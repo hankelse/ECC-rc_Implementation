@@ -4,6 +4,8 @@
 using namespace std;
 
 #include "node.h"
+#include "edge.h"
+#include "graph.h"
 
 /**
  * @brief An Implementation of the framework from Conte et al.
@@ -16,13 +18,20 @@ using namespace std;
  * @return int the size of the ECC
  */
 int ecc_rc(string graph_filepath, vector<Node> &cliques) {
-    
 
+    return 0;
 }
 
 
+// vector<Edge>* find_clique_of (Graph G) {
+
+//     return nullptr;
+// } 
+
+// string DATASET_PATH = "datasets/email-EuAll.txt";
+string DATASET_PATH = "datasets/test1.txt";
+
 int main() {
-
-
+    Graph G(DATASET_PATH);
     return 0;
 }

@@ -2,15 +2,21 @@
 #include "node.h"
 
 Node::Node() {
-    _value = 0; // default value
+    _id = 0; // default value
 }
 
-Node::Node(int value) {
-    _value = value;
-}
-
-int Node::value() {
-    return (_value);
+Node::Node(int id) {
+    _id = id;
 }
 
 
+
+int Node::id() {
+    return (_id);
+}
+
+
+ostream& operator<<(ostream& os, Node& node) {
+    os << "[" << node.id() << "]";
+    return os;
+}
