@@ -11,17 +11,13 @@ class Edge {
         Edge();
         Edge(Node* node1, Node* node2);
 
-        int cover();
+        void cover();
         bool is_covered();
-
         Node* _node1;
         Node* _node2; 
     
     private:
         bool _covered;
-
-
-    
 };
     
 ostream& operator<<(ostream& os, Edge& edge);

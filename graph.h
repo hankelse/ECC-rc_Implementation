@@ -21,12 +21,13 @@ class Graph {
         int _num_nodes;
         int _num_edges;
 
-        
-        
+        //ECC-rc methods
+        Edge* select_uncovered_edge();
+
     private:
-        void construct(string filename); //fills graph using get_data_sizes and fill_graph
-        void get_data_sizes(ifstream& file); //gets sizes from file of _nodes and _edges
-        void fill_graph(ifstream& file); //puts nodes and edges into graph
+        void construct(string filename);       //fills graph using get_data_sizes and fill_graph
+        void get_data_sizes(ifstream& file);   //gets sizes from file of _nodes and _edges
+        void fill_graph(ifstream& file);       //puts nodes and edges into graph
 };
     
 

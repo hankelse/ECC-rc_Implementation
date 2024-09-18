@@ -5,6 +5,7 @@ class Edge; // avoid errors and circular definitions
 class Graph; // avoid errors and circular definitions
 
 #include <iostream>
+#include <vector>
 using namespace std;
 
 class Node {
@@ -15,9 +16,10 @@ class Node {
 
         int id();
         vector<Edge*> get_edges(Graph &graph);
-        vector<Node*> get_neighbors(Graph &graph);
+        vector<Node*> get_neighbors(Graph &graph);   // will be only for testing since adjacency list implemented
 
-        
+        vector<Node*> neighbors;                     // should be built with graph 
+        vector<Edge*> edges; 
 
     private:
         int _id;

@@ -14,6 +14,10 @@ bool Edge::is_covered() {
     return _covered;
 }
 
+void Edge::cover() {
+    _covered = true;
+}
+
 ostream& operator<<(ostream& os, Edge& edge) {
     Node* node1 = edge._node1;
     Node* node2 = edge._node2;

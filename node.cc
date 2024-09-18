@@ -13,7 +13,8 @@ Node::Node(int id) {
 
 
 /**
- * @brief Returns a list of edges that a node is a part of
+ * @brief Gets all edges in G that node is a part of.
+ * Iterates through edge list, collecting the nodes.
  * 
  * @param node The node to find the edges of
  * @return vector<Edge*> 
@@ -37,7 +38,8 @@ vector<Edge*> Node::get_edges(Graph &graph) {
 }
 
 /**
- * @brief Returns a list of neighbors of the node.
+ * @brief Gets all neighbors in G to the node.
+ * Iterates through edge list, collecting the neighbors.
  * 
  * @param node The node to find the edges of
  * @return vector<Edge*> 

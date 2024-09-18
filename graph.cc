@@ -31,15 +31,17 @@ Graph::~Graph() {
 void Graph::construct(string filename) {
     ifstream file(filename);
 
-    //--Error Checking
+    //Check if file was opened correctly
     if (!file.is_open()) {
         cerr << "Error: Could not open the file " << filename << endl;
     }
 
+    //Get the reported number of nodes and edges in G
     this->get_data_sizes(file);
+
     // reserve neccesary space with the new sizes
-    this->_nodes = vector<Node*>(_num_nodes, nullptr); // need to be able to set values via indexing in this range
-    this->_edges.reserve(this->_num_edges); // just need to push into this range
+    this->_nodes = vector<Node*>(_num_nodes, nullptr);    // need to be able to set values via indexing in this range
+    this->_edges.reserve(this->_num_edges);               // just need to push into this range
     
     //read in the data: push edge*s, assign node* to id spot
     this->fill_graph(file);
@@ -55,10 +57,11 @@ void Graph::construct(string filename) {
  */
 void Graph::get_data_sizes(ifstream& file) {
     bool sizes_found = false; // have we found "Nodes:"?
-    string word; // holds current word/number from file
+    
     int num_nodes = 0;
     int num_edges = 0;
 
+    string word; // holds current word/number from file
     while (!sizes_found) {
         file >> word;
         if (word == "Nodes:") {
@@ -95,7 +98,7 @@ void Graph::fill_graph(ifstream& file) {
     while (file >> node1_id) {
         file >> node2_id;
 
-        //If more space is needed for nodes:
+        //If more space is needed for nodes, resize: (Good indicator of error, caught by checksß)
         if (node1_id >= _nodes.size()) {
             _nodes.resize(node1_id+1);
         }
@@ -111,10 +114,28 @@ void Graph::fill_graph(ifstream& file) {
             _nodes[node2_id] = new Node(node2_id);
         }
         
-        //Add the edge
+        // Add the edge
         Edge* temp_edge;
         temp_edge = new Edge(_nodes[node1_id], _nodes[node2_id]);
         _edges.push_back(temp_edge);
+
+        //Add the each node to the other adjacency neighbors list
+        _nodes[node1_id]->neighbors.push_back(_nodes[node2_id]);
+        _nodes[node2_id]->neighbors.push_back(_nodes[node1_id]);
+
+        //Add the edge to each nodes adjacency edges list
+        _nodes[node1_id]->edges.push_back(temp_edge);
+        _nodes[node2_id]->edges.push_back(temp_edge);
+
     }
 
 }
+
+
+
+
+
+
+
+
+

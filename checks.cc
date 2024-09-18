@@ -71,3 +71,44 @@ bool all_edges_imported(Graph& G, ostringstream& warnings) {
     return num_edges_reported == (G._edges.size() - num_empty_indices);
 }
 
+
+/**
+ * @brief Checks if the adjacency lists of each node match the nodes from iterating through the G._edges vector
+ *        Doesn't check all because of very slow running time. Checks 400 times equally spaced if there are more than 400 nodes.
+ * @param G
+ * @param warnings 
+ * @return true 
+ * @return false 
+ */
+bool adj_lists_correct(Graph& G, ostringstream& warnings) {
+    bool result = true;
+    int num_checks = G._nodes.size();
+    if (num_checks > 400) {
+        num_checks = 400;
+    }
+    // vector<size_t> indicies_to_check = {0, G._nodes.size()/4 , G._nodes.size()/2, 3*G._nodes.size()/4, G._nodes.size()-1};
+
+    warnings << "CHECK FAILURE: adj_lists_correct \t adjacency lists don't match references." << endl;
+    for (int i = 0; i < G._nodes.size(); i=i+G._nodes.size()/num_checks) {
+    // for (size_t n = 0; n < indicies_to_check.size(); n++) {
+    //     int i = indicies_to_check[n];
+        Node* current = G._nodes[i];
+        // cout << "Starting Node " << i << "/" << G._nodes.size() << endl;
+
+        //get the neighbor list and edge list to compare against
+        vector<Node*> neighbors_reference = current->get_neighbors(G);
+        vector<Edge*> edges_reference = current->get_edges(G);
+
+        if (current->neighbors != neighbors_reference) {
+            warnings << "\t\t [" << current->id() << "]'s NEIGHBOR adjac list doesn't match reference" << endl;
+            result = false;
+        }
+        if (current->edges != edges_reference) {
+            warnings << "\t\t [" << current->id() << "]'s EDGES adjac list doesn't match reference" << endl;
+            result = false;
+        }
+    }
+    return result;
+
+
+}
