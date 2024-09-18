@@ -14,16 +14,19 @@ class Graph {
     public:
         Graph();
         Graph(string filename);
+        ~Graph();
 
         vector<Edge*> _edges;
         vector<Node*> _nodes;
         int _num_nodes;
         int _num_edges;
+
+        
         
     private:
-        void construct(string filename);
-        void get_sizes(ifstream& file);
-        void fill_graph(ifstream& file);
+        void construct(string filename); //fills graph using get_data_sizes and fill_graph
+        void get_data_sizes(ifstream& file); //gets sizes from file of _nodes and _edges
+        void fill_graph(ifstream& file); //puts nodes and edges into graph
 };
     
 

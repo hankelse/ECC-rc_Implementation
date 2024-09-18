@@ -44,6 +44,7 @@
         "vector": "cpp",
         "algorithm": "cpp",
         "memory_resource": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "type_traits": "cpp"
     }
 }

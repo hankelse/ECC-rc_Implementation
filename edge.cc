@@ -15,7 +15,9 @@ bool Edge::is_covered() {
 }
 
 ostream& operator<<(ostream& os, Edge& edge) {
-    os << "{" << *edge._node1 << "<->" << *edge._node2 << "}";
+    Node* node1 = edge._node1;
+    Node* node2 = edge._node2;
+    os << "{" << node1->id() << "<->" << node2->id() << "}";
     return os;
 }
 
