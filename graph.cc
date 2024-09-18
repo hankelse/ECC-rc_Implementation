@@ -131,8 +131,24 @@ void Graph::fill_graph(ifstream& file) {
 
 }
 
-
-
+/**
+ * @brief selects an uncovered edge in G starting where it left off.
+ * 
+ * @param previous_index 
+ * @return Edge* 
+ */
+Edge* Graph::select_uncovered_edge(int& previous_index) {
+    for (int i = previous_index; i < _num_edges; i++) {
+        if (!_edges[i]->is_covered()) {
+            previous_index = i;
+            return _edges[previous_index];
+        } else {
+            cout << "\t" << _edges[i] << "is covered?" << _edges[i]->is_covered() << endl;
+        }
+    }
+    cerr << "Got to end of select_uncovered_edge!" << endl;
+    return nullptr;
+}
 
 
 

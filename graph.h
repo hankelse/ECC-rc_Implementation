@@ -22,7 +22,7 @@ class Graph {
         int _num_edges;
 
         //ECC-rc methods
-        Edge* select_uncovered_edge();
+        Edge* select_uncovered_edge(int& previous_index);
 
     private:
         void construct(string filename);       //fills graph using get_data_sizes and fill_graph

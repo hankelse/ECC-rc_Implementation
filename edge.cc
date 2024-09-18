@@ -8,6 +8,8 @@ Edge::Edge() {
 Edge::Edge(Node* node1, Node* node2) {
     _node1 = node1;
     _node2 = node2;
+    
+    _covered = false;
 }
 
 bool Edge::is_covered() {
