@@ -4,7 +4,8 @@
 #include <iostream>
 #include <vector>
 using namespace std;
-#include "node.h"
+
+class Node;
 
 class Edge {
     public:

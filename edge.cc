@@ -1,5 +1,6 @@
 
 #include "edge.h"
+#include "node.h"
 
 Edge::Edge() {
     _covered = false;

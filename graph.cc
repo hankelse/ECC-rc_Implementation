@@ -1,5 +1,8 @@
 
 #include "graph.h"
+#include "ev_pair.h"
+#include "node.h"
+#include "edge.h"
 
 
 Graph::Graph() {
@@ -16,8 +19,16 @@ Graph::~Graph() {
     }
 
     for (int i = 0; i < _num_nodes; i++) {
-        delete _nodes[i];
+        Node* node = _nodes[i];
+        // delete EV pairs of node
+        for (int n = 0; n < node->connections.size(); n++) {
+            delete node->connections[n];
+        }
+
+        delete node;
     }
+
+
     return;
 }
 
@@ -127,6 +138,9 @@ void Graph::fill_graph(ifstream& file) {
         _nodes[node1_id]->edges.push_back(temp_edge);
         _nodes[node2_id]->edges.push_back(temp_edge);
 
+        //Add each to each nodes adjacency EV_pair list
+        _nodes[node1_id]->connections.push_back(new EV_pair(temp_edge, _nodes[node2_id]));
+        _nodes[node2_id]->connections.push_back(new EV_pair(temp_edge, _nodes[node1_id]));
     }
 
 }

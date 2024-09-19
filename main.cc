@@ -8,6 +8,7 @@ using namespace std;
 #include "edge.h"
 #include "graph.h"
 #include "checks.h"
+#include "ev_pair.h"
 
 
 
@@ -125,7 +126,9 @@ int main() {
     cout << "\n" << endl;
     cout << "Adjacency Lists:" << endl;
     for (int i = 0; i < G._nodes.size(); i++ ) {
-        cout << "\t The neighbors of " << *G._nodes[i] << " are " << G._nodes[i]->neighbors << endl;
+        cout << "\t Nodes: The neighbors of " << *G._nodes[i] << " are " << G._nodes[i]->neighbors << endl;
+        cout << "\t Edges: The edges with "  << *G._nodes[i] << " are " << G._nodes[i]->edges << endl;
+        cout << "\t Connections: The connections with "  << *G._nodes[i] << " are " << G._nodes[i]->connections << endl;
     }
     cout << "\n";
     

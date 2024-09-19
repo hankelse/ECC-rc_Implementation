@@ -1,11 +1,13 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 
-#include "node.h"
-#include "edge.h"
 #include <vector>
 #include <string>
 #include <fstream>
+
+class EV_pair;
+class Node;
+class Edge;
 
 using namespace std;
 

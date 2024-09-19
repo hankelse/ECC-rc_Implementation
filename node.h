@@ -2,7 +2,8 @@
 #define NODE_H
 
 class Edge; // avoid errors and circular definitions
-class Graph; // avoid errors and circular definitions
+class Graph; 
+class EV_pair; 
 
 #include <iostream>
 #include <vector>
@@ -20,6 +21,9 @@ class Node {
 
         vector<Node*> neighbors;                     // should be built with graph 
         vector<Edge*> edges; 
+
+        vector<EV_pair*> connections;                // combinding the adjacency lists into one
+
 
     private:
         int _id;

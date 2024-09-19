@@ -4,20 +4,29 @@ Used in node classes to refer to an edge connecting it to another node and the o
 
 */
 
+#include <iostream>
+using namespace std;
 #ifndef EV_PAIR_H
 #define EV_PAIR_H
 
-#include "edge.h";
-#include "node.h";
+class Edge;
+class Node;
 
 
 class EV_pair {
 public:
+    Edge* edge;
+    Node* neighbor;
 
-    Edge* edge = nullptr; 
-    Node* neighbor = nullptr;
+    EV_pair();
+
+    EV_pair(Edge* connecting_edge, Node* neighboring_node);
+
+    bool is_covered();
+
 
 };
+ostream& operator<<(ostream& os, EV_pair& pair);
 
 
 

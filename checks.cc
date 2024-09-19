@@ -1,5 +1,7 @@
 #include "checks.h"
 #include "io.h"
+#include "node.h"
+#include "edge.h"
 
 /**
  * @brief Checks if all of the nodes have been imported correctly:
