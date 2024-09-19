@@ -5,7 +5,7 @@
 #include <string>
 #include <fstream>
 
-class EV_pair;
+class Connection;
 class Node;
 class Edge;
 
@@ -35,7 +35,7 @@ class Graph {
         void fill_graph(ifstream& file);       //puts nodes and edges into graph
 };
 
-vector<Node*> node_set_intersect(vector<Node*> n1, vector<Node*> n2);
+vector<Node*> node_set_intersect(vector<Connection*> n1, vector<Connection*> n2);
 
 
 #endif

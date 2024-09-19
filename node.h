@@ -3,7 +3,7 @@
 
 class Edge; // avoid errors and circular definitions
 class Graph; 
-class EV_pair; 
+class Connection; 
 
 #include <iostream>
 #include <vector>
@@ -22,7 +22,7 @@ class Node {
         vector<Node*> neighbors;                     // should be built with graph 
         vector<Edge*> edges; 
 
-        vector<EV_pair*> connections;                // combinding the adjacency lists into one
+        vector<Connection*> connections;                // combining the adjacency lists into one
 
 
     private:

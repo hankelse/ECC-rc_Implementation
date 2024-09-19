@@ -1,6 +1,6 @@
 
 #include "graph.h"
-#include "ev_pair.h"
+#include "connection.h"
 #include "node.h"
 #include "edge.h"
 
@@ -20,7 +20,7 @@ Graph::~Graph() {
 
     for (int i = 0; i < _num_nodes; i++) {
         Node* node = _nodes[i];
-        // delete EV pairs of node
+        // delete Connections of node
         for (int n = 0; n < node->connections.size(); n++) {
             delete node->connections[n];
         }
@@ -138,9 +138,9 @@ void Graph::fill_graph(ifstream& file) {
         _nodes[node1_id]->edges.push_back(temp_edge);
         _nodes[node2_id]->edges.push_back(temp_edge);
 
-        //Add each to each nodes adjacency EV_pair list
-        _nodes[node1_id]->connections.push_back(new EV_pair(temp_edge, _nodes[node2_id]));
-        _nodes[node2_id]->connections.push_back(new EV_pair(temp_edge, _nodes[node1_id]));
+        //Add each to each nodes adjacency Connection list
+        _nodes[node1_id]->connections.push_back(new Connection(temp_edge, _nodes[node2_id]));
+        _nodes[node2_id]->connections.push_back(new Connection(temp_edge, _nodes[node1_id]));
     }
 
 }
@@ -180,7 +180,7 @@ vector<Edge*> Graph::find_clique_of(Edge* edge_uv) {
     Node* u = edge_uv->_node1;
     Node* v = edge_uv->_node2;
 
-    potential_additions= node_set_intersect(u->neighbors, v->neighbors);
+    potential_additions= node_set_intersect(u->connections, v->connections);
 
     //z ← EXTRACT NODE(P)
     
@@ -214,24 +214,25 @@ Node* Graph::extract_node(vector<Node*> node_set, vector<Node*>& result) {
  * @param n2 
  * @return vector<Node*> 
  */
-vector<Node*> node_set_intersect(vector<Node*> n1, vector<Node*> n2) {
-    vector<Node*> result = n1;
-    bool unique_to_n2 = true;
-    for (int i = 0; i < n2.size(); i++) {
-        Node* n2_node = n2[i];
-        unique_to_n2 = true;
-        for (int _ = 0; _ < result.size(); _++) {
-            if (n2_node->id() == result[_]->id()) {
-                unique_to_n2 = false;
-                continue;
-            }
-        }
-        if (unique_to_n2) {
-            result.push_back(n2_node);
-        }
-    }
-    return result;
-
+vector<Node*> node_set_intersect(vector<Connection*> n1, vector<Connection*> n2) {
+    // vector<Connection*> result = n1;
+    // bool unique_to_n2 = true;
+    // for (int i = 0; i < n2.size(); i++) {
+    //     Node* n2_node = n2[i];
+    //     unique_to_n2 = true;
+    //     for (int _ = 0; _ < result.size(); _++) {
+    //         if (n2_node->id() == result[_]->id()) {
+    //             unique_to_n2 = false;
+    //             continue;
+    //         }
+    //     }
+    //     if (unique_to_n2) {
+    //         result.push_back(n2_node);
+    //     }
+    // }
+    // return result;
+    vector<Node*> some = {nullptr};
+    return some;
 }
 
 

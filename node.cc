@@ -2,7 +2,7 @@
 #include "node.h"
 #include "edge.h"
 #include "graph.h"
-#include "ev_pair.h"
+#include "connection.h"
 
 Node::Node() {
     _id = 0; // default value
