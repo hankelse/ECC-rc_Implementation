@@ -32,7 +32,8 @@ class Graph {
         void get_data_sizes(ifstream& file);   //gets sizes from file of _nodes and _edges
         void fill_graph(ifstream& file);       //puts nodes and edges into graph
 };
-    
+
+vector<Node*> node_set_intersect(vector<Node*> n1, vector<Node*> n2);
 
 
 #endif

@@ -170,8 +170,7 @@ vector<Edge*> Graph::find_clique_of(Edge* edge_uv) {
 
     //z ← EXTRACT NODE(P)
     
-
-
+    return result;
 }
 
 /**

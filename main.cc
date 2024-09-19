@@ -117,8 +117,17 @@ int main() {
 
     //run ecc_rc
     vector<vector<Edge*>> clique_cover;
-    ecc_rc(G, clique_cover);
+    // ecc_rc(G, clique_cover);
 
+    // -- Reading in Data Demo -- //
+    cout << "The nodes in G are " << G._nodes << endl;
+    cout << "The edges in G are " << G._edges << endl;
+    cout << "\n" << endl;
+    cout << "Adjacency Lists:" << endl;
+    for (int i = 0; i < G._nodes.size(); i++ ) {
+        cout << "\t The neighbors of " << *G._nodes[i] << " are " << G._nodes[i]->neighbors << endl;
+    }
+    cout << "\n";
     
 
  
