@@ -33,10 +33,8 @@ int ecc_rc(Graph& G, vector<vector<Edge*>> &cliques) {
         // u, v ← SELECT UNCOVERED EDGE()
         Edge* uncovered_edge = G.select_uncovered_edge(last_uncovered_edge_index);
 
-        uncovered_edge->cover();
-        cout << *uncovered_edge << endl;
-        num_edges_covered +=1;
         //R ← FIND CLIQUE OF(u, v)
+        vector<Edge*> found_clique = G.find_clique_of(uncovered_edge);
         
 
 

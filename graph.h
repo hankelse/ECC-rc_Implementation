@@ -23,6 +23,9 @@ class Graph {
 
         //ECC-rc methods
         Edge* select_uncovered_edge(int& previous_index);
+        vector<Edge*> find_clique_of(Edge* uncovered_edge);
+        Node* extract_node(vector<Node*> node_set, vector<Node*>& result);
+
 
     private:
         void construct(string filename);       //fills graph using get_data_sizes and fill_graph

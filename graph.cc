@@ -151,7 +151,74 @@ Edge* Graph::select_uncovered_edge(int& previous_index) {
 }
 
 
+/**
+ * @brief Find the clique of an edge
+ * 
+ * @param edge_uv 
+ * @return vector<Edge*> 
+ */
+vector<Edge*> Graph::find_clique_of(Edge* edge_uv) {
+    //R ← {u, v}
+    vector<Edge*> result = {edge_uv};
+
+    //P ← N(u)∩ N(v)
+    vector<Node*> potential_additions;
+    Node* u = edge_uv->_node1;
+    Node* v = edge_uv->_node2;
+
+    potential_additions= node_set_intersect(u->neighbors, v->neighbors);
+
+    //z ← EXTRACT NODE(P)
+    
 
 
+}
+
+/**
+ * @brief Return any vertex z (if any) yielding maximum size |N_u(z) ∩ R| > 0; otherwise, return z = null.
+ * 
+ * @param node_set 
+ * @param result R - the set of nodes in the clique
+ * @return Node* z // nullptr if there is none
+ */
+Node* Graph::extract_node(vector<Node*> node_set, vector<Node*>& result) {
+    Node* best = nullptr;
+    int best_score = 0;
+    for (int i = 0; i < node_set.size(); i++) {
+        Node* z = result[i];
+        // vector<Node*> uncovered_neighbors = 
+
+    }
+
+
+    return best;
+}
+
+/**
+ * @brief Slow program give n1 intersect n2 where n1 and n2 are vector<Node*>
+ * 
+ * @param n1 
+ * @param n2 
+ * @return vector<Node*> 
+ */
+vector<Node*> node_set_intersect(vector<Node*> n1, vector<Node*> n2) {
+    vector<Node*> result = n1;
+    bool unique_to_n2 = true;
+    for (int i = 0; i < n2.size(); i++) {
+        Node* n2_node = n2[i];
+        unique_to_n2 = true;
+        for (int _ = 0; _ < result.size(); _++) {
+            if (n2_node->id() == result[_]->id()) {
+                unique_to_n2 = false;
+                continue;
+            }
+        }
+        if (unique_to_n2) {
+            result.push_back(n2_node);
+        }
+    }
+    return result;
+
+}
 
 
