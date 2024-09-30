@@ -29,6 +29,8 @@ class Graph {
         Node* extract_node(vector<Node*> node_set, vector<Node*>& result);
 
         Edge* are_connected(Node* node1, Node* node2);
+        Edge* get_edge(Node* node1, Node* node2);  // synonymous to are_connected
+
 
         //helper methods that probably shouldn't be used
         vector<Node*> edges_to_nodes(vector<Edge*> edges);

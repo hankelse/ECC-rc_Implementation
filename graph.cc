@@ -3,6 +3,7 @@
 #include "connection.h"
 #include "node.h"
 #include "edge.h"
+#include "io.h"
 
 
 Graph::Graph() {
@@ -279,10 +280,29 @@ Edge* Graph::are_connected(Node* node1, Node* node2) {
     vector<Connection*> n1_connects = node1->connections;
     for (int i = 0; i < n1_connects.size(); i++) {
         Connection* connection = n1_connects[i];
-        if (*connection->neighbor == *node1) {
+        if (*connection->neighbor == *node2) {
             return connection->edge;
         }
     }
+    return nullptr;
+}
+
+/**
+ * @brief Synonym of are_connected
+ * 
+ * @param node1 
+ * @param node2 
+ * @return Edge* 
+ */
+Edge* Graph::get_edge(Node* node1, Node* node2) {
+    vector<Connection*> n1_connects = node1->connections;
+    for (int i = 0; i < n1_connects.size(); i++) {
+        Connection* connection = n1_connects[i];
+        if (connection->neighbor->id() == node2->id()) {
+            return connection->edge;
+        }
+    }
+
     return nullptr;
 }
 

@@ -9,7 +9,7 @@ using namespace std;
 #include "graph.h"
 #include "checks.h"
 #include "connection.h"
-
+#include "clique.h"
 
 
 
@@ -111,9 +111,9 @@ void run_checks(Graph& G) {
 
 
 /* SETTINGS */
-string const DATASET_PATH = "datasets/email-EuAll.txt";
+string const DATASET_PATH = "datasets/clique.txt";
 // string const DATASET_PATH = "datasets/test1.txt";
-bool const DO_CHECKS = true;
+bool const DO_CHECKS = false;
 
 
 int main() {
@@ -121,12 +121,22 @@ int main() {
     Graph G(DATASET_PATH);
 
     //Run checks
-    if (DO_CHECKS) { run_checks(G); }
-    cout << "finished " << endl;
+    if (DO_CHECKS) { run_checks(G); cout << "finished " << endl;}
+    
 
     //run ecc_rc
-    vector<vector<Edge*>> clique_cover;
+    // vector<vector<Edge*>> clique_cover;
     // ecc_rc(G, clique_cover);
+
+    vector<Clique*> clique_cover;
+    
+    //  = {G._nodes.begin() + 10, G._nodes.begin() + 15};
+
+    vector<Node*> nodes = G._nodes;
+    Clique C(nodes, G);
+
+    cout << C << endl;
+    cout << C.edges << endl;
 
 
     

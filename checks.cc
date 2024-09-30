@@ -82,8 +82,8 @@ bool all_edges_imported(Graph& G, ostringstream& warnings) {
  * @return true 
  * @return false 
  */
-bool adj_lists_correct(Graph& G, ostringstream& warnings) {`
-    int check_limit = 265215; //so it doesn't take too long
+bool adj_lists_correct(Graph& G, ostringstream& warnings) {
+    int check_limit = 400; //so it doesn't take too long
 
     bool result = true;
     int num_checks = G._nodes.size();
