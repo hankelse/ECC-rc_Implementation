@@ -18,7 +18,7 @@ template <typename T>
 ostream& operator<<(ostream &os, vector<T> &v) {
     // Check if vector is empty
     if (v.size() < 1) {
-        os << "[vector is empty]" << endl;
+        os << "[vector is empty]";
     } else {
 
         //Check if T is a pointer

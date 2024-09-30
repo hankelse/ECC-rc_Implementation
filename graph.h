@@ -8,6 +8,7 @@
 class Connection;
 class Node;
 class Edge;
+class Clique;
 
 using namespace std;
 
@@ -18,6 +19,7 @@ class Graph {
         Graph(string filename);
         ~Graph();
 
+        vector<Clique*> _cliques;
         vector<Edge*> _edges;
         vector<Node*> _nodes;
         int _num_nodes;
@@ -25,8 +27,8 @@ class Graph {
 
         //ECC-rc methods
         Edge* select_uncovered_edge(int& previous_index);
-        vector<Edge*> find_clique_of(Edge* uncovered_edge);
-        Node* extract_node(vector<Node*> node_set, vector<Node*>& result);
+        Clique* find_clique_of(Edge* uncovered_edge);
+        Node* extract_node(vector<Node*> candidate_set, Clique* clique);
 
         Edge* are_connected(Node* node1, Node* node2);
         Edge* get_edge(Node* node1, Node* node2);  // synonymous to are_connected
@@ -36,6 +38,8 @@ class Graph {
         vector<Node*> edges_to_nodes(vector<Edge*> edges);
         vector<Edge*> nodes_to_edges(vector<Node*> nodes);
 
+        vector<Node*> node_set_intersect(vector<Node*>, vector<Node*> );
+
 
     private:
         void construct(string filename);       //fills graph using get_data_sizes and fill_graph
@@ -43,7 +47,7 @@ class Graph {
         void fill_graph(ifstream& file);       //puts nodes and edges into graph
 };
 
-vector<Node*> node_set_intersect(vector<Node*> u_neighbors, vector<Node*> v_neighbors);
+
 
 
 #endif

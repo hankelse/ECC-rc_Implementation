@@ -22,8 +22,14 @@ Clique::Clique(vector<Node*> &nodes_to_add, Graph& G){
     }
 }
 
+
+Clique::Clique(Edge* edge, Graph& G) {
+    add_node(edge->_node1, G);
+    add_node(edge->_node2, G);
+}
+
 /**
- * @brief Add a node (and impplied edges) to a clique
+ * @brief Add a node (and impplied edges) to a clique (COVERS EDGES)
  * 
  * @param n Node being added
  * @param G Graph
@@ -31,7 +37,8 @@ Clique::Clique(vector<Node*> &nodes_to_add, Graph& G){
 void Clique::add_node(Node* n, Graph& G) {
     //Add edges
     for (int i = 0; i < nodes.size(); i++) {
-        Edge* edge = G.get_edge(n, G._nodes[i]);
+        Edge* edge = G.get_edge(n, nodes[i]);
+        edge->cover();
         if (edge == nullptr) {
             cerr << "ERROR: Can't include " << *n << " in clique: Node " << *n << " is not connected to Node " << *G._nodes[i] << endl;
         }
@@ -54,6 +61,10 @@ bool Clique::is_complete() {
 }
 
 
+int Clique::size() {
+    return edges.size();
+}
+
 /**
  * @brief Overloading operator for outputting Cliques
  * 
@@ -66,7 +77,7 @@ ostream& operator<<(ostream& os, Clique& clique) {
     for (int i = 1; i < clique.nodes.size(); i++) {
         os << "x" << clique.nodes[i]->id();
     }
-    os << "]>" << endl;
+    os << "]>";
     return os;
 }
 

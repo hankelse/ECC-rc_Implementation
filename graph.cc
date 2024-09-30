@@ -4,6 +4,7 @@
 #include "node.h"
 #include "edge.h"
 #include "io.h"
+#include "clique.h"
 
 
 Graph::Graph() {
@@ -31,6 +32,10 @@ Graph::~Graph() {
         }
 
         delete node;
+    }
+
+    for (int i = 0; i < _cliques.size(); i ++) {
+        delete _cliques[i];
     }
 
 
@@ -167,55 +172,92 @@ void Graph::fill_graph(ifstream& file) {
  * @return Edge* 
  */
 Edge* Graph::select_uncovered_edge(int& previous_index) {
-    for (int i = previous_index; i < _num_edges; i++) {
+    for (int i = previous_index+1; i < _num_edges; i++) {
         if (!_edges[i]->is_covered()) {
             previous_index = i;
             return _edges[previous_index];
-        } else {
-            cout << "\t" << _edges[i] << "is covered?" << _edges[i]->is_covered() << endl;
         }
     }
-    cerr << "Got to end of select_uncovered_edge!" << endl;
+    cerr << "Uh Oh!  Got to end of select_uncovered_edge!" << endl;
     return nullptr;
 }
 
 
 /**
- * @brief Find the clique of an edge
+ * @brief Creates a Clique object representing the clique with the edge
  * 
  * @param edge_uv 
  * @return vector<Edge*> 
  */
-vector<Edge*> Graph::find_clique_of(Edge* edge_uv) {
+Clique* Graph::find_clique_of(Edge* edge) {
+
     //R ← {u, v}
-    vector<Edge*> result = {edge_uv};
+    Node* u = edge->_node1;
+    Node* v = edge->_node2;
+    Clique* clique = new Clique(edge, *this);
+    _cliques.push_back(clique); 
 
     //P ← N(u)∩ N(v)
-    vector<Node*> potential_additions;
-    Node* u = edge_uv->_node1;
-    Node* v = edge_uv->_node2;
-
-    // LEFT ON: WHAT SHOULD BE A CONNECTION AND WHAT SHOULD BE AN EDGE?
-    potential_additions = node_set_intersect(u->neighbors, v->neighbors);
+    vector<Node*> candidates = node_set_intersect(u->neighbors, v->neighbors);
+    cout << "\t a) Candidates = " << candidates << endl;
 
     // z ← EXTRACT NODE(P)
+    Node* new_member = extract_node(candidates, clique);
+    if (new_member == nullptr) {
+        cout << "\t b) Extracted node: nullptr" << endl;
+    } else {    
+        cout << "\t b) Extracted node: " << *new_member << endl;
+    }
 
-    //get all the nodes in result
-    vector<Node*> result_nodes;
+    // while z != null do
+    while (new_member != nullptr) {
+        //add new_node to clique (COVERS EDGES)
+        cout << "Adding " << *new_member << endl;
+        clique->add_node(new_member, *this);
+        cout << "\t c) Added " << *new_member << "to Clique: " << *clique << endl << endl;
 
-    Node* new_addition = extract_node(potential_additions, result_nodes);
+        // Trim candidates: P ← P ∩ N(z)
+        vector<Node*> new_candidates;
+        for (Node* node : new_member->neighbors) {
+            // if node in candidates, put in new candidates
+
+            for (Node* candidate : candidates) {
+                if (candidate->id() == node->id()) {
+                    new_candidates.push_back(node);
+                    continue;
+                }
+            }
+        }
+        candidates = new_candidates;
+        cout << "\t a) Candidates reduced: " << candidates << endl;
+
+        // Extract next node
+        new_member = extract_node(candidates, clique);
+
+        if (new_member == nullptr) {
+            cout << "\t b) Extracted node: nullptr" << endl;
+        } else {    
+            cout << "\t b) Extracted node: " << *new_member << endl;
+        }
+        
+
+    }
     
-    return result;
+    return clique;
 }
 
 /**
  * @brief Return any vertex z (if any) yielding maximum size |N_u(z) ∩ R| > 0; otherwise, return z = null.
  * 
  * @param potential_additions P - the set of nodes that could be in the clique
- * @param clique R - the set of nodes in the clique
+ * @param clique R - The clique being built
  * @return Node* z // nullptr if there is none
  */
-Node* Graph::extract_node(vector<Node*> potential_additions, vector<Node*>& clique) {
+Node* Graph::extract_node(vector<Node*> potential_additions, Clique* clique) {
+    if (potential_additions.size() == 0) {
+        return nullptr;
+    }
+
     Node* best = nullptr;
     int best_score = 0;
 
@@ -225,15 +267,15 @@ Node* Graph::extract_node(vector<Node*> potential_additions, vector<Node*>& cliq
         int z_score = 0;       //the number of uncovered edges between z and R
         
         // Iterate through R, looking for uncovered edges between the nodes in R and z
-        for (int i = 0; i < clique.size(); i++) {
-            Edge* connection = this->are_connected(z, clique[i]); //nullptr if none found
+        for (int i = 0; i < clique->nodes.size(); i++) {
+            Edge* connection = this->are_connected(z, clique->nodes[i]); //nullptr if none found
             if (connection != nullptr && !connection->is_covered()) {
                 z_score += 1;
             }
         }
 
         //update best and best_score if better z is found
-        if (z_score > best_score) {
+        if (z_score >= best_score) {
             best_score = z_score;
             best = z;
         }
@@ -243,30 +285,33 @@ Node* Graph::extract_node(vector<Node*> potential_additions, vector<Node*>& cliq
 }
 
 /**
- * @brief Slow program give N(u) intersect N(v) where u and v are nodes
+ * @brief Given two sets of nodes, returns the elements in both
  * 
- * @param u_neighbors 
- * @param v_neighbors 
+ * @param set_1
+ * @param set_2
  * @return vector<Node*> 
  */
-vector<Node*> node_set_intersect(vector<Node*> u_neighbors, vector<Node*> v_neighbors) {
-    vector<Node*> result = u_neighbors;
-    
-    bool unique_to_v;
-    for (int i = 0; i < v_neighbors.size(); i++) {
-        Node* v_neighbor = v_neighbors[i];
-        unique_to_v = true;
-        for (int _ = 0; _ < result.size(); _++) {
-            if (v_neighbor->id() == result[_]->id()) {
-                unique_to_v = false;
-                continue;
+vector<Node*> Graph::node_set_intersect(vector<Node*> set_1, vector<Node*> set_2) {
+    vector<bool> has_been_added(_num_nodes, false);
+    vector<Node*> intersection;
+
+    for (Node* node_1 : set_1) {
+
+        for (Node* node_2 : set_2) {
+
+            if (node_1->id() == node_2->id()) {
+                if (!has_been_added[node_1->id()]) {
+                    intersection.push_back(node_1);
+                    has_been_added[node_1->id()] = 1;
+                    continue;
+                }
+                
+
             }
-        }
-        if (unique_to_v) {
-            result.push_back(v_neighbor);
+
         }
     }
-    return result;
+    return intersection;
 }
 
 /**

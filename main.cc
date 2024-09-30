@@ -23,8 +23,8 @@ using namespace std;
  * 
  * @return int the size of the ECC
  */
-int ecc_rc(Graph& G, vector<vector<Edge*>> &cliques) {
-    cout << "Starting ECC" << endl;
+int ecc_rc(Graph& G, vector<Clique*> &cliques) {
+    cout << "\n\n\t\tSTARTING ECC-rc\n\n" << endl;
  
     //while there are uncovered edges do
     int num_edges_covered = 0;
@@ -34,17 +34,25 @@ int ecc_rc(Graph& G, vector<vector<Edge*>> &cliques) {
 
         // u, v ← SELECT UNCOVERED EDGE()
         Edge* uncovered_edge = G.select_uncovered_edge(last_uncovered_edge_index);
-        cout << "Got uncovered edge" << endl;
+        cout << "1) SELECTED UNCOVERED EDGE: \t" << *uncovered_edge << endl;
 
         //R ← FIND CLIQUE OF(u, v)
-        vector<Edge*> found_clique = G.find_clique_of(uncovered_edge);
-        cout << "Found clique!" << endl;
+        cout << "2) FINDING CLIQUE OF \t" << *uncovered_edge << endl;
+        Clique* found_clique = G.find_clique_of(uncovered_edge);
+        cout << "   => FOUND CLIQUE OF " <<  *uncovered_edge << ": \t" << *found_clique << endl;
 
         // C ← C∪R
         cliques.push_back(found_clique);
+        cout << "3) ADDED CLIQUE TO ECC \t num_cliques = " << cliques.size() << endl;
 
-        //Mark all edges of R as covered
-        //Happens in find_clique_of
+        // Done?
+        num_edges_covered += found_clique->size();
+        cout << "4) COVERED " << num_edges_covered << " / " << G._num_edges;
+        if (num_edges_covered < G._num_edges) {
+            cout << " -> REPEATING \n\n" << endl;
+        } else {
+            cout << " -> FINISHED\n" << endl;
+        }
     }
 
 
@@ -111,8 +119,9 @@ void run_checks(Graph& G) {
 
 
 /* SETTINGS */
-string const DATASET_PATH = "datasets/clique.txt";
+// string const DATASET_PATH = "datasets/clique.txt";
 // string const DATASET_PATH = "datasets/test1.txt";
+string const DATASET_PATH = "datasets/email-EuAll.txt";
 bool const DO_CHECKS = false;
 
 
@@ -125,18 +134,16 @@ int main() {
     
 
     //run ecc_rc
-    // vector<vector<Edge*>> clique_cover;
-    // ecc_rc(G, clique_cover);
-
     vector<Clique*> clique_cover;
-    
-    //  = {G._nodes.begin() + 10, G._nodes.begin() + 15};
+    ecc_rc(G, clique_cover);
 
-    vector<Node*> nodes = G._nodes;
-    Clique C(nodes, G);
 
-    cout << C << endl;
-    cout << C.edges << endl;
+
+    // vector<Node*> nodes = G._nodes;
+    // Clique C(nodes, G);
+
+    // cout << C << endl;
+    // cout << C.edges << endl;
 
 
     
