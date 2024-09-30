@@ -6,6 +6,7 @@
 using namespace std;
 
 class Node;
+class Connection;
 
 class Edge {
     public:
@@ -16,6 +17,8 @@ class Edge {
         bool is_covered();
         Node* _node1;
         Node* _node2; 
+
+        Connection* to_connection_of(Node& node);  //given a node, returns the connection of that node with the edge called on
     
     private:
         bool _covered;

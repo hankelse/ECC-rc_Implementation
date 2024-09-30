@@ -82,20 +82,27 @@ bool all_edges_imported(Graph& G, ostringstream& warnings) {
  * @return true 
  * @return false 
  */
-bool adj_lists_correct(Graph& G, ostringstream& warnings) {
+bool adj_lists_correct(Graph& G, ostringstream& warnings) {`
+    int check_limit = 265215; //so it doesn't take too long
+
     bool result = true;
     int num_checks = G._nodes.size();
-    if (num_checks > 400) {
-        num_checks = 400;
+    if (num_checks > check_limit) {
+        num_checks = check_limit;
     }
     // vector<size_t> indicies_to_check = {0, G._nodes.size()/4 , G._nodes.size()/2, 3*G._nodes.size()/4, G._nodes.size()-1};
 
     warnings << "CHECK FAILURE: adj_lists_correct \t adjacency lists don't match references." << endl;
     for (int i = 0; i < G._nodes.size(); i=i+G._nodes.size()/num_checks) {
-    // for (size_t n = 0; n < indicies_to_check.size(); n++) {
-    //     int i = indicies_to_check[n];
         Node* current = G._nodes[i];
-        // cout << "Starting Node " << i << "/" << G._nodes.size() << endl;
+        if (current == nullptr) {
+            cout << "\t\t\t no node at " << i << endl;
+            continue;
+        }
+ 
+        if ((i / (G._nodes.size()/num_checks)) % (num_checks/100) == 0) {
+            cout <<"\t\t Checked " << (100*i)/(G._nodes.size()) << "% of the lists" << endl;
+        }
 
         //get the neighbor list and edge list to compare against
         vector<Node*> neighbors_reference = current->get_neighbors(G);
@@ -103,6 +110,8 @@ bool adj_lists_correct(Graph& G, ostringstream& warnings) {
 
         if (current->neighbors != neighbors_reference) {
             warnings << "\t\t [" << current->id() << "]'s NEIGHBOR adjac list doesn't match reference" << endl;
+            warnings << "\t\t\tFrom ->neighbors : " << current->neighbors << endl;
+            warnings << "\t\t\tFrom   reference : " << neighbors_reference << endl;
             result = false;
         }
         if (current->edges != edges_reference) {
@@ -113,4 +122,30 @@ bool adj_lists_correct(Graph& G, ostringstream& warnings) {
     return result;
 
 
+}
+
+/**
+ * @brief Compares vectors as unordered to see if they contain the same things
+ * 
+ * @tparam S 
+ * @param v1 
+ * @param v2 
+ * @return true 
+ * @return false 
+ */
+template <typename S>
+bool vectors_contents_same(vector<S>& v1, vector<S>& v2) {
+    if (v1.size() != v2.size()) { return false; }
+    
+    // vector<S> v1_copy = v1; //make copy so elements can be removed from v1
+
+    // for (int i = 0; i < v1.size()) {
+
+    //     for (int j = 0; j < v2.size()) {
+
+    //     }
+    // }
+
+    return true;
+    
 }

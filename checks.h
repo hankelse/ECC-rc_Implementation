@@ -14,4 +14,9 @@ bool all_edges_imported(Graph& G, ostringstream& warnings); // Do we have as man
 
 bool adj_lists_correct(Graph& G, ostringstream& warnings);
 
+
+/* helper functions */
+template <typename S>
+bool vectors_contents_same(vector<S>&, vector<S>&); 
+
 #endif

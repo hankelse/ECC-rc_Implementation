@@ -14,13 +14,17 @@ Graph::Graph(string filename) {
 }
 
 Graph::~Graph() {
-    for (int n = 0; n < _num_edges; n++) {
+    for (int n = 0; n < _edges.size(); n++) {
+        // if (_edges[n] != nullptr) {
         delete _edges[n];
+        // }
     }
 
-    for (int i = 0; i < _num_nodes; i++) {
+    for (int i = 0; i < _nodes.size(); i++) {
         Node* node = _nodes[i];
-        // delete Connections of node
+        if (_nodes[i] == nullptr) {
+            continue;
+        }
         for (int n = 0; n < node->connections.size(); n++) {
             delete node->connections[n];
         }
@@ -91,6 +95,8 @@ void Graph::get_data_sizes(ifstream& file) {
  * @brief Gets rid of remaining unnessesary data and 
  * reads in the edges and nodes into _nodes and _edges.
  * 
+ * Does not include any self connections
+ * 
  * WARNING: may break if nodes arent numbered from 0 to num_nodes.
  * WARNING: may break if there are nodes that aren't connected. 
  * 
@@ -108,6 +114,14 @@ void Graph::fill_graph(ifstream& file) {
     int node2_id;
     while (file >> node1_id) {
         file >> node2_id;
+
+        if (node1_id == node2_id) {
+            if (_nodes[node1_id] == nullptr) {
+                _nodes[node1_id] = new Node(node1_id);
+            }
+            _num_edges --; 
+            continue;
+        }
 
         //If more space is needed for nodes, resize: (Good indicator of error, caught by checksß)
         if (node1_id >= _nodes.size()) {
@@ -180,9 +194,15 @@ vector<Edge*> Graph::find_clique_of(Edge* edge_uv) {
     Node* u = edge_uv->_node1;
     Node* v = edge_uv->_node2;
 
-    potential_additions= node_set_intersect(u->connections, v->connections);
+    // LEFT ON: WHAT SHOULD BE A CONNECTION AND WHAT SHOULD BE AN EDGE?
+    potential_additions = node_set_intersect(u->neighbors, v->neighbors);
 
-    //z ← EXTRACT NODE(P)
+    // z ← EXTRACT NODE(P)
+
+    //get all the nodes in result
+    vector<Node*> result_nodes;
+
+    Node* new_addition = extract_node(potential_additions, result_nodes);
     
     return result;
 }
@@ -190,49 +210,123 @@ vector<Edge*> Graph::find_clique_of(Edge* edge_uv) {
 /**
  * @brief Return any vertex z (if any) yielding maximum size |N_u(z) ∩ R| > 0; otherwise, return z = null.
  * 
- * @param node_set 
- * @param result R - the set of nodes in the clique
+ * @param potential_additions P - the set of nodes that could be in the clique
+ * @param clique R - the set of nodes in the clique
  * @return Node* z // nullptr if there is none
  */
-Node* Graph::extract_node(vector<Node*> node_set, vector<Node*>& result) {
+Node* Graph::extract_node(vector<Node*> potential_additions, vector<Node*>& clique) {
     Node* best = nullptr;
     int best_score = 0;
-    for (int i = 0; i < node_set.size(); i++) {
-        Node* z = result[i];
-        // vector<Node*> uncovered_neighbors = 
 
+    //Find the z who has the most uncovered neighbors that are in R ()
+    for (int i = 0; i < potential_additions.size(); i++) {
+        Node* z = potential_additions[i];
+        int z_score = 0;       //the number of uncovered edges between z and R
+        
+        // Iterate through R, looking for uncovered edges between the nodes in R and z
+        for (int i = 0; i < clique.size(); i++) {
+            Edge* connection = this->are_connected(z, clique[i]); //nullptr if none found
+            if (connection != nullptr && !connection->is_covered()) {
+                z_score += 1;
+            }
+        }
+
+        //update best and best_score if better z is found
+        if (z_score > best_score) {
+            best_score = z_score;
+            best = z;
+        }
+ 
     }
-
-
-    return best;
+    return best; //nullptr if none better than 0
 }
 
 /**
- * @brief Slow program give n1 intersect n2 where n1 and n2 are vector<Node*>
+ * @brief Slow program give N(u) intersect N(v) where u and v are nodes
  * 
- * @param n1 
- * @param n2 
+ * @param u_neighbors 
+ * @param v_neighbors 
  * @return vector<Node*> 
  */
-vector<Node*> node_set_intersect(vector<Connection*> n1, vector<Connection*> n2) {
-    // vector<Connection*> result = n1;
-    // bool unique_to_n2 = true;
-    // for (int i = 0; i < n2.size(); i++) {
-    //     Node* n2_node = n2[i];
-    //     unique_to_n2 = true;
-    //     for (int _ = 0; _ < result.size(); _++) {
-    //         if (n2_node->id() == result[_]->id()) {
-    //             unique_to_n2 = false;
-    //             continue;
-    //         }
-    //     }
-    //     if (unique_to_n2) {
-    //         result.push_back(n2_node);
-    //     }
-    // }
-    // return result;
-    vector<Node*> some = {nullptr};
-    return some;
+vector<Node*> node_set_intersect(vector<Node*> u_neighbors, vector<Node*> v_neighbors) {
+    vector<Node*> result = u_neighbors;
+    
+    bool unique_to_v;
+    for (int i = 0; i < v_neighbors.size(); i++) {
+        Node* v_neighbor = v_neighbors[i];
+        unique_to_v = true;
+        for (int _ = 0; _ < result.size(); _++) {
+            if (v_neighbor->id() == result[_]->id()) {
+                unique_to_v = false;
+                continue;
+            }
+        }
+        if (unique_to_v) {
+            result.push_back(v_neighbor);
+        }
+    }
+    return result;
 }
 
+/**
+ * @brief Checks if two nodes are connected and returns the connecting edge if they are
+ * 
+ * @param node1 
+ * @param node2 
+ * @return Edge* 
+ */
+Edge* Graph::are_connected(Node* node1, Node* node2) {
+    vector<Connection*> n1_connects = node1->connections;
+    for (int i = 0; i < n1_connects.size(); i++) {
+        Connection* connection = n1_connects[i];
+        if (*connection->neighbor == *node1) {
+            return connection->edge;
+        }
+    }
+    return nullptr;
+}
 
+/**
+ * @brief NOT IMPLEMENTED- Given a vector of edges get the nodes in the list
+ * Used for the confusion between functions that need nodes and functions that need edges
+ * 
+ * @param edges 
+ * @return vector<Node*> 
+ */
+vector<Node*> Graph::edges_to_nodes(vector<Edge*> edges) {
+    vector<Node*> result;
+    for (int i = 0; i < edges.size(); i++) {
+        Edge* edge = edges[i];
+
+        bool node1_already_added = false;
+        bool node2_already_added = false;
+
+        for (int j = 0; j < result.size(); j++) {
+            if (*result[j] == *edge->_node1) {
+                node1_already_added = true;
+            } else if (*result[j] == *edge->_node2) {
+                node2_already_added = true;
+            }
+            if (!node1_already_added) {
+                result.push_back(edge->_node1);
+            }
+            if (!node2_already_added) {
+                result.push_back(edge->_node2);
+            }
+
+        }
+
+    }
+    return {nullptr};
+}
+
+/**
+ * @brief NOT IMPLEMENTED- Given a vector of nodes get the all edges in the list
+ * Used for the confusion between functions that need nodes and functions that need edges
+ * 
+ * @param nodes 
+ * @return vector<Edge*> 
+ */
+vector<Edge*> Graph::nodes_to_edges(vector<Node*> nodes) {
+    return {nullptr};
+}

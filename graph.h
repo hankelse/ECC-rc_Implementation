@@ -28,6 +28,12 @@ class Graph {
         vector<Edge*> find_clique_of(Edge* uncovered_edge);
         Node* extract_node(vector<Node*> node_set, vector<Node*>& result);
 
+        Edge* are_connected(Node* node1, Node* node2);
+
+        //helper methods that probably shouldn't be used
+        vector<Node*> edges_to_nodes(vector<Edge*> edges);
+        vector<Edge*> nodes_to_edges(vector<Node*> nodes);
+
 
     private:
         void construct(string filename);       //fills graph using get_data_sizes and fill_graph
@@ -35,7 +41,7 @@ class Graph {
         void fill_graph(ifstream& file);       //puts nodes and edges into graph
 };
 
-vector<Node*> node_set_intersect(vector<Connection*> n1, vector<Connection*> n2);
+vector<Node*> node_set_intersect(vector<Node*> u_neighbors, vector<Node*> v_neighbors);
 
 
 #endif

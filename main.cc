@@ -24,21 +24,27 @@ using namespace std;
  * @return int the size of the ECC
  */
 int ecc_rc(Graph& G, vector<vector<Edge*>> &cliques) {
-    
-
+    cout << "Starting ECC" << endl;
+ 
     //while there are uncovered edges do
     int num_edges_covered = 0;
     int last_uncovered_edge_index = 0;
 
     while (num_edges_covered < G._num_edges) {
+
         // u, v ← SELECT UNCOVERED EDGE()
         Edge* uncovered_edge = G.select_uncovered_edge(last_uncovered_edge_index);
+        cout << "Got uncovered edge" << endl;
 
         //R ← FIND CLIQUE OF(u, v)
         vector<Edge*> found_clique = G.find_clique_of(uncovered_edge);
-        
+        cout << "Found clique!" << endl;
 
+        // C ← C∪R
+        cliques.push_back(found_clique);
 
+        //Mark all edges of R as covered
+        //Happens in find_clique_of
     }
 
 
@@ -98,14 +104,15 @@ void run_checks(Graph& G) {
     }  else {
         cout << "\tFAILED " << num_tests_failed << " TESTS.\n" << endl;
     }
+    return;
 }
 
 
 
 
 /* SETTINGS */
-// string DATASET_PATH = "datasets/email-EuAll.txt";
-string const DATASET_PATH = "datasets/test1.txt";
+string const DATASET_PATH = "datasets/email-EuAll.txt";
+// string const DATASET_PATH = "datasets/test1.txt";
 bool const DO_CHECKS = true;
 
 
@@ -115,6 +122,7 @@ int main() {
 
     //Run checks
     if (DO_CHECKS) { run_checks(G); }
+    cout << "finished " << endl;
 
     //run ecc_rc
     vector<vector<Edge*>> clique_cover;
