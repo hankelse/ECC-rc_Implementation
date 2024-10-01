@@ -199,7 +199,13 @@ Clique* Graph::find_clique_of(Edge* edge) {
 
     //P ← N(u)∩ N(v)
     vector<Node*> candidates = node_set_intersect(u->neighbors, v->neighbors);
-    cout << "\t a) Candidates = " << candidates << endl;
+    cout << "\t a) Candidates = ";
+    if (candidates.size() > 10 ) {
+        cout << "[" << *candidates[0] << "..." << *candidates[candidates.size()-1] << "]" << endl;
+     } else {
+
+        cout << candidates << endl;
+    }
 
     // z ← EXTRACT NODE(P)
     Node* new_member = extract_node(candidates, clique);
@@ -212,7 +218,6 @@ Clique* Graph::find_clique_of(Edge* edge) {
     // while z != null do
     while (new_member != nullptr) {
         //add new_node to clique (COVERS EDGES)
-        cout << "Adding " << *new_member << endl;
         clique->add_node(new_member, *this);
         cout << "\t c) Added " << *new_member << "to Clique: " << *clique << endl << endl;
 
@@ -229,8 +234,13 @@ Clique* Graph::find_clique_of(Edge* edge) {
             }
         }
         candidates = new_candidates;
-        cout << "\t a) Candidates reduced: " << candidates << endl;
+        cout << "\t a) Candidates reduced: ";
+        if (candidates.size() > 10 ) {
+            cout << "[" << *candidates[0] << "..." << *candidates[candidates.size()-1] << "]  (" << candidates.size() << ")" << endl;
+        } else {
 
+            cout << candidates << endl;
+        }
         // Extract next node
         new_member = extract_node(candidates, clique);
 
