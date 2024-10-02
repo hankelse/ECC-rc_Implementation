@@ -238,85 +238,87 @@ vector<string> datasets = {
 int main() {
 
 
-    string filename = "datasets/demo1.txt";
-    run_on_demo(filename);
+    // string filename = "datasets/demo1.txt";
+    // run_on_demo(filename);
 
 
 
-
+    if (DO_CHECKS) {
     
-    // vector<string> properly_imported;
-    // vector<string> improperly_imported;
+        vector<string> properly_imported;
+        vector<string> improperly_imported;
 
 
-    // for (string filepath : datasets) {
-    //     Graph G(filepath);
-    //     if(run_checks(G)) {
-    //         cout << filepath << "is being imported correctly!" << endl;
-    //         properly_imported.push_back(filepath);
-    //         continue;
-    //     }
-    //     cout << filepath << "is NOT being imported correctly." << endl;
-    //     improperly_imported.push_back(filepath);
-    // }
+        for (string filepath : datasets) {
+            Graph G(filepath);
+            if(run_checks(G)) {
+                cout << filepath << "is being imported correctly!" << endl;
+                properly_imported.push_back(filepath);
+                continue;
+            }
+            cout << filepath << "is NOT being imported correctly." << endl;
+            improperly_imported.push_back(filepath);
+        }
 
-    // cout << "Properly Imported: "  << endl;
-    // for (string filename : properly_imported) {
-    //     cout << "\t - " << filename << endl;
-    // }
+        cout << "Properly Imported: "  << endl;
+        for (string filename : properly_imported) {
+            cout << "\t - " << filename << endl;
+        }
 
-    // cout << "NOT Properly Imported: "  << endl;
-    // for (string filename : improperly_imported) {
-    //     cout << "\t - " << filename << endl;
-    // }
-
-
-    // for (string filepath : properly_imported) {
-    //     run_on(filepath);
-    // }
+        cout << "NOT Properly Imported: "  << endl;
+        for (string filename : improperly_imported) {
+            cout << "\t - " << filename << endl;
+        }
+        datasets = properly_imported;
+    }
 
 
+    for (string filepath : datasets) {
+        run_on(filepath);
+    }
 
 
 
 
-     // // time_t ecc_start = time(NULL);
 
-    // //Collect graph
-    // Graph G(DATASET_PATH);
 
-    // // //Run checks
-    // if (DO_CHECKS) { run_checks(G); cout << "finished " << endl;}
+     // time_t ecc_start = time(NULL);
+
+    //Collect graph
+    Graph G(DATASET_PATH);
+
+    // //Run checks
+    if (DO_CHECKS) { run_checks(G); cout << "finished " << endl;}
     
+    // vector<Clique*> clique_cover;
+    // size_t k = demo_ecc_rc(G, clique_cover);
+
+    // // //run ecc_rc
     // // vector<Clique*> clique_cover;
-    // // size_t k = demo_ecc_rc(G, clique_cover);
+    // // size_t k = ecc_rc(G, clique_cover);
 
-    // // // //run ecc_rc
-    // // // vector<Clique*> clique_cover;
-    // // // size_t k = ecc_rc(G, clique_cover);
+    // // time_t ecc_end = time(NULL);
 
-    // // // time_t ecc_end = time(NULL);
-
-    // // // double runtime = difftime(ecc_end, ecc_start);
-    // // // cout << "Algorithm found cover of G with \n\t" << k << " cliques \n\tin " << runtime << "seconds." << endl;
+    // // double runtime = difftime(ecc_end, ecc_start);
+    // // cout << "Algorithm found cover of G with \n\t" << k << " cliques \n\tin " << runtime << "seconds." << endl;
 
 
 
-    // // // run_on ("datasets/clique.txt");
-    // // // run_on ("datasets/test1.txt");
-    // run_on ("datasets/email-EuAll.txt");
-    // run_on ("datasets/soc-Slashdot0811.txt");
-    // run_on ("datasets/soc-Slashdot0902.txt");
-    // run_on ("datasets/email-Enron.txt");
-    // // run_on ("datasets/wiki-Vote.txt");
+    // // run_on ("datasets/clique.txt");
+    // // run_on ("datasets/test1.txt");
+    run_on ("datasets/email-EuAll.txt");
+    run_on ("datasets/soc-Slashdot0811.txt");
+    run_on ("datasets/soc-Slashdot0902.txt");
+    run_on ("datasets/email-Enron.txt");
+    // run_on ("datasets/wiki-Vote.txt");
 
     
 
 
-    // // run_on ("");
+    // run_on ("");
     
 
-    // // run_on_demo(DATASET_PATH);
+    // run_on_demo(DATASET_PATH);
 
     
 
