@@ -96,13 +96,15 @@ bool adj_lists_correct(Graph& G, ostringstream& warnings) {
     for (int i = 0; i < G._nodes.size(); i=i+G._nodes.size()/num_checks) {
         Node* current = G._nodes[i];
         if (current == nullptr) {
-            cout << "\t\t\t no node at " << i << endl;
+            // cout << "\t\t\t no node at " << i << endl;
+            // result = false;
+
             continue;
         }
  
-        if ((i / (G._nodes.size()/num_checks)) % (num_checks/100) == 0) {
-            cout <<"\t\t Checked " << (100*i)/(G._nodes.size()) << "% of the lists" << endl;
-        }
+        // if ((i / (G._nodes.size()/num_checks)) % (num_checks/100) == 0) {
+        //     cout <<"\t\t Checked " << (100*i)/(G._nodes.size()) << "% of the lists" << endl;
+        // }
 
         //get the neighbor list and edge list to compare against
         vector<Node*> neighbors_reference = current->get_neighbors(G);

@@ -16,16 +16,17 @@ Clique::Clique() {
  * @param nodes_to_add 
  * @param G 
  */
-Clique::Clique(vector<Node*> &nodes_to_add, Graph& G){ 
+Clique::Clique(vector<Node*> &nodes_to_add, Graph& G, size_t& edges_covered){ 
     for (int i = 0; i < nodes_to_add.size(); i++) {
-        add_node(nodes_to_add[i], G);
+        add_node(nodes_to_add[i], G, edges_covered);
     }
 }
 
 
-Clique::Clique(Edge* edge, Graph& G) {
-    add_node(edge->_node1, G);
-    add_node(edge->_node2, G);
+Clique::Clique(Edge* edge, Graph& G, size_t &edges_covered) {
+    nodes = {};
+    add_node(edge->_node1, G, edges_covered);
+    add_node(edge->_node2, G, edges_covered);
 }
 
 /**
@@ -34,10 +35,15 @@ Clique::Clique(Edge* edge, Graph& G) {
  * @param n Node being added
  * @param G Graph
  */
-void Clique::add_node(Node* n, Graph& G) {
+void Clique::add_node(Node* n, Graph& G, size_t& edges_covered) {
     //Add edges
     for (int i = 0; i < nodes.size(); i++) {
         Edge* edge = G.get_edge(n, nodes[i]);
+        if (!edge->is_covered()) {
+            edge->cover();
+            edges_covered += 1;
+            
+        }
         edge->cover();
         if (edge == nullptr) {
             cerr << "ERROR: Can't include " << *n << " in clique: Node " << *n << " is not connected to Node " << *G._nodes[i] << endl;

@@ -13,10 +13,10 @@ class Clique {
 public:
 
     Clique();
-    Clique(vector<Node*> &nodes_to_add, Graph& G);
-    Clique(Edge* edge, Graph& G);
+    Clique(vector<Node*> &nodes_to_add, Graph& G, size_t& edges_covered);
+    Clique(Edge* edge, Graph& G, size_t& edges_covered);
 
-    void add_node(Node*, Graph&); // add a node to the clique (adds all edges)
+    void add_node(Node* n, Graph& G, size_t& edges_covered); // add a node to the clique (adds all edges)
 
     bool is_complete(); // is the clique complete
     int size();

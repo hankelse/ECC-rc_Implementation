@@ -27,7 +27,8 @@ class Graph {
 
         //ECC-rc methods
         Edge* select_uncovered_edge(int& previous_index);
-        Clique* find_clique_of(Edge* uncovered_edge);
+        Clique* find_clique_of(Edge* edge, size_t& edges_covered);
+        Clique* demo_find_clique_of(Edge* edge, size_t& edges_covered);
         Node* extract_node(vector<Node*> candidate_set, Clique* clique);
 
         Edge* are_connected(Node* node1, Node* node2);

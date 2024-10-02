@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <ctime>
+
 using namespace std;
 
 #include "io.h"
@@ -23,11 +25,11 @@ using namespace std;
  * 
  * @return int the size of the ECC
  */
-int ecc_rc(Graph& G, vector<Clique*> &cliques) {
+size_t demo_ecc_rc(Graph& G, vector<Clique*> &cliques) {
     cout << "\n\n\t\tSTARTING ECC-rc\n\n" << endl;
  
     //while there are uncovered edges do
-    int num_edges_covered = 0;
+    size_t num_edges_covered = 0;
     int last_uncovered_edge_index = 0;
 
     while (num_edges_covered < G._num_edges) {
@@ -38,7 +40,7 @@ int ecc_rc(Graph& G, vector<Clique*> &cliques) {
 
         //R ← FIND CLIQUE OF(u, v)
         cout << "2) FINDING CLIQUE OF \t" << *uncovered_edge << endl;
-        Clique* found_clique = G.find_clique_of(uncovered_edge);
+        Clique* found_clique = G.demo_find_clique_of(uncovered_edge, num_edges_covered);
         cout << "   => FOUND CLIQUE OF " <<  *uncovered_edge << ": \t" << *found_clique << endl;
 
         // C ← C∪R
@@ -46,7 +48,6 @@ int ecc_rc(Graph& G, vector<Clique*> &cliques) {
         cout << "3) ADDED CLIQUE TO ECC \t num_cliques = " << cliques.size() << endl;
 
         // Done?
-        num_edges_covered += found_clique->size();
         cout << "4) COVERED " << num_edges_covered << " / " << G._num_edges;
         if (num_edges_covered < G._num_edges) {
             cout << " -> REPEATING \n\n" << endl;
@@ -56,10 +57,40 @@ int ecc_rc(Graph& G, vector<Clique*> &cliques) {
     }
 
 
-    return 0;
+    return cliques.size();
 }
 
+/**
+ * @brief An Implementation of the framework from Conte et al.
+ * 
+ * @param graph_filepath, the filepath of the graph to preform the algorithm on
+ * @param cliques, a vector of cliques to be filled
+ * 
+ * 
+ * 
+ * @return int the size of the ECC
+ */
+size_t ecc_rc(Graph& G, vector<Clique*> &cliques) {
+ 
+    //while there are uncovered edges do
+    size_t num_edges_covered = 0;
+    int last_uncovered_edge_index = 0;
 
+    while (num_edges_covered < G._num_edges) {
+
+        // u, v ← SELECT UNCOVERED EDGE()
+        Edge* uncovered_edge = G.select_uncovered_edge(last_uncovered_edge_index);
+
+        //R ← FIND CLIQUE OF(u, v)
+        Clique* found_clique = G.find_clique_of(uncovered_edge, num_edges_covered);
+
+        // C ← C∪R
+        cliques.push_back(found_clique);
+
+
+    }
+    return cliques.size();
+}
 
 vector<Edge>* find_clique_of (Graph G) {
 
@@ -71,7 +102,7 @@ vector<Edge>* find_clique_of (Graph G) {
  * 
  * @param G graph to run checks on
  */
-void run_checks(Graph& G) {
+bool run_checks(Graph& G) {
     ostringstream warnings;
     int num_tests_failed = 0;
 
@@ -109,85 +140,168 @@ void run_checks(Graph& G) {
 
     if (!num_tests_failed) {
         cout << "\tPASSED ALL CHECKS\n" << endl;
-    }  else {
-        cout << "\tFAILED " << num_tests_failed << " TESTS.\n" << endl;
+        return true;
     }
-    return;
+    cout << "\tFAILED " << num_tests_failed << " TESTS.\n" << endl;
+    return false;
 }
 
+bool check_ECC (Graph& G, vector<Clique*>& clique_cover) {
+    for (Edge* edge : G._edges) {
+        if (edge->is_covered() == false) {
+            return false;
+        }
+    }
+    return true;
+}
 
+bool check_ECC_verbose (Graph& G, vector<Clique*>& clique_cover) {
+    for (Edge* edge : G._edges) {
+        if (edge->is_covered() == false) {
+            cout << *edge << "isn't covered" << endl;
+            return false;
+        }
+    }
+    return true;
+}
+
+void run_on(string filename) {
+
+    cout << "\nRunning ECC on " << filename << "." << endl;
+    time_t ecc_start = time(NULL);
+    Graph G(filename);
+
+    cout << "\tNodes: " << G._num_nodes << endl;
+    cout << "\tEdges: " << G._num_edges << endl;
+
+    vector<Clique*> clique_cover;
+    size_t k = ecc_rc(G, clique_cover);
+
+    time_t ecc_end = time(NULL);
+
+    double runtime = difftime(ecc_end, ecc_start);
+
+    if (check_ECC_verbose(G, clique_cover)) {
+        cout << "Algorithm found cover of G with \n\t" << k << " cliques \n\tin " << runtime << " seconds.\n" << endl;
+    } else {
+        cout << "Algorithm did not cover all edges." << endl;
+    }
+    
+
+
+}
+
+void run_on_demo(string filename) {
+
+    cout << "\nRunning ECC demo on " << filename << "." << endl;
+    time_t ecc_start = time(NULL);
+    Graph G(filename);
+
+    cout << "\tNodes: " << G._num_nodes << endl;
+    cout << "\tEdges: " << G._num_edges << endl;
+
+    vector<Clique*> clique_cover;
+    size_t k = demo_ecc_rc(G, clique_cover);
+
+    time_t ecc_end = time(NULL);
+
+    double runtime = difftime(ecc_end, ecc_start);
+    cout << "Algorithm found cover of G with \n\t" << k << " cliques \n\tin " << runtime << " seconds.\n" << endl;
+}
 
 
 /* SETTINGS */
 // string const DATASET_PATH = "datasets/clique.txt";
 // string const DATASET_PATH = "datasets/test1.txt";
-string const DATASET_PATH = "datasets/email-EuAll.txt";
-bool const DO_CHECKS = false;
+// string const DATASET_PATH = "datasets/email-EuAll.txt";
+// string const DATASET_PATH = "datasets/email-Enron.txt";
+// string const DATASET_PATH = "datasets/soc-Slashdot0811.txt";
+string const DATASET_PATH = "datasets/wiki-Vote.txt";
+bool const DO_CHECKS = true;
 
+
+vector<string> datasets = {
+"datasets/ca-AstroPh.txt", 
+"datasets/ca-CondMat.txt", 
+"datasets/ca-GrQc.txt", 
+"datasets/ca-HepPh.txt", 
+"datasets/ca-HepTh.txt", 
+"datasets/cit-HepTh.txt",
+"datasets/cit-HepPh.txt",
+"datasets/email-Enron.txt",
+"datasets/email-EuAll.txt",
+"datasets/p2p-Gnutella31.txt",
+"datasets/soc-Slashdot0811.txt",
+"datasets/soc-Slashdot0902.txt",
+"datasets/wiki-Vote.txt",
+};
 
 int main() {
-    //Collect graph
-    Graph G(DATASET_PATH);
+    vector<string> working;
+    vector<string> not_working;
 
-    //Run checks
-    if (DO_CHECKS) { run_checks(G); cout << "finished " << endl;}
+
+    for (string filepath : datasets) {
+        Graph G(filepath);
+        if(run_checks(G)) {
+            cout << filepath << "is being imported correctly!" << endl;
+            working.push_back(filepath);
+            continue;
+        }
+        cout << filepath << "is NOT being imported correctly." << endl;
+        not_working.push_back(filepath);
+    }
+
+    cout << "WORKING: " << working << endl;
+
+    cout << "NOT WORKING: " << not_working << endl; 
+
+
+    for (string filepath : working) {
+        run_on(filepath);
+    }
+
+     // // time_t ecc_start = time(NULL);
+
+    // //Collect graph
+    // Graph G(DATASET_PATH);
+
+    // // //Run checks
+    // if (DO_CHECKS) { run_checks(G); cout << "finished " << endl;}
+    
+    // // vector<Clique*> clique_cover;
+    // // size_t k = demo_ecc_rc(G, clique_cover);
+
+    // // // //run ecc_rc
+    // // // vector<Clique*> clique_cover;
+    // // // size_t k = ecc_rc(G, clique_cover);
+
+    // // // time_t ecc_end = time(NULL);
+
+    // // // double runtime = difftime(ecc_end, ecc_start);
+    // // // cout << "Algorithm found cover of G with \n\t" << k << " cliques \n\tin " << runtime << "seconds." << endl;
+
+
+
+    // // // run_on ("datasets/clique.txt");
+    // // // run_on ("datasets/test1.txt");
+    // run_on ("datasets/email-EuAll.txt");
+    // run_on ("datasets/soc-Slashdot0811.txt");
+    // run_on ("datasets/soc-Slashdot0902.txt");
+    // run_on ("datasets/email-Enron.txt");
+    // // run_on ("datasets/wiki-Vote.txt");
+
     
 
-    //run ecc_rc
-    vector<Clique*> clique_cover;
-    ecc_rc(G, clique_cover);
 
+    // // run_on ("");
+    
 
-
-    // vector<Node*> nodes = G._nodes;
-    // Clique C(nodes, G);
-
-    // cout << C << endl;
-    // cout << C.edges << endl;
-
+    // // run_on_demo(DATASET_PATH);
 
     
 
  
 
-
     return 0;
 }
-
-    // cout << "Neighbors and Edges:" << endl;
-    // for (int i = 0; i < G._nodes.size(); i++) {
-    //     cout << "\tNode "<< i << ":" << endl;
-    //     cout << "\t\t Neighbors: " << G._nodes[i]->neighbors << endl; 
-    //     cout << "\t\t Edges: " << G._nodes[i]->edges << endl; 
-    //     cout << "ALSO... done the other way..." << endl;
-    //     vector<Edge*> containing_edges = G._nodes[0]->get_edges(G);
-    //     vector<Node*> neighboring_nodes = G._nodes[0]->get_neighbors(G);
-    //     cout << "\t\t Neighbors: " << neighboring_nodes << endl; 
-    //     cout << "\t\t Edges: " << containing_edges << endl;  
-    // }
-
-    // // -- Reading in Data Demo -- //
-    // cout << "The nodes in G are " << G._nodes << endl;
-    // cout << "The edges in G are " << G._edges << endl;
-    // cout << "\n" << endl;
-    // cout << "Adjacency Lists:" << endl;
-    // for (int i = 0; i < G._nodes.size(); i++ ) {
-    //     cout << "\t Nodes: The neighbors of " << *G._nodes[i] << " are " << G._nodes[i]->neighbors << endl;
-    //     cout << "\t Edges: The edges with "  << *G._nodes[i] << " are " << G._nodes[i]->edges << endl;
-    //     cout << "\t Connections: The connections with "  << *G._nodes[i] << " are " << G._nodes[i]->connections << endl;
-    // }
-    // cout << "\n";
-
-    // // -- Overloading Operators Demo -- //
-    
-    // Node node = Node(45);
-    // cout << "1) Printing a node: " << node << endl << endl;
-
-    // Edge edge = Edge(&node, &node);
-    // cout << "2) Printing an edge: " << edge << endl << endl;
-
-    // vector<Node> nodes = {Node(10), Node(20), Node(30)};
-    // cout << "3) Printing a vector of Nodes: " << nodes << endl << endl;
-
-    // vector<Edge*> edges = {new Edge(&nodes[0], &nodes[1]), new Edge(&nodes[1], &nodes[2])};
-    // cout << "4) Printing a vector of Edge*s: " << edges << endl << endl;
