@@ -146,6 +146,14 @@ bool run_checks(Graph& G) {
     return false;
 }
 
+/**
+ * @brief Is the Clique Cover legitimate?
+ * Checks to make sure all edges have been covered.
+ *
+ * @param G 
+ * @param clique_cover 
+ * @return 
+ */
 bool check_ECC (Graph& G, vector<Clique*>& clique_cover) {
     for (Edge* edge : G._edges) {
         if (edge->is_covered() == false) {
@@ -155,15 +163,6 @@ bool check_ECC (Graph& G, vector<Clique*>& clique_cover) {
     return true;
 }
 
-bool check_ECC_verbose (Graph& G, vector<Clique*>& clique_cover) {
-    for (Edge* edge : G._edges) {
-        if (edge->is_covered() == false) {
-            cout << *edge << "isn't covered" << endl;
-            return false;
-        }
-    }
-    return true;
-}
 
 void run_on(string filename) {
 
@@ -181,7 +180,7 @@ void run_on(string filename) {
 
     double runtime = difftime(ecc_end, ecc_start);
 
-    if (check_ECC_verbose(G, clique_cover)) {
+    if (check_ECC(G, clique_cover)) {
         cout << "Algorithm found cover of G with \n\t" << k << " cliques \n\tin " << runtime << " seconds.\n" << endl;
     } else {
         cout << "Algorithm did not cover all edges." << endl;
@@ -237,29 +236,49 @@ vector<string> datasets = {
 };
 
 int main() {
-    vector<string> working;
-    vector<string> not_working;
 
 
-    for (string filepath : datasets) {
-        Graph G(filepath);
-        if(run_checks(G)) {
-            cout << filepath << "is being imported correctly!" << endl;
-            working.push_back(filepath);
-            continue;
-        }
-        cout << filepath << "is NOT being imported correctly." << endl;
-        not_working.push_back(filepath);
-    }
-
-    cout << "WORKING: " << working << endl;
-
-    cout << "NOT WORKING: " << not_working << endl; 
+    string filename = "datasets/demo1.txt";
+    run_on_demo(filename);
 
 
-    for (string filepath : working) {
-        run_on(filepath);
-    }
+
+
+    
+    // vector<string> properly_imported;
+    // vector<string> improperly_imported;
+
+
+    // for (string filepath : datasets) {
+    //     Graph G(filepath);
+    //     if(run_checks(G)) {
+    //         cout << filepath << "is being imported correctly!" << endl;
+    //         properly_imported.push_back(filepath);
+    //         continue;
+    //     }
+    //     cout << filepath << "is NOT being imported correctly." << endl;
+    //     improperly_imported.push_back(filepath);
+    // }
+
+    // cout << "Properly Imported: "  << endl;
+    // for (string filename : properly_imported) {
+    //     cout << "\t - " << filename << endl;
+    // }
+
+    // cout << "NOT Properly Imported: "  << endl;
+    // for (string filename : improperly_imported) {
+    //     cout << "\t - " << filename << endl;
+    // }
+
+
+    // for (string filepath : properly_imported) {
+    //     run_on(filepath);
+    // }
+
+
+
+
+
 
      // // time_t ecc_start = time(NULL);
 

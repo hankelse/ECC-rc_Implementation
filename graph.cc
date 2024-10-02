@@ -213,7 +213,6 @@ Clique* Graph::demo_find_clique_of(Edge* edge, size_t& edges_covered) {
     Clique* clique = new Clique(edge, *this, edges_covered);
     _cliques.push_back(clique); 
 
-    cout << "neigh" << endl;
     //P ← N(u)∩ N(v)
     vector<Node*> candidates = node_set_intersect(u->neighbors, v->neighbors);
     cout << "\t a) Candidates = ";
@@ -282,15 +281,12 @@ Clique* Graph::demo_find_clique_of(Edge* edge, size_t& edges_covered) {
  */
 Clique* Graph::find_clique_of(Edge* edge, size_t& edges_covered) {
 
-    //R ← {u, v}
+    //R ← {u, v}  create the new clique with the edge
+    Clique* clique = new Clique(edge, *this, edges_covered);
     Node* u = edge->_node1;
     Node* v = edge->_node2;
 
-
-    Clique* clique = new Clique();
-    clique->add_node(edge->_node1, *this, edges_covered);
-    clique->add_node(edge->_node2, *this, edges_covered);
-
+    //save the clique (for deconstruction)
     _cliques.push_back(clique); 
 
     //P ← N(u)∩ N(v)
@@ -299,20 +295,17 @@ Clique* Graph::find_clique_of(Edge* edge, size_t& edges_covered) {
     // z ← EXTRACT NODE(P)
     Node* new_member = extract_node(candidates, clique);
 
-    // while z != null do
+    // while there are more potential additions:
     while (new_member != nullptr) {
         //add new_node to clique (COVERS EDGES)
         clique->add_node(new_member, *this, edges_covered);
 
         // Trim candidates: P ← P ∩ N(z)
-        vector<Node*> new_candidates = node_set_intersect(candidates, new_member->neighbors);
-
-        candidates = new_candidates;
+        candidates = node_set_intersect(candidates, new_member->neighbors);
 
         // Extract next node
         new_member = extract_node(candidates, clique);
     }
-    
     return clique;
 }
 
@@ -324,6 +317,7 @@ Clique* Graph::find_clique_of(Edge* edge, size_t& edges_covered) {
  * @return Node* z // nullptr if there is none
  */
 Node* Graph::extract_node(vector<Node*> potential_additions, Clique* clique) {
+    //If no potential_additions
     if (potential_additions.size() == 0) {
         return nullptr;
     }
@@ -333,18 +327,15 @@ Node* Graph::extract_node(vector<Node*> potential_additions, Clique* clique) {
 
     //Find the z who has the most uncovered neighbors that are in R ()
     for (int i = 0; i < potential_additions.size(); i++) {
-        // cout << "i=" << i << endl;
         Node* z = potential_additions[i];
         int z_score = 0;       //the number of uncovered edges between z and R
         
         // Iterate through R, looking for uncovered edges between the nodes in R and z
         for (int j = 0; j < clique->nodes.size(); j++) {
-            // cout << "j=" << j << endl;
             Edge* connection = this->are_connected(z, clique->nodes[j]); //nullptr if none found
             if (connection != nullptr && !connection->is_covered()) {
                 z_score += 1;
             }
-            // cout << "j=" << j << " done " << endl;
         }
 
         //update best and best_score if better z is found
@@ -354,7 +345,7 @@ Node* Graph::extract_node(vector<Node*> potential_additions, Clique* clique) {
         }
  
     }
-    return best; //nullptr if none better than 0
+    return best;
 }
 
 /**
