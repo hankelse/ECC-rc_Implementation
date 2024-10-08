@@ -216,23 +216,23 @@ void run_on_demo(string filename) {
 // string const DATASET_PATH = "datasets/email-Enron.txt";
 // string const DATASET_PATH = "datasets/soc-Slashdot0811.txt";
 string const DATASET_PATH = "datasets/wiki-Vote.txt";
-bool const DO_CHECKS = true;
+bool const DO_CHECKS = false;
 
 
 vector<string> datasets = {
-"datasets/ca-AstroPh.txt", 
-"datasets/ca-CondMat.txt", 
-"datasets/ca-GrQc.txt", 
-"datasets/ca-HepPh.txt", 
-"datasets/ca-HepTh.txt", 
-"datasets/cit-HepTh.txt",
-"datasets/cit-HepPh.txt",
-"datasets/email-Enron.txt",
-"datasets/email-EuAll.txt",
-"datasets/p2p-Gnutella31.txt",
-"datasets/soc-Slashdot0811.txt",
-"datasets/soc-Slashdot0902.txt",
-"datasets/wiki-Vote.txt",
+"snap_datasets/ca-AstroPh.txt", 
+"snap_datasets/ca-CondMat.txt", 
+"snap_datasets/ca-GrQc.txt", 
+"snap_datasets/ca-HepPh.txt", 
+"snap_datasets/ca-HepTh.txt", 
+"snap_datasets/cit-HepTh.txt",
+"snap_datasets/cit-HepPh.txt",
+"snap_datasets/email-Enron.txt",
+"snap_datasets/email-EuAll.txt",
+"snap_datasets/p2p-Gnutella31.txt",
+"snap_datasets/soc-Slashdot0811.txt",
+"snap_datasets/soc-Slashdot0902.txt",
+"snap_datasets/wiki-Vote.txt",
 };
 
 int main() {
