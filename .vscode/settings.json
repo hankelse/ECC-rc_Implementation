@@ -46,6 +46,13 @@
         "memory_resource": "cpp",
         "fstream": "cpp",
         "type_traits": "cpp",
-        "unordered_map": "cpp"
+        "unordered_map": "cpp",
+        "__hash_table": "cpp",
+        "__node_handle": "cpp",
+        "charconv": "cpp",
+        "deque": "cpp",
+        "iomanip": "cpp",
+        "optional": "cpp",
+        "queue": "cpp"
     }
 }
