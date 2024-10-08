@@ -1,7 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <ctime>
+// #include <ctime>
+#include <chrono>
 
 using namespace std;
 
@@ -167,7 +168,10 @@ bool check_ECC (Graph& G, vector<Clique*>& clique_cover) {
 void run_on(string filename) {
 
     cout << "\nRunning ECC on " << filename << "." << endl;
-    time_t ecc_start = time(NULL);
+    
+    //Save the starting time of the algorithm
+    chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
+
     Graph G(filename);
 
     cout << "\tNodes: " << G._num_nodes << endl;
@@ -176,12 +180,13 @@ void run_on(string filename) {
     vector<Clique*> clique_cover;
     size_t k = ecc_rc(G, clique_cover);
 
-    time_t ecc_end = time(NULL);
+    //Get the time passed in miliseconds
+    chrono::steady_clock::time_point end_time = chrono::steady_clock::now();
+    size_t runtime = chrono::duration_cast<chrono::milliseconds>(end_time - start_time).count();
 
-    double runtime = difftime(ecc_end, ecc_start);
 
     if (check_ECC(G, clique_cover)) {
-        cout << "Algorithm found cover of G with \n\t" << k << " cliques \n\tin " << runtime << " seconds.\n" << endl;
+        cout << "Algorithm found cover of G with \n\t" << k << " cliques \n\tin " << runtime << " miliseconds.\n" << endl;
     } else {
         cout << "Algorithm did not cover all edges." << endl;
     }
@@ -190,32 +195,28 @@ void run_on(string filename) {
 
 }
 
-void run_on_demo(string filename) {
+// void run_on_demo(string filename) {
 
-    cout << "\nRunning ECC demo on " << filename << "." << endl;
-    time_t ecc_start = time(NULL);
-    Graph G(filename);
+//     cout << "\nRunning ECC demo on " << filename << "." << endl;
+//     time_t ecc_start = time(NULL);
+//     Graph G(filename);
 
-    cout << "\tNodes: " << G._num_nodes << endl;
-    cout << "\tEdges: " << G._num_edges << endl;
+//     cout << "\tNodes: " << G._num_nodes << endl;
+//     cout << "\tEdges: " << G._num_edges << endl;
 
-    vector<Clique*> clique_cover;
-    size_t k = demo_ecc_rc(G, clique_cover);
+//     vector<Clique*> clique_cover;
+//     size_t k = demo_ecc_rc(G, clique_cover);
 
-    time_t ecc_end = time(NULL);
+//     time_t ecc_end = time(NULL);
 
-    double runtime = difftime(ecc_end, ecc_start);
-    cout << "Algorithm found cover of G with \n\t" << k << " cliques \n\tin " << runtime << " seconds.\n" << endl;
-}
+//     double runtime = difftime(ecc_end, ecc_start);
+//     cout << "Algorithm found cover of G with \n\t" << k << " cliques \n\tin " << runtime << " seconds.\n" << endl;
+// }
 
 
 /* SETTINGS */
-// string const DATASET_PATH = "datasets/clique.txt";
-// string const DATASET_PATH = "datasets/test1.txt";
-// string const DATASET_PATH = "datasets/email-EuAll.txt";
-// string const DATASET_PATH = "datasets/email-Enron.txt";
-// string const DATASET_PATH = "datasets/soc-Slashdot0811.txt";
-string const DATASET_PATH = "datasets/wiki-Vote.txt";
+
+string const DATASET_PATH = "datasets/";
 bool const DO_CHECKS = false;
 
 
@@ -237,29 +238,24 @@ vector<string> datasets = {
 
 int main() {
 
-
-    // string filename = "datasets/demo1.txt";
-    // run_on_demo(filename);
-
-
-
+    //Run checks on each dataset and then report and exclude ones that don't pass
     if (DO_CHECKS) {
-    
         vector<string> properly_imported;
         vector<string> improperly_imported;
 
-
+        //Check whether or not dataset was properly imported and put in corresponding list
         for (string filepath : datasets) {
             Graph G(filepath);
             if(run_checks(G)) {
-                cout << filepath << "is being imported correctly!" << endl;
+                cout << filepath << " is being imported correctly!" << endl;
                 properly_imported.push_back(filepath);
                 continue;
             }
-            cout << filepath << "is NOT being imported correctly." << endl;
+            cout << filepath << " is NOT being imported correctly." << endl;
             improperly_imported.push_back(filepath);
         }
 
+        //Report the results
         cout << "Properly Imported: "  << endl;
         for (string filename : properly_imported) {
             cout << "\t - " << filename << endl;
@@ -269,8 +265,14 @@ int main() {
         for (string filename : improperly_imported) {
             cout << "\t - " << filename << endl;
         }
+        if (improperly_imported.size() == 0) {
+            cout << "\t None!" << endl;
+        }
         datasets = properly_imported;
-    }
+
+        cout << "\nPress ENTER to continue. Will run algorithm on " << properly_imported.size() << " properly imported graphs." << endl;
+        cin.get();
+     }
 
 
     for (string filepath : datasets) {
@@ -282,43 +284,43 @@ int main() {
 
 
 
-     // time_t ecc_start = time(NULL);
+    //  // time_t ecc_start = time(NULL);
 
-    //Collect graph
-    Graph G(DATASET_PATH);
+    // //Collect graph
+    // Graph G(DATASET_PATH);
 
-    // //Run checks
-    if (DO_CHECKS) { run_checks(G); cout << "finished " << endl;}
+    // // //Run checks
+    // if (DO_CHECKS) { run_checks(G); cout << "finished " << endl;}
     
-    // vector<Clique*> clique_cover;
-    // size_t k = demo_ecc_rc(G, clique_cover);
-
-    // // //run ecc_rc
     // // vector<Clique*> clique_cover;
-    // // size_t k = ecc_rc(G, clique_cover);
+    // // size_t k = demo_ecc_rc(G, clique_cover);
 
-    // // time_t ecc_end = time(NULL);
+    // // // //run ecc_rc
+    // // // vector<Clique*> clique_cover;
+    // // // size_t k = ecc_rc(G, clique_cover);
 
-    // // double runtime = difftime(ecc_end, ecc_start);
-    // // cout << "Algorithm found cover of G with \n\t" << k << " cliques \n\tin " << runtime << "seconds." << endl;
+    // // // time_t ecc_end = time(NULL);
+
+    // // // double runtime = difftime(ecc_end, ecc_start);
+    // // // cout << "Algorithm found cover of G with \n\t" << k << " cliques \n\tin " << runtime << "seconds." << endl;
 
 
 
-    // // run_on ("datasets/clique.txt");
-    // // run_on ("datasets/test1.txt");
-    run_on ("datasets/email-EuAll.txt");
-    run_on ("datasets/soc-Slashdot0811.txt");
-    run_on ("datasets/soc-Slashdot0902.txt");
-    run_on ("datasets/email-Enron.txt");
-    // run_on ("datasets/wiki-Vote.txt");
+    // // // run_on ("datasets/clique.txt");
+    // // // run_on ("datasets/test1.txt");
+    // run_on ("datasets/email-EuAll.txt");
+    // run_on ("datasets/soc-Slashdot0811.txt");
+    // run_on ("datasets/soc-Slashdot0902.txt");
+    // run_on ("datasets/email-Enron.txt");
+    // // run_on ("datasets/wiki-Vote.txt");
 
     
 
 
-    // run_on ("");
+    // // run_on ("");
     
 
-    // run_on_demo(DATASET_PATH);
+    // // run_on_demo(DATASET_PATH);
 
     
 
