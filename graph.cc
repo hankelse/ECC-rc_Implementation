@@ -363,8 +363,6 @@ vector<Node*> Graph::node_set_intersect(vector<Node*> vec_1, vector<Node*> vec_2
     vector<Node*> intersection;
 
     for (Node* node : vec_2) {
-        //
-        std::unordered_set<Node*>::const_iterator searcher = set_1.find (node);
         if (set_1.erase(node)) {
             intersection.push_back(node);
         }

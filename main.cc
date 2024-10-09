@@ -292,9 +292,9 @@ vector<string> datasets = {
 int main() {
     ProfilerStart("profile_output.prof");
 
-    run_on(datasets[8]);
+    // run_on(datasets[8]);
 
-    // run_on_all(datasets, DO_CHECKS);
+    run_on_all(datasets, DO_CHECKS);
 
     ProfilerStop();
 
