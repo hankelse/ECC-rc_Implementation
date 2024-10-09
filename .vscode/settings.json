@@ -53,6 +53,7 @@
         "deque": "cpp",
         "iomanip": "cpp",
         "optional": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "chrono": "cpp"
     }
 }

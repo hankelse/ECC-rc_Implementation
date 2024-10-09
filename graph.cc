@@ -5,6 +5,7 @@
 #include "edge.h"
 #include "io.h"
 #include "clique.h"
+#include <unordered_set>
 
 
 Graph::Graph() {
@@ -348,35 +349,59 @@ Node* Graph::extract_node(vector<Node*> potential_additions, Clique* clique) {
     return best;
 }
 
+
 /**
- * @brief Given two sets of nodes, returns the elements in both
- * Relies on nodes starting at 0 and ending at num_nodes
- * @param set_1
- * @param set_2
+ * @brief  Faster! Given two sets of nodes, returns the elements in both
+ * @param vec_1
+ * @param vec_2
  * @return vector<Node*> 
  */
-vector<Node*> Graph::node_set_intersect(vector<Node*> set_1, vector<Node*> set_2) {
-    vector<bool> has_been_added(_nodes.size(), false);
+vector<Node*> Graph::node_set_intersect(vector<Node*> vec_1, vector<Node*> vec_2) {
+
+    unordered_set<Node *> set_1(vec_1.begin(), vec_1.end());
+
     vector<Node*> intersection;
 
-    for (Node* node_1 : set_1) {
-
-        for (Node* node_2 : set_2) {
-
-            if (node_1->id() == node_2->id()) {
-                if (!has_been_added[node_1->id()]) {
-                    intersection.push_back(node_1);
-                    has_been_added[node_1->id()] = 1;
-                    continue;
-                }
-                
-
-            }
-
+    for (Node* node : vec_2) {
+        //
+        std::unordered_set<Node*>::const_iterator searcher = set_1.find (node);
+        if (set_1.erase(node)) {
+            intersection.push_back(node);
         }
     }
+
     return intersection;
 }
+
+// /**
+//  * @brief Given two sets of nodes, returns the elements in both
+//  * Relies on nodes starting at 0 and ending at num_nodes
+//  * @param set_1
+//  * @param set_2
+//  * @return vector<Node*> 
+//  */
+// vector<Node*> Graph::node_set_intersect(vector<Node*> set_1, vector<Node*> set_2) {
+//     vector<bool> has_been_added(_nodes.size(), false);
+//     vector<Node*> intersection;
+
+//     for (Node* node_1 : set_1) {
+
+//         for (Node* node_2 : set_2) {
+
+//             if (node_1->id() == node_2->id()) {
+//                 if (!has_been_added[node_1->id()]) {
+//                     intersection.push_back(node_1);
+//                     has_been_added[node_1->id()] = 1;
+//                     continue;
+//                 }
+                
+
+//             }
+
+//         }
+//     }
+//     return intersection;
+// }
 
 /**
  * @brief Checks if two nodes are connected and returns the connecting edge if they are
