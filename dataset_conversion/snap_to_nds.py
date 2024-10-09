@@ -3,22 +3,34 @@
 # for each node, one line containing the node's ID (integer) and its degree
 # finally, the list of edges (pair of IDs separated by space, one on each line in any order)
 
+# datasets = [
+# "datasets/ca-AstroPh.txt", 
+# "datasets/ca-CondMat.txt", 
+# "datasets/ca-GrQc.txt", 
+# "datasets/ca-HepPh.txt", 
+# "datasets/ca-HepTh.txt", 
+# "datasets/cit-HepTh.txt",
+# "datasets/cit-HepPh.txt",
+# "datasets/email-Enron.txt",
+# "datasets/email-EuAll.txt",
+# "datasets/p2p-Gnutella31.txt",
+# "datasets/soc-Slashdot0811.txt",
+# "datasets/soc-Slashdot0902.txt",
+# "datasets/wiki-Vote.txt"]
 datasets = [
-"datasets/ca-AstroPh.txt", 
-"datasets/ca-CondMat.txt", 
-"datasets/ca-GrQc.txt", 
-"datasets/ca-HepPh.txt", 
-"datasets/ca-HepTh.txt", 
-"datasets/cit-HepTh.txt",
-"datasets/cit-HepPh.txt",
-"datasets/email-Enron.txt",
-"datasets/email-EuAll.txt",
-"datasets/p2p-Gnutella31.txt",
-"datasets/soc-Slashdot0811.txt",
-"datasets/soc-Slashdot0902.txt",
-"datasets/wiki-Vote.txt"]
+"new_snap_datasets/amazon0302.txt",
+"new_snap_datasets/amazon0312.txt",
+"new_snap_datasets/roadNet-CA.txt",
+"new_snap_datasets/roadNet-PA.txt",
+"new_snap_datasets/roadNet-TX.txt",
+"new_snap_datasets/web-BerkStan.txt",
+"new_snap_datasets/web-Google.txt",
+]
 
-filenames = [ds[9::] for ds in datasets]
+OUTPUT_DIR = "new_nde_datasets/"
+INPUT_DIR = datasets[0].split("/")[0]+ "/"
+
+filenames = [ds.split("/")[1] for ds in datasets]
 print(filenames)
 
 
@@ -55,8 +67,8 @@ def write_lines_to_file(lines, filename):
 
 def convert(filename):
 
-    SNAP_FILE_PATH = "snap_datasets/" + filename
-    NDE_FILE_PATH = "nde_datasets/" + filename
+    SNAP_FILE_PATH = INPUT_DIR + filename
+    NDE_FILE_PATH = OUTPUT_DIR + filename
 
     nodes = []
     node_degrees = {}

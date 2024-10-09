@@ -377,39 +377,39 @@ Clique* Graph::find_clique_of(Edge* edge, size_t& edges_covered) {
 //     return best;
 // }
 
-// Node* Graph::extract_node(unordered_set<Node*>& potential_additions, Clique* clique) {
-//     //If no potential_additions
-//     if (potential_additions.empty()) {
-//         return nullptr;
-//     }
+Node* Graph::extract_node(unordered_set<Node*>& potential_additions, Clique* clique) {
+    //If no potential_additions
+    if (potential_additions.empty()) {
+        return nullptr;
+    }
 
-//     // Create a vector to track the number of uncovered connections between each potential node and the clique nodes
-//     unordered_map<Node*, int> uncovered_counts;
+    // Create a vector to track the number of uncovered connections between each potential node and the clique nodes
+    unordered_map<Node*, int> uncovered_counts;
 
-//     // Iterate over the clique's nodes and check for uncovered edges
-//     for (Node* clique_node : clique->nodes) {
-//         for (Node* potential : potential_additions) {
-//             // Use are_connected() to check if the node is connected to the clique node and if the edge is uncovered
-//             Edge* connection = this->are_connected(potential, clique_node);
-//             if (connection != nullptr && !connection->is_covered()) {
-//                 uncovered_counts[potential] += 1;
-//             }
-//         }
-//     }
+    // Iterate over the clique's nodes and check for uncovered edges
+    for (Node* clique_node : clique->nodes) {
+        for (Node* potential : potential_additions) {
+            // Use are_connected() to check if the node is connected to the clique node and if the edge is uncovered
+            Edge* connection = this->are_connected(potential, clique_node);
+            if (connection != nullptr && !connection->is_covered()) {
+                uncovered_counts[potential] += 1;
+            }
+        }
+    }
 
-//     // Find the node with the maximum uncovered connections
-//     Node* best_node = nullptr;
-//     int best_score = 0;
+    // Find the node with the maximum uncovered connections
+    Node* best_node = nullptr;
+    int best_score = 0;
     
-//     for (const auto& [node, score] : uncovered_counts) {
-//         if (score > best_score) {
-//             best_node = node;
-//             best_score = score;
-//         }
-//     }
+    for (const auto& [node, score] : uncovered_counts) {
+        if (score > best_score) {
+            best_node = node;
+            best_score = score;
+        }
+    }
 
-//     return best_node;
-// }
+    return best_node;
+}
 
 
 

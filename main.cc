@@ -15,52 +15,6 @@ using namespace std;
 #include <gperftools/profiler.h>
 
 
-
-// /**
-//  * @brief An Implementation of the framework from Conte et al.
-//  * 
-//  * @param graph_filepath, the filepath of the graph to preform the algorithm on
-//  * @param cliques, a vector of cliques to be filled
-//  * 
-//  * 
-//  * 
-//  * @return int the size of the ECC
-//  */
-// size_t demo_ecc_rc(Graph& G, vector<Clique*> &cliques) {
-//     cout << "\n\n\t\tSTARTING ECC-rc\n\n" << endl;
- 
-//     //while there are uncovered edges do
-//     size_t num_edges_covered = 0;
-//     int last_uncovered_edge_index = 0;
-
-//     while (num_edges_covered < G._num_edges) {
-
-//         // u, v ← SELECT UNCOVERED EDGE()
-//         Edge* uncovered_edge = G.select_uncovered_edge(last_uncovered_edge_index);
-//         cout << "1) SELECTED UNCOVERED EDGE: \t" << *uncovered_edge << endl;
-
-//         //R ← FIND CLIQUE OF(u, v)
-//         cout << "2) FINDING CLIQUE OF \t" << *uncovered_edge << endl;
-//         Clique* found_clique = G.demo_find_clique_of(uncovered_edge, num_edges_covered);
-//         cout << "   => FOUND CLIQUE OF " <<  *uncovered_edge << ": \t" << *found_clique << endl;
-
-//         // C ← C∪R
-//         cliques.push_back(found_clique);
-//         cout << "3) ADDED CLIQUE TO ECC \t num_cliques = " << cliques.size() << endl;
-
-//         // Done?
-//         cout << "4) COVERED " << num_edges_covered << " / " << G._num_edges;
-//         if (num_edges_covered < G._num_edges) {
-//             cout << " -> REPEATING \n\n" << endl;
-//         } else {
-//             cout << " -> FINISHED\n" << endl;
-//         }
-//     }
-
-
-//     return cliques.size();
-// }
-
 /**
  * @brief An Implementation of the framework from Conte et al.
  * 
@@ -157,7 +111,7 @@ bool run_checks(Graph& G) {
  */
 bool check_ECC (Graph& G, vector<Clique*>& clique_cover) {
     for (Edge* edge : G._edges) {
-        if (edge->is_covered() == false) {
+        if (!edge->is_covered()) {
             return false;
         }
     }
@@ -317,10 +271,16 @@ void run_on_all(vector<string> datasets, bool do_checks) {
 void data_on_all(vector<string> datasets) {
     vector<size_t> clique_stats;
     vector<size_t> time_stats;
+    vector<size_t> edge_stats;
+    vector<size_t> node_stats;
 
     for (string filename : datasets) {
         //make graph
         Graph G(filename);
+
+        edge_stats.push_back(G._num_edges);
+        node_stats.push_back(G._num_nodes);
+
 
         //start timer
         chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
@@ -349,6 +309,14 @@ void data_on_all(vector<string> datasets) {
     for (int i = 0; i < datasets.size(); i++) {
         cout << datasets[i] << endl;
     }
+    cout << "\nDataset nodes:" << endl;
+    for (int i = 0; i < datasets.size(); i++) {
+        cout << node_stats[i] << endl;
+    }
+    cout << "\nDataset edges:" << endl;
+    for (int i = 0; i < datasets.size(); i++) {
+        cout << edge_stats[i] << endl;
+    }
     cout << "\nCliques:" << endl;
     for (int i = 0; i < datasets.size(); i++) {
         cout << clique_stats[i] << endl;
@@ -364,6 +332,7 @@ void data_on_all(vector<string> datasets) {
 
 string const DATASET_PATH = "datasets/";
 bool const DO_CHECKS = false;
+bool const INCLUDE_BIG_DATA = true;
 
 
 vector<string> datasets = {
@@ -386,22 +355,29 @@ vector<string> big_datasets = {
     "new_snap_datasets/amazon0302.txt", 
     "new_snap_datasets/amazon0312.txt", 
     "new_snap_datasets/roadNet-CA.txt", 
-    "new_snap_datasets/web-BerkStan.txt", 
+    "new_snap_datasets/roadNet-PA.txt", 
+    "new_snap_datasets/roadNet-TX.txt", 
+    // "new_snap_datasets/web-BerkStan.txt", 
     "new_snap_datasets/web-Google.txt"
 };
 
 int main() {
-    // datasets = big_datasets;
-    ProfilerStart("profile_output.prof");
+    if (INCLUDE_BIG_DATA) {
+        datasets.insert(datasets.end(), big_datasets.begin(), big_datasets.end());
+    }
+    
+    // ProfilerStart("profile_output.prof");
 
     // // run_on(datasets[10]);
 
     // run_on_all(datasets, DO_CHECKS);
     data_on_all(datasets);
 
-    ProfilerStop();
+    // ProfilerStop();
 
-    // run_on_profile("web-Google.txt");
+    // run_on_profile(big_datasets[3]);
+    // run_on_profile(big_datasets[5]);
+    // run_on_profile(big_datasets[5]);
 
     return 0;
 }
@@ -417,7 +393,7 @@ See pprof
 pprof ecc ./profile_output.prof  
 
 pprof analysis
-top20 --cum
+top100 --cum
 
 
 */
