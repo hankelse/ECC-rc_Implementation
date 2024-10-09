@@ -12,7 +12,7 @@ class Graph;
 class Clique {
 public:
 
-    Clique();
+    Clique() = delete;
     Clique(vector<Node*> &nodes_to_add, Graph& G, size_t& edges_covered);
     Clique(Edge* edge, Graph& G, size_t& edges_covered);
 

@@ -183,6 +183,11 @@ void Graph::fill_graph(ifstream& file) {
         //Add each to each nodes connection map
         _nodes[node1_id]->connection_map[_nodes[node2_id]] = temp_edge;
         _nodes[node2_id]->connection_map[_nodes[node1_id]] = temp_edge;
+
+        //Add each node to eachother's neighbor set
+        _nodes[node1_id]->neighbor_set.insert(_nodes[node2_id]);
+        _nodes[node2_id]->neighbor_set.insert(_nodes[node1_id]);
+
         }
 
         
@@ -301,9 +306,12 @@ Clique* Graph::find_clique_of(Edge* edge, size_t& edges_covered) {
     _cliques.push_back(clique); 
 
     //P ← N(u)∩ N(v)
+    unordered_set<Node*> candidates = node_set_intersect(u->neighbor_set, v->neighbor_set);
+
     // vector<Node*> candidates = node_set_intersect(u->neighbors, v->neighbors);
-    vector<Node*> candidates_vector = node_set_intersect(u->neighbors, v->neighbors);
-    unordered_set<Node*> candidates(candidates_vector.begin(), candidates_vector.end());
+
+    // vector<Node*> candidates_vector = node_vector_intersect(u->neighbors, v->neighbors);
+    // unordered_set<Node*> candidates(candidates_vector.begin(), candidates_vector.end());
 
     // z ← EXTRACT NODE(P)
     // Node* new_member = extract_node(candidates, clique);
@@ -316,11 +324,14 @@ Clique* Graph::find_clique_of(Edge* edge, size_t& edges_covered) {
 
         // Trim candidates: P ← P ∩ N(z)
         // candidates = node_set_intersect(candidates, new_member->neighbors);
-        candidates = trim_set(candidates, new_member->neighbors);
+        // candidates = trim_set(candidates, new_member->neighbors);
+        // trim_candidates(candidates, new_member->neighbor_set);
+        candidates = node_set_intersect(candidates, new_member->neighbor_set);
 
         // Extract next node
         // new_member = extract_node(candidates, clique);
         new_member = extract_node(candidates, clique);
+
     }
     return clique;
 }
@@ -366,39 +377,41 @@ Clique* Graph::find_clique_of(Edge* edge, size_t& edges_covered) {
 //     return best;
 // }
 
-Node* Graph::extract_node(unordered_set<Node*>& potential_additions, Clique* clique) {
-    //If no potential_additions
-    if (potential_additions.empty()) {
-        return nullptr;
-    }
+// Node* Graph::extract_node(unordered_set<Node*>& potential_additions, Clique* clique) {
+//     //If no potential_additions
+//     if (potential_additions.empty()) {
+//         return nullptr;
+//     }
 
-    // Create a vector to track the number of uncovered connections between each potential node and the clique nodes
-    unordered_map<Node*, int> uncovered_counts;
+//     // Create a vector to track the number of uncovered connections between each potential node and the clique nodes
+//     unordered_map<Node*, int> uncovered_counts;
 
-    // Iterate over the clique's nodes and check for uncovered edges
-    for (Node* clique_node : clique->nodes) {
-        for (Node* potential : potential_additions) {
-            // Use are_connected() to check if the node is connected to the clique node and if the edge is uncovered
-            Edge* connection = this->are_connected(potential, clique_node);
-            if (connection != nullptr && !connection->is_covered()) {
-                uncovered_counts[potential] += 1;
-            }
-        }
-    }
+//     // Iterate over the clique's nodes and check for uncovered edges
+//     for (Node* clique_node : clique->nodes) {
+//         for (Node* potential : potential_additions) {
+//             // Use are_connected() to check if the node is connected to the clique node and if the edge is uncovered
+//             Edge* connection = this->are_connected(potential, clique_node);
+//             if (connection != nullptr && !connection->is_covered()) {
+//                 uncovered_counts[potential] += 1;
+//             }
+//         }
+//     }
 
-    // Find the node with the maximum uncovered connections
-    Node* best_node = nullptr;
-    int best_score = 0;
+//     // Find the node with the maximum uncovered connections
+//     Node* best_node = nullptr;
+//     int best_score = 0;
     
-    for (const auto& [node, score] : uncovered_counts) {
-        if (score > best_score) {
-            best_node = node;
-            best_score = score;
-        }
-    }
+//     for (const auto& [node, score] : uncovered_counts) {
+//         if (score > best_score) {
+//             best_node = node;
+//             best_score = score;
+//         }
+//     }
 
-    return best_node;
-}
+//     return best_node;
+// }
+
+
 
 /**
  * @brief  Even Faster! Given an unordered_set and vector, returns the elements in both
@@ -406,36 +419,99 @@ Node* Graph::extract_node(unordered_set<Node*>& potential_additions, Clique* cli
  * @param vec_2
  * @return unordered_set<Node *> new set
  */
-unordered_set<Node *> Graph::trim_set(unordered_set<Node *>& set_1, vector<Node*>& vec_2) {
+unordered_set<Node *> Graph::trim_set(unordered_set<Node *> set_1, vector<Node*>& vec_2) {
     unordered_set<Node*> result;
     for (Node* node : vec_2) {
-        if (set_1.erase(node)) {
+        if (set_1.count(node) > 0) {
             result.insert(node);
         }
     }
     return result;
 }
 
+void Graph::trim_candidates(unordered_set<Node *>& candidates, unordered_set<Node *>& constraints){
+    if (candidates.size() >= constraints.size()) {
+        candidates = node_set_intersect(constraints, candidates);
+        return;
+    }
 
+    // Iterate over the candidates and remove any that are not in the constraints
+    for (unordered_set<Node*>::const_iterator it = candidates.begin(); it != candidates.end(); ) {
+        // If the candidate is not in constraints, erase it from candidates
+        if (constraints.find(*it) == constraints.end()) {
+            it = candidates.erase(it);  // Erase returns the next iterator
+        } else {
+            ++it;  // Move to the next element if not erased
+        }
+    }
+}
+
+ 
 /**
  * @brief  Faster! Given two sets of nodes, returns the elements in both
  * @param vec_1
  * @param vec_2
  * @return vector<Node*> 
  */
-vector<Node*> Graph::node_set_intersect(vector<Node*>& vec_1, vector<Node*>& vec_2) {
+vector<Node*> Graph::node_vector_intersect(vector<Node*>& vec_1, vector<Node*>& vec_2) {
 
     unordered_set<Node *> set_1(vec_1.begin(), vec_1.end()); //O(n)
-
     vector<Node*> intersection;
 
     for (Node* node : vec_2) {
-        if (set_1.erase(node)) {
+        if (set_1.count(node) > 0) {
             intersection.push_back(node);
         }
     }
 
     return intersection;
+}
+
+// unordered_set<Node *> Graph::node_set_intersect(unordered_set<Node *>& set_1, unordered_set<Node *>& set_2) {
+//     // for (Node* node : set_2) {
+//     //     if (set_1.count(node) == 0) {
+//     //         set_2.erase(node);
+//     //     }
+//     // }
+//     int correct_index = 0;
+//     for (unordered_set<Node*>::iterator itr = set_1.begin(); itr != set_2.end(); ++itr) {
+//         if (set_2.count(*itr) == 0) {
+//             set_1.erase(*itr);
+//             correct_index -= 1;
+//             --itr;
+//         } 
+//         correct_index += 1;
+//     }
+//     return set_2;
+// }
+
+
+// unordered_set<Node *> Graph::node_set_intersect(unordered_set<Node *>& set_1, unordered_set<Node *>& set_2) {
+//     unordered_set<Node*> result;
+//     for (Node* node : set_2) {
+//         if (set_1.count(node) > 0) {
+//             result.insert(node);
+//         }
+//     }
+//     return result;
+// }
+
+unordered_set<Node *> Graph::node_set_intersect(unordered_set<Node *>& set_1, unordered_set<Node *>& set_2) {
+
+    //Recursively run with smaller first
+    if (set_1.size() > set_2.size()) {
+        return node_set_intersect(set_2, set_1);
+    }
+
+    unordered_set<Node*> result;
+    
+    // Iterate over the smaller set and check for each node in larger
+    for (Node* node : set_1) {
+        if (set_2.count(node) > 0) {
+            result.insert(node);
+        }
+    }
+    return result;
 }
 
 // /**

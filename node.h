@@ -8,6 +8,7 @@ class Connection;
 #include <iostream>
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 using namespace std;
 
 class Node {
@@ -25,7 +26,9 @@ class Node {
 
         vector<Connection*> connections;                // combining the adjacency lists into one
 
+        //new datastructures for optimizing
         unordered_map<Node*, Edge*> connection_map;
+        unordered_set<Node*> neighbor_set;
 
 
     private:

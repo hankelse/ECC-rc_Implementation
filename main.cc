@@ -198,6 +198,48 @@ void run_on(string filename) {
 
 }
 
+/**
+ * @brief Runs full algorithm on a dataset. Measures running time and checks correctness.
+ * @param filename the filename of the dataset to run on.
+ */
+void run_on_profile(string filename) {
+
+    cout << "\nRunning ECC on " << filename << "." << endl;
+    
+
+
+    Graph G(filename);
+    
+    //Save the starting time of the algorithm
+    chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
+
+    cout << "\tNodes: " << G._num_nodes << endl;
+    cout << "\tEdges: " << G._num_edges << endl;
+
+    ProfilerStart("profile_output.prof");
+
+    vector<Clique*> clique_cover;
+    size_t k = ecc_rc(G, clique_cover);
+
+    ProfilerStop();
+
+    //Get the time passed in miliseconds
+    chrono::steady_clock::time_point end_time = chrono::steady_clock::now();
+    size_t runtime = chrono::duration_cast<chrono::milliseconds>(end_time - start_time).count();
+    
+
+
+    if (check_ECC(G, clique_cover)) {
+        cout << "Algorithm found cover of G with \n\t" << k << " cliques \n\tin " << runtime << " miliseconds.\n" << endl;
+    } else {
+        cout << "Algorithm did not cover all edges." << endl;
+    }
+    
+
+
+}
+
+
 // void run_on_demo(string filename) {
 
 //     cout << "\nRunning ECC demo on " << filename << "." << endl;
@@ -267,7 +309,11 @@ void run_on_all(vector<string> datasets, bool do_checks) {
     } 
 }
 
-
+/**
+ * @brief Runs algo on all datasets, then prints copyable data sequences for copy and paste to table
+ * 
+ * @param datasets 
+ */
 void data_on_all(vector<string> datasets) {
     vector<size_t> clique_stats;
     vector<size_t> time_stats;
@@ -326,25 +372,36 @@ vector<string> datasets = {
 "snap_datasets/ca-GrQc.txt", 
 "snap_datasets/ca-HepPh.txt", 
 "snap_datasets/ca-HepTh.txt", 
-"snap_datasets/cit-HepPh.txt",
+"snap_datasets/cit-HepPh.txt", //[5]
 "snap_datasets/cit-HepTh.txt",
 "snap_datasets/email-Enron.txt",
 "snap_datasets/email-EuAll.txt",
 "snap_datasets/p2p-Gnutella31.txt",
-"snap_datasets/soc-Slashdot0811.txt",
+"snap_datasets/soc-Slashdot0811.txt", //[10]
 "snap_datasets/soc-Slashdot0902.txt",
 "snap_datasets/wiki-Vote.txt",
 };
 
+vector<string> big_datasets = {
+    "new_snap_datasets/amazon0302.txt", 
+    "new_snap_datasets/amazon0312.txt", 
+    "new_snap_datasets/roadNet-CA.txt", 
+    "new_snap_datasets/web-BerkStan.txt", 
+    "new_snap_datasets/web-Google.txt"
+};
+
 int main() {
+    // datasets = big_datasets;
     ProfilerStart("profile_output.prof");
 
-    // run_on(datasets[8]);
+    // // run_on(datasets[10]);
 
     // run_on_all(datasets, DO_CHECKS);
     data_on_all(datasets);
 
     ProfilerStop();
+
+    // run_on_profile("web-Google.txt");
 
     return 0;
 }

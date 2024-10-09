@@ -7,20 +7,20 @@
 
 
 
-Clique::Clique() {
-}
+// Clique::Clique() {
+// }
 
-/**
- * @brief Construct a new Clique with nodes in it
- * 
- * @param nodes_to_add 
- * @param G 
- */
-Clique::Clique(vector<Node*> &nodes_to_add, Graph& G, size_t& edges_covered){ 
-    for (int i = 0; i < nodes_to_add.size(); i++) {
-        add_node(nodes_to_add[i], G, edges_covered);
-    }
-}
+// /**
+//  * @brief Construct a new Clique with nodes in it
+//  * 
+//  * @param nodes_to_add 
+//  * @param G 
+//  */
+// Clique::Clique(vector<Node*> &nodes_to_add, Graph& G, size_t& edges_covered){ 
+//     for (int i = 0; i < nodes_to_add.size(); i++) {
+//         add_node(nodes_to_add[i], G, edges_covered);
+//     }
+// }
 
 
 Clique::Clique(Edge* edge, Graph& G, size_t &edges_covered) {
@@ -36,18 +36,22 @@ Clique::Clique(Edge* edge, Graph& G, size_t &edges_covered) {
  * @param G Graph
  */
 void Clique::add_node(Node* n, Graph& G, size_t& edges_covered) {
+    //reserve space
+    edges.reserve(edges.size() + nodes.size()); // Reserve space if needed
     //Add edges
     for (int i = 0; i < nodes.size(); i++) {
         Edge* edge = G.get_edge(n, nodes[i]);
+        
+        if (edge == nullptr) {
+            cerr << "ERROR: Can't include " << *n << " in clique: Node " << *n << " is not connected to Node " << *nodes[i] << endl;
+        }
+
         if (!edge->is_covered()) {
             edge->cover();
             edges_covered += 1;
             
         }
-        edge->cover();
-        if (edge == nullptr) {
-            cerr << "ERROR: Can't include " << *n << " in clique: Node " << *n << " is not connected to Node " << *G._nodes[i] << endl;
-        }
+        // edge->cover();
         edges.push_back(edge);
     }
 

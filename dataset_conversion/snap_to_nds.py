@@ -1,4 +1,3 @@
-import re
 
 # one line with the number of nodes
 # for each node, one line containing the node's ID (integer) and its degree
