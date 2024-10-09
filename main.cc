@@ -12,6 +12,7 @@ using namespace std;
 #include "checks.h"
 #include "connection.h"
 #include "clique.h"
+#include <gperftools/profiler.h>
 
 
 
@@ -163,7 +164,10 @@ bool check_ECC (Graph& G, vector<Clique*>& clique_cover) {
     return true;
 }
 
-
+/**
+ * @brief Runs full algorithm on a dataset. Measures running time and checks correctness.
+ * @param filename the filename of the dataset to run on.
+ */
 void run_on(string filename) {
 
     cout << "\nRunning ECC on " << filename << "." << endl;
@@ -212,33 +216,17 @@ void run_on(string filename) {
 //     cout << "Algorithm found cover of G with \n\t" << k << " cliques \n\tin " << runtime << " seconds.\n" << endl;
 // }
 
-
-/* SETTINGS */
-
-string const DATASET_PATH = "datasets/";
-bool const DO_CHECKS = false;
-
-
-vector<string> datasets = {
-"snap_datasets/ca-AstroPh.txt", 
-"snap_datasets/ca-CondMat.txt", 
-"snap_datasets/ca-GrQc.txt", 
-"snap_datasets/ca-HepPh.txt", 
-"snap_datasets/ca-HepTh.txt", 
-"snap_datasets/cit-HepTh.txt",
-"snap_datasets/cit-HepPh.txt",
-"snap_datasets/email-Enron.txt",
-"snap_datasets/email-EuAll.txt",
-"snap_datasets/p2p-Gnutella31.txt",
-"snap_datasets/soc-Slashdot0811.txt",
-"snap_datasets/soc-Slashdot0902.txt",
-"snap_datasets/wiki-Vote.txt",
-};
-
-int main() {
-
+/**
+ * @brief Runs run_on on a list of filenames
+ * If do_checks, first checks if all the data is imported correctly, 
+ * then runs on correctly imported data.
+ * 
+ * @param datasets list of datasets to run on
+ * @param do_checks bool for if graphs should be checked
+ */
+void run_on_all(vector<string> datasets, bool do_checks) {
     //Run checks on each dataset and then report and exclude ones that don't pass
-    if (DO_CHECKS) {
+    if (do_checks) {
         vector<string> properly_imported;
         vector<string> improperly_imported;
 
@@ -277,6 +265,53 @@ int main() {
     for (string filepath : datasets) {
         run_on(filepath);
     } 
+}
+
+/* SETTINGS */
+
+string const DATASET_PATH = "datasets/";
+bool const DO_CHECKS = false;
+
+
+vector<string> datasets = {
+"snap_datasets/ca-AstroPh.txt", 
+"snap_datasets/ca-CondMat.txt", 
+"snap_datasets/ca-GrQc.txt", 
+"snap_datasets/ca-HepPh.txt", 
+"snap_datasets/ca-HepTh.txt", 
+"snap_datasets/cit-HepTh.txt",
+"snap_datasets/cit-HepPh.txt",
+"snap_datasets/email-Enron.txt",
+"snap_datasets/email-EuAll.txt",
+"snap_datasets/p2p-Gnutella31.txt",
+"snap_datasets/soc-Slashdot0811.txt",
+"snap_datasets/soc-Slashdot0902.txt",
+"snap_datasets/wiki-Vote.txt",
+};
+
+int main() {
+    ProfilerStart("profile_output.prof");
+
+    // run_on(datasets[2]);
+
+    run_on_all(datasets, DO_CHECKS);
+
+    ProfilerStop();
 
     return 0;
 }
+
+/*Running with gperf
+Include path:
+-I/opt/homebrew/include
+
+Linked:
+g++ -I/opt/homebrew/include -L/opt/homebrew/lib -lprofiler -std=c++17 *.cc -o ecc
+
+See pprof
+pprof ecc ./profile_output.prof  
+
+
+
+
+*/

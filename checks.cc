@@ -1,6 +1,7 @@
 #include "checks.h"
 #include "io.h"
 #include "node.h"
+#include "graph.h"
 #include "edge.h"
 
 /**

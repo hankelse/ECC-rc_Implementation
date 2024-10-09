@@ -1,9 +1,10 @@
 #ifndef CHECKS_H
 #define CHECKS_H
 
-#include "graph.h"
 #include <sstream>
 using namespace std;
+
+class Graph;
 
 /* Was building the graph done correctly? */
 
