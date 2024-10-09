@@ -267,6 +267,53 @@ void run_on_all(vector<string> datasets, bool do_checks) {
     } 
 }
 
+
+void data_on_all(vector<string> datasets) {
+    vector<size_t> clique_stats;
+    vector<size_t> time_stats;
+
+    for (string filename : datasets) {
+        //make graph
+        Graph G(filename);
+
+        //start timer
+        chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
+
+        //run algorithm
+        vector<Clique*> clique_cover;
+        size_t k = ecc_rc(G, clique_cover);
+
+        //Get the time passed in miliseconds
+        chrono::steady_clock::time_point end_time = chrono::steady_clock::now();
+        size_t runtime = chrono::duration_cast<chrono::milliseconds>(end_time - start_time).count();
+
+
+        if (check_ECC(G, clique_cover)) {
+            cout << "Algorithm found cover of G from: "<< filename <<" with \n\t" << k << " cliques \n\tin " << runtime << " miliseconds.\n" << endl;
+            clique_stats.push_back(k);
+            time_stats.push_back(runtime);
+        } else {
+            cout << "Algorithm did not cover all edges." << endl;
+            clique_stats.push_back(-1);
+            time_stats.push_back(-1);
+        }
+    }
+    cout << "\nDATA for copy/paste!\n" << endl;
+    cout << "\nDataset names:" << endl;
+    for (int i = 0; i < datasets.size(); i++) {
+        cout << datasets[i] << endl;
+    }
+    cout << "\nCliques:" << endl;
+    for (int i = 0; i < datasets.size(); i++) {
+        cout << clique_stats[i] << endl;
+    }
+    cout << "\nTimes:" << endl;
+    for (int i = 0; i < datasets.size(); i++) {
+        cout << time_stats[i] << endl;
+    }
+
+}
+
 /* SETTINGS */
 
 string const DATASET_PATH = "datasets/";
@@ -279,8 +326,8 @@ vector<string> datasets = {
 "snap_datasets/ca-GrQc.txt", 
 "snap_datasets/ca-HepPh.txt", 
 "snap_datasets/ca-HepTh.txt", 
-"snap_datasets/cit-HepTh.txt",
 "snap_datasets/cit-HepPh.txt",
+"snap_datasets/cit-HepTh.txt",
 "snap_datasets/email-Enron.txt",
 "snap_datasets/email-EuAll.txt",
 "snap_datasets/p2p-Gnutella31.txt",
@@ -294,7 +341,8 @@ int main() {
 
     // run_on(datasets[8]);
 
-    run_on_all(datasets, DO_CHECKS);
+    // run_on_all(datasets, DO_CHECKS);
+    data_on_all(datasets);
 
     ProfilerStop();
 
