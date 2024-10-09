@@ -16,50 +16,50 @@ using namespace std;
 
 
 
-/**
- * @brief An Implementation of the framework from Conte et al.
- * 
- * @param graph_filepath, the filepath of the graph to preform the algorithm on
- * @param cliques, a vector of cliques to be filled
- * 
- * 
- * 
- * @return int the size of the ECC
- */
-size_t demo_ecc_rc(Graph& G, vector<Clique*> &cliques) {
-    cout << "\n\n\t\tSTARTING ECC-rc\n\n" << endl;
+// /**
+//  * @brief An Implementation of the framework from Conte et al.
+//  * 
+//  * @param graph_filepath, the filepath of the graph to preform the algorithm on
+//  * @param cliques, a vector of cliques to be filled
+//  * 
+//  * 
+//  * 
+//  * @return int the size of the ECC
+//  */
+// size_t demo_ecc_rc(Graph& G, vector<Clique*> &cliques) {
+//     cout << "\n\n\t\tSTARTING ECC-rc\n\n" << endl;
  
-    //while there are uncovered edges do
-    size_t num_edges_covered = 0;
-    int last_uncovered_edge_index = 0;
+//     //while there are uncovered edges do
+//     size_t num_edges_covered = 0;
+//     int last_uncovered_edge_index = 0;
 
-    while (num_edges_covered < G._num_edges) {
+//     while (num_edges_covered < G._num_edges) {
 
-        // u, v ← SELECT UNCOVERED EDGE()
-        Edge* uncovered_edge = G.select_uncovered_edge(last_uncovered_edge_index);
-        cout << "1) SELECTED UNCOVERED EDGE: \t" << *uncovered_edge << endl;
+//         // u, v ← SELECT UNCOVERED EDGE()
+//         Edge* uncovered_edge = G.select_uncovered_edge(last_uncovered_edge_index);
+//         cout << "1) SELECTED UNCOVERED EDGE: \t" << *uncovered_edge << endl;
 
-        //R ← FIND CLIQUE OF(u, v)
-        cout << "2) FINDING CLIQUE OF \t" << *uncovered_edge << endl;
-        Clique* found_clique = G.demo_find_clique_of(uncovered_edge, num_edges_covered);
-        cout << "   => FOUND CLIQUE OF " <<  *uncovered_edge << ": \t" << *found_clique << endl;
+//         //R ← FIND CLIQUE OF(u, v)
+//         cout << "2) FINDING CLIQUE OF \t" << *uncovered_edge << endl;
+//         Clique* found_clique = G.demo_find_clique_of(uncovered_edge, num_edges_covered);
+//         cout << "   => FOUND CLIQUE OF " <<  *uncovered_edge << ": \t" << *found_clique << endl;
 
-        // C ← C∪R
-        cliques.push_back(found_clique);
-        cout << "3) ADDED CLIQUE TO ECC \t num_cliques = " << cliques.size() << endl;
+//         // C ← C∪R
+//         cliques.push_back(found_clique);
+//         cout << "3) ADDED CLIQUE TO ECC \t num_cliques = " << cliques.size() << endl;
 
-        // Done?
-        cout << "4) COVERED " << num_edges_covered << " / " << G._num_edges;
-        if (num_edges_covered < G._num_edges) {
-            cout << " -> REPEATING \n\n" << endl;
-        } else {
-            cout << " -> FINISHED\n" << endl;
-        }
-    }
+//         // Done?
+//         cout << "4) COVERED " << num_edges_covered << " / " << G._num_edges;
+//         if (num_edges_covered < G._num_edges) {
+//             cout << " -> REPEATING \n\n" << endl;
+//         } else {
+//             cout << " -> FINISHED\n" << endl;
+//         }
+//     }
 
 
-    return cliques.size();
-}
+//     return cliques.size();
+// }
 
 /**
  * @brief An Implementation of the framework from Conte et al.
@@ -359,7 +359,8 @@ g++ -I/opt/homebrew/include -L/opt/homebrew/lib -lprofiler -std=c++17 *.cc -o ec
 See pprof
 pprof ecc ./profile_output.prof  
 
-
+pprof analysis
+top20 --cum
 
 
 */
