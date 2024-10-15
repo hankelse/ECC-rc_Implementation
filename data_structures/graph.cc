@@ -1,9 +1,9 @@
 
 #include "graph.h"
-#include "connection.h"
+// #include "connection.h"
 #include "node.h"
 #include "edge.h"
-#include "io.h"
+#include "tools/io.h"
 #include "clique.h"
 #include <unordered_set>
 #include <unordered_map>

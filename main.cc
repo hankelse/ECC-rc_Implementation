@@ -4,15 +4,17 @@
 #include <chrono>
 
 using namespace std;
+#include "tools/checks.h"
+#include "tools/io.h"
 
-#include "ecc.h"
-#include "io.h"
-#include "node.h"
-#include "edge.h"
-#include "graph.h"
-#include "checks.h"
-#include "connection.h"
-#include "clique.h"
+#include "data_structures/node.h"
+#include "data_structures/edge.h"
+#include "data_structures/graph.h"
+// #include "data_structures/connection.h"
+#include "data_structures/clique.h"
+
+#include "implementations/ecc.h"
+
 #include <gperftools/profiler.h>
 
 
