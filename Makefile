@@ -5,13 +5,13 @@ ecc: main.o checks.o clique.o connection.o edge.o graph.o io.o node.o
 main.o: main.cc
 	g++ -std=c++17 main.cc -o main.o
 
-checks.o: tools/checks.cc tools/checks.h
+checks.o: checks.cc checks.h
 	g++ -std=c++17 checks.cc -o checks.o
 
-clique.o: tools/clique.cc tools/clique.h
+clique.o: clique.cc clique.h
 	g++ -std=c++17 clique.cc -o clique.o
 
-connection.o: tools/connection.cc tools/connection.h
+connection.o: connection.cc connection.h
 	g++ -std=c++17 connection.cc -o connection.o
 
 edge.o: edge.cc edge.h

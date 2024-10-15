@@ -1,10 +1,10 @@
 #include "ecc.h"
 
-#include "data_structures/graph.h"
-#include "data_structures/node.h"
-#include "data_structures/edge.h"
-#include "data_structures/clique.h"
-#include "data_structures/fast_set.h"
+#include "graph.h"
+#include "node.h"
+#include "edge.h"
+#include "clique.h"
+#include "fast_set.h"
 
 
 
@@ -191,14 +191,14 @@ Node* ECC::extract_node(unordered_set<Node*>& potential_additions, Clique* cliqu
 
 // ===== HELPER FUNCTIONS ===== //
 
-// /**
-//  * @brief Finds the intersection between two sets of node*s
-//  * 
-//  *
-//  * @param set_1 
-//  * @param set_2 
-//  * @return 
-//  */
+/**
+ * @brief Finds the intersection between two sets of node*s
+ * 
+ *
+ * @param set_1 
+ * @param set_2 
+ * @return 
+ */
 unordered_set<Node *> ECC::node_set_intersect(unordered_set<Node *>& set_1, unordered_set<Node *>& set_2) {
 
     //Recursively run with smaller first
