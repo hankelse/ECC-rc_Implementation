@@ -8,8 +8,9 @@ Node::Node() {
     _id = 0; // default value
 }
 
-Node::Node(int id) {
+Node::Node(int id, int index_in_graph) {
     _id = id;
+    index = index_in_graph;
 }
 
 

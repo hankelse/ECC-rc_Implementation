@@ -53,54 +53,54 @@ using namespace std;
 //     return nullptr;
 // } 
 
-// /**
-//  * @brief Runs checks from checks.h on G
-//  * 
-//  * @param G graph to run checks on
-//  */
-// bool run_checks(Graph& G) {
-//     ostringstream warnings;
-//     int num_tests_failed = 0;
+/**
+ * @brief Runs checks from checks.h on G
+ * 
+ * @param G graph to run checks on
+ */
+bool run_checks(Graph& G) {
+    ostringstream warnings;
+    int num_tests_failed = 0;
 
-//     cout << "\tRUNNING ALL CHECKS" << endl;
+    cout << "\tRUNNING ALL CHECKS" << endl;
 
-//     // If not all nodes are imported, print the warnings
-//     if (!all_nodes_imported(G, warnings)) { 
-//         cout << warnings.str() << endl;
-//         num_tests_failed += 1;
-//     } else {
-//         cout << "\t\tPASSED all_nodes_imported" << endl;
-//     }
-//     warnings.str(""); // empty
-
-
-//     // If not all edges are imported, print the warnings
-//     if (!all_edges_imported(G, warnings)) {
-//         cout << warnings.str() << endl;
-//         num_tests_failed += 1;
-//     } else {
-//         cout << "\t\tPASSED all_edges_imported" << endl;
-//     }
-//     warnings.str(""); // empty
+    // If not all nodes are imported, print the warnings
+    if (!all_nodes_imported(G, warnings)) { 
+        cout << warnings.str() << endl;
+        num_tests_failed += 1;
+    } else {
+        cout << "\t\tPASSED all_nodes_imported" << endl;
+    }
+    warnings.str(""); // empty
 
 
-//     // If adjacency lists don't match manual lists, print the warnigns
-//     if (!adj_lists_correct(G, warnings)) {
-//         cout << warnings.str() << endl;
-//         num_tests_failed += 1;
-//     } else {
-//         cout << "\t\tPASSED adj_lists_correct" << endl;
-//     }
-//     warnings.str(""); // empty
+    // If not all edges are imported, print the warnings
+    if (!all_edges_imported(G, warnings)) {
+        cout << warnings.str() << endl;
+        num_tests_failed += 1;
+    } else {
+        cout << "\t\tPASSED all_edges_imported" << endl;
+    }
+    warnings.str(""); // empty
 
 
-//     if (!num_tests_failed) {
-//         cout << "\tPASSED ALL CHECKS\n" << endl;
-//         return true;
-//     }
-//     cout << "\tFAILED " << num_tests_failed << " TESTS.\n" << endl;
-//     return false;
-// }
+    // If adjacency lists don't match manual lists, print the warnigns
+    if (!adj_lists_correct(G, warnings)) {
+        cout << warnings.str() << endl;
+        num_tests_failed += 1;
+    } else {
+        cout << "\t\tPASSED adj_lists_correct" << endl;
+    }
+    warnings.str(""); // empty
+
+
+    if (!num_tests_failed) {
+        cout << "\tPASSED ALL CHECKS\n" << endl;
+        return true;
+    }
+    cout << "\tFAILED " << num_tests_failed << " TESTS.\n" << endl;
+    return false;
+}
 
 // /**
 //  * @brief Is the Clique Cover legitimate?
@@ -363,7 +363,14 @@ vector<string> big_datasets = {
     "new_snap_datasets/web-Google.txt"
 };
 
+string dataset = "snap_datasets/test1.txt";
+
 int main() {
+    Graph G(dataset);
+    run_checks(G);
+    cout << "size: " << G._nodes.size() << endl;
+
+    
     // if (INCLUDE_BIG_DATA) {
     //     datasets.insert(datasets.end(), big_datasets.begin(), big_datasets.end());
     // }

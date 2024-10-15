@@ -13,11 +13,12 @@ using namespace std;
 
 class Node {
     public:
-        Node(int id);
+        Node(int id, int index_in_graph);
         Node();
         
 
         int id();
+        int index; // the nodes index in the graph's node list
         vector<Edge*> get_edges(Graph &graph);
         vector<Node*> get_neighbors(Graph &graph);   // will be only for testing since adjacency list implemented
 

@@ -63,8 +63,9 @@ void Graph::construct(string filename) {
     this->get_data_sizes(file);
 
     // reserve neccesary space with the new sizes
-    this->_nodes = vector<Node*>(_num_nodes, nullptr);    // need to be able to set values via indexing in this range
-    this->_edges.reserve(this->_num_edges);               // just need to push into this range
+    // this->_nodes = vector<Node*>(_num_nodes, nullptr);  
+    // this->_nodes  
+    this->_edges.reserve(this->_num_edges);               
     
     //read in the data: push edge*s, assign node* to id spot
     this->fill_graph(file);
@@ -105,8 +106,6 @@ void Graph::get_data_sizes(ifstream& file) {
  * 
  * Does not include any self connections
  * 
- * WARNING: may break if nodes arent numbered from 0 to num_nodes.
- * WARNING: may break if there are nodes that aren't connected. 
  * 
  * @param file the ifstream after get_sizes has been run.
  */
@@ -117,43 +116,50 @@ void Graph::fill_graph(ifstream& file) {
     file >> temp; // From node
     file >> temp; // To node
 
+    unordered_map<int, int> id_to_index; 
+
     // get data
     int node1_id;
     int node2_id;
+    Node* node1;
+    Node* node2;
 
 
     while (file >> node1_id) {
         file >> node2_id;
 
+        // If there is a self connecting edge
         if (node1_id == node2_id) {
-            if (_nodes[node1_id] == nullptr) {
-                _nodes[node1_id] = new Node(node1_id);
+            if (id_to_index.find(node1_id) == id_to_index.end()) {
+                id_to_index[node1_id] = _nodes.size();
+                node1 = new Node(node1_id, _nodes.size());
+                _nodes.push_back(node1);
             }
             _num_edges --; 
             continue;
         }
 
-        //If more space is needed for nodes, resize: (Good indicator of error, caught by checksß)
-        if (node1_id >= _nodes.size()) {
-            _nodes.resize(node1_id+1);
-        }
-        if (node2_id >= _nodes.size()) {
-            _nodes.resize(node2_id +1);
-        }
-
         //If nodes haven't been created, create them
-        if (_nodes[node1_id] == nullptr) {
-            _nodes[node1_id] = new Node(node1_id);
+        if (id_to_index.find(node1_id) == id_to_index.end()) {
+                id_to_index[node1_id] = _nodes.size();
+                node1 = new Node(node1_id, _nodes.size());
+                _nodes.push_back(node1);
+        } else {
+            node1 = _nodes[id_to_index[node1_id]];
         }
-        if (_nodes[node2_id] == nullptr) {
-            _nodes[node2_id] = new Node(node2_id);
+        if (id_to_index.find(node2_id) == id_to_index.end()) {
+                id_to_index[node2_id] = _nodes.size();
+                node2 = new Node(node2_id, _nodes.size());
+                _nodes.push_back(node2);
+        } else {
+            node2 = _nodes[id_to_index[node2_id]];
         }
         
         // Add the edge
-        Edge* temp_edge;
+        Edge* edge;
         //if reversed edge hasn't been added already
         bool new_edge = true;
-        for (Node* neighbor : _nodes[node2_id]->neighbors) {
+        for (Node* neighbor : node2->neighbors) {
             if (neighbor->id() == node1_id) {
                 new_edge = false;
 
@@ -161,32 +167,32 @@ void Graph::fill_graph(ifstream& file) {
             }
         }
         if (new_edge) {
-            temp_edge = new Edge(_nodes[node1_id], _nodes[node2_id]);
-            _edges.push_back(temp_edge);
+            edge = new Edge(node1, node2);
+            _edges.push_back(edge);
         } else {
             _num_edges -= 1; //decrease num reported edges by 1
         }
         if (new_edge) {
 
         //Add the each node to the other adjacency neighbors list
-        _nodes[node1_id]->neighbors.push_back(_nodes[node2_id]);
-        _nodes[node2_id]->neighbors.push_back(_nodes[node1_id]);
+        node1->neighbors.push_back(node2);
+        node2->neighbors.push_back(node1);
 
         //Add the edge to each nodes adjacency edges list
-        _nodes[node1_id]->edges.push_back(temp_edge);
-        _nodes[node2_id]->edges.push_back(temp_edge);
+        node1->edges.push_back(edge);
+        node2->edges.push_back(edge);
 
         //Add each to each nodes adjacency Connection list
-        _nodes[node1_id]->connections.push_back(new Connection(temp_edge, _nodes[node2_id]));
-        _nodes[node2_id]->connections.push_back(new Connection(temp_edge, _nodes[node1_id]));
+        node1->connections.push_back(new Connection(edge, node2));
+        node2->connections.push_back(new Connection(edge, node1));
 
         //Add each to each nodes connection map
-        _nodes[node1_id]->connection_map[_nodes[node2_id]] = temp_edge;
-        _nodes[node2_id]->connection_map[_nodes[node1_id]] = temp_edge;
+        node1->connection_map[node2] = edge;
+        node2->connection_map[node1] = edge;
 
         //Add each node to eachother's neighbor set
-        _nodes[node1_id]->neighbor_set.insert(_nodes[node2_id]);
-        _nodes[node2_id]->neighbor_set.insert(_nodes[node1_id]);
+        node1->neighbor_set.insert(node2);
+        node2->neighbor_set.insert(node1);
 
         }
 
