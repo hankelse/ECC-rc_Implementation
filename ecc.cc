@@ -4,6 +4,7 @@
 #include "node.h"
 #include "edge.h"
 #include "clique.h"
+#include "fast_set.h"
 
 
 
@@ -68,8 +69,20 @@ bool ECC::check_solution () {
 ECC::ECC(string dataset_filepath) {
     _dataset_filepath = dataset_filepath;
     G = new Graph(dataset_filepath);
+
+
+    lookup_set1 = new Fast_set(G->_nodes.size());
+    lookup_set2 = new Fast_set(G->_nodes.size());
 }
 
+/**
+ * @brief Returns a pointer to the graph used
+ * 
+ * @return 
+ */
+Graph* ECC::graph() {
+    return G;
+}
 
 // ==== FRAMEWORK METHODS ==== //
 

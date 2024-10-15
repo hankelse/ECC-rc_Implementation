@@ -17,10 +17,12 @@
 #include <unordered_set>
 #include <gperftools/profiler.h>
 
+
 class Graph;
 class Node;
 class Edge;
 class Clique;
+class Fast_set;
 
 using namespace std;
 
@@ -30,11 +32,17 @@ using namespace std;
 class ECC {
 public:
     ECC() = delete;                 //No default constructor
-    ECC(string dataset_filepath);   //Builds ECC object for dataset
+    ECC(string dataset_filepath);   //Builds ECC object for dataset, and fast_set for lookups
 
     vector<Clique*>* run(string prof_out_filepath = "None");         //Runs the algorithm Returns a pointer to the clique_cover
 
     bool check_solution();
+
+    Fast_set* lookup_set1;
+    Fast_set* lookup_set2;
+
+    Graph* graph(); // Returns a pointer to the graph
+
 private:
     string _dataset_filepath;
 

@@ -264,70 +264,71 @@ bool run_checks(Graph& G) {
 //     } 
 // }
 
-// /**
-//  * @brief Runs algo on all datasets, then prints copyable data sequences for copy and paste to table
-//  * 
-//  * @param datasets 
-//  */
-// void data_on_all(vector<string> datasets) {
-//     vector<size_t> clique_stats;
-//     vector<size_t> time_stats;
-//     vector<size_t> edge_stats;
-//     vector<size_t> node_stats;
+/**
+ * @brief Runs algo on all datasets, then prints copyable data sequences for copy and paste to table
+ * 
+ * @param datasets 
+ */
+void data_on_all(vector<string> datasets) {
+    vector<size_t> clique_stats;
+    vector<size_t> time_stats;
+    vector<size_t> edge_stats;
+    vector<size_t> node_stats;
 
-//     for (string filename : datasets) {
-//         //make graph
-//         Graph G(filename);
+    for (string filename : datasets) {
+        //make graph
+        ECC solver(filename);
+        Graph* G = solver.graph();
 
-//         edge_stats.push_back(G._num_edges);
-//         node_stats.push_back(G._num_nodes);
-
-
-//         //start timer
-//         chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
-
-//         //run algorithm
-//         vector<Clique*> clique_cover;
-//         size_t k = ecc_rc(G, clique_cover);
-
-//         //Get the time passed in miliseconds
-//         chrono::steady_clock::time_point end_time = chrono::steady_clock::now();
-//         size_t runtime = chrono::duration_cast<chrono::milliseconds>(end_time - start_time).count();
+        edge_stats.push_back(G->_edges.size());
+        node_stats.push_back(G->_nodes.size());
 
 
-//         if (check_ECC(G, clique_cover)) {
-//             cout << "Algorithm found cover of G from: "<< filename <<" with \n\t" << k << " cliques \n\tin " << runtime << " miliseconds.\n" << endl;
-//             clique_stats.push_back(k);
-//             time_stats.push_back(runtime);
-//         } else {
-//             cout << "Algorithm did not cover all edges." << endl;
-//             clique_stats.push_back(-1);
-//             time_stats.push_back(-1);
-//         }
-//     }
-//     cout << "\nDATA for copy/paste!\n" << endl;
-//     cout << "\nDataset names:" << endl;
-//     for (int i = 0; i < datasets.size(); i++) {
-//         cout << datasets[i] << endl;
-//     }
-//     cout << "\nDataset nodes:" << endl;
-//     for (int i = 0; i < datasets.size(); i++) {
-//         cout << node_stats[i] << endl;
-//     }
-//     cout << "\nDataset edges:" << endl;
-//     for (int i = 0; i < datasets.size(); i++) {
-//         cout << edge_stats[i] << endl;
-//     }
-//     cout << "\nCliques:" << endl;
-//     for (int i = 0; i < datasets.size(); i++) {
-//         cout << clique_stats[i] << endl;
-//     }
-//     cout << "\nTimes:" << endl;
-//     for (int i = 0; i < datasets.size(); i++) {
-//         cout << time_stats[i] << endl;
-//     }
+        //start timer
+        chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
 
-// }
+        //run algorithm
+        vector<Clique*>* clique_cover = solver.run();
+        size_t k = clique_cover->size();
+
+        //Get the time passed in miliseconds
+        chrono::steady_clock::time_point end_time = chrono::steady_clock::now();
+        size_t runtime = chrono::duration_cast<chrono::milliseconds>(end_time - start_time).count();
+
+
+        if (solver.check_solution()) {
+            cout << "Algorithm found cover of G from: "<< filename <<" with \n\t" << k << " cliques \n\tin " << runtime << " miliseconds.\n" << endl;
+            clique_stats.push_back(k);
+            time_stats.push_back(runtime);
+        } else {
+            cout << "Algorithm did not cover all edges." << endl;
+            clique_stats.push_back(-1);
+            time_stats.push_back(-1);
+        }
+    }
+    cout << "\nDATA for copy/paste!\n" << endl;
+    cout << "\nDataset names:" << endl;
+    for (int i = 0; i < datasets.size(); i++) {
+        cout << datasets[i] << endl;
+    }
+    cout << "\nDataset nodes:" << endl;
+    for (int i = 0; i < datasets.size(); i++) {
+        cout << node_stats[i] << endl;
+    }
+    cout << "\nDataset edges:" << endl;
+    for (int i = 0; i < datasets.size(); i++) {
+        cout << edge_stats[i] << endl;
+    }
+    cout << "\nCliques:" << endl;
+    for (int i = 0; i < datasets.size(); i++) {
+        cout << clique_stats[i] << endl;
+    }
+    cout << "\nTimes:" << endl;
+    for (int i = 0; i < datasets.size(); i++) {
+        cout << time_stats[i] << endl;
+    }
+
+}
 
 /* SETTINGS */
 
@@ -366,35 +367,19 @@ vector<string> big_datasets = {
 string dataset = "snap_datasets/test1.txt";
 
 int main() {
-    Graph G(dataset);
-    run_checks(G);
-    cout << "size: " << G._nodes.size() << endl;
-
     
-    // if (INCLUDE_BIG_DATA) {
-    //     datasets.insert(datasets.end(), big_datasets.begin(), big_datasets.end());
-    // }
+    if (INCLUDE_BIG_DATA) {
+        datasets.insert(datasets.end(), big_datasets.begin(), big_datasets.end());
+    }
     
-    // // ProfilerStart("profile_output.prof");
+    ProfilerStart("profile_output.prof");
 
-    // // // run_on(datasets[10]);
 
-    // // run_on_all(datasets, DO_CHECKS);
-    // data_on_all(datasets);
+    data_on_all(datasets);
 
-    // // ProfilerStop();
+    ProfilerStop();
 
-    // // run_on_profile(big_datasets[3]);
-    // // run_on_profile(big_datasets[5]);
-    // // run_on_profile(big_datasets[5]);
-
-    // return 0;
-    // ECC solver("snap_datasets/clique.txt");
-    ECC solver("snap_datasets/ca-AstroPh.txt");
-    // ECC solver("snap_datasets/test2.txt");
-    vector<Clique*>* cc = solver.run();
-    cout << cc->size() << endl;
-    cout << solver.check_solution() << endl;
+    return 0;
 }
 
 /*Running with gperf
