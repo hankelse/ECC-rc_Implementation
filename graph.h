@@ -28,11 +28,11 @@ class Graph {
 
 
         //ECC-rc methods
-        Edge* select_uncovered_edge(int& previous_index);
-        Clique* find_clique_of(Edge* edge, size_t& edges_covered);
-        Clique* demo_find_clique_of(Edge* edge, size_t& edges_covered);
-        Node* extract_node(vector<Node*>& candidate_set, Clique* clique);
-        Node* extract_node(unordered_set<Node*>& candidate_set, Clique* clique);
+        // Edge* select_uncovered_edge(int& previous_index);
+        // Clique* find_clique_of(Edge* edge, size_t& edges_covered);
+        // Clique* demo_find_clique_of(Edge* edge, size_t& edges_covered);
+        // Node* extract_node(vector<Node*>& candidate_set, Clique* clique);
+        // Node* extract_node(unordered_set<Node*>& candidate_set, Clique* clique);
 
         Edge* are_connected(Node* node1, Node* node2);
         Edge* get_edge(Node* node1, Node* node2);  // synonymous to are_connected
@@ -42,10 +42,10 @@ class Graph {
         vector<Node*> edges_to_nodes(vector<Edge*> edges);
         vector<Edge*> nodes_to_edges(vector<Node*> nodes);
 
-        vector<Node*> node_vector_intersect(vector<Node*>&, vector<Node*>&);
-        unordered_set<Node *> node_set_intersect(unordered_set<Node *>&, unordered_set<Node *>&);
-        unordered_set<Node *> trim_set(unordered_set<Node *> set_1, vector<Node*>& vec_2);
-        void trim_candidates(unordered_set<Node *>& candidates, unordered_set<Node *>&);
+        // vector<Node*> node_vector_intersect(vector<Node*>&, vector<Node*>&);
+        // unordered_set<Node *> node_set_intersect(unordered_set<Node *>&, unordered_set<Node *>&);
+        // unordered_set<Node *> trim_set(unordered_set<Node *> set_1, vector<Node*>& vec_2);
+        // void trim_candidates(unordered_set<Node *>& candidates, unordered_set<Node *>&);
 
 
     private:

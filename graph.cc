@@ -197,22 +197,6 @@ void Graph::fill_graph(ifstream& file) {
 
 }
 
-/**
- * @brief selects an uncovered edge in G starting where it left off.
- * 
- * @param previous_index 
- * @return Edge* 
- */
-Edge* Graph::select_uncovered_edge(int& previous_index) {
-    for (int i = previous_index; i < _num_edges; i++) {
-        if (!_edges[i]->is_covered()) {
-            previous_index = i;
-            return _edges[previous_index];
-        }
-    }
-    cerr << "Uh Oh!  Got to end of select_uncovered_edge!" << endl;
-    return nullptr;
-}
 
 
 // /**
@@ -221,120 +205,46 @@ Edge* Graph::select_uncovered_edge(int& previous_index) {
 //  * @param edge_uv 
 //  * @return vector<Edge*> 
 //  */
-// Clique* Graph::demo_find_clique_of(Edge* edge, size_t& edges_covered) {
+// Clique* Graph::find_clique_of(Edge* edge, size_t& edges_covered) {
 
-//     //R ← {u, v}
+//     //R ← {u, v}  create the new clique with the edge
+//     Clique* clique = new Clique(edge, *this, edges_covered);
 //     Node* u = edge->_node1;
 //     Node* v = edge->_node2;
-//     Clique* clique = new Clique(edge, *this, edges_covered);
+
+//     //save the clique (for deconstruction)
 //     _cliques.push_back(clique); 
 
 //     //P ← N(u)∩ N(v)
-//     vector<Node*> candidates = node_set_intersect(u->neighbors, v->neighbors);
-//     cout << "\t a) Candidates = ";
-//     if (candidates.size() > 10 ) {
-//         cout << "[" << *candidates[0] << "..." << *candidates[candidates.size()-1] << "]" << endl;
-//      } else {
+//     unordered_set<Node*> candidates = node_set_intersect(u->neighbor_set, v->neighbor_set);
 
-//         cout << candidates << endl;
-//     }
+//     // vector<Node*> candidates = node_set_intersect(u->neighbors, v->neighbors);
+
+//     // vector<Node*> candidates_vector = node_vector_intersect(u->neighbors, v->neighbors);
+//     // unordered_set<Node*> candidates(candidates_vector.begin(), candidates_vector.end());
 
 //     // z ← EXTRACT NODE(P)
+//     // Node* new_member = extract_node(candidates, clique);
 //     Node* new_member = extract_node(candidates, clique);
-//     if (new_member == nullptr) {
-//         cout << "\t b) Extracted node: nullptr" << endl;
-//     } else {    
-//         cout << "\t b) Extracted node: " << *new_member << endl;
-//     }
 
-//     // while z != null do
+//     // while there are more potential additions:
 //     while (new_member != nullptr) {
 //         //add new_node to clique (COVERS EDGES)
 //         clique->add_node(new_member, *this, edges_covered);
-//         cout << "\t c) Added " << *new_member << "to Clique: " << *clique << endl << endl;
 
 //         // Trim candidates: P ← P ∩ N(z)
-//         vector<Node*> new_candidates = node_set_intersect(candidates, new_member->neighbors);
-//         // for (Node* node : new_member->neighbors) {
-//         //     // if node in candidates, put in new candidates
+//         // candidates = node_set_intersect(candidates, new_member->neighbors);
+//         // candidates = trim_set(candidates, new_member->neighbors);
+//         // trim_candidates(candidates, new_member->neighbor_set);
+//         candidates = node_set_intersect(candidates, new_member->neighbor_set);
 
-//         //     for (Node* candidate : candidates) {
-//         //         if (candidate->id() == node->id()) {
-//         //             new_candidates.push_back(node);
-//         //             continue;
-//         //         }
-//         //     }
-//         // }
-//         candidates = new_candidates;
-//         cout << "\t a) Candidates reduced: ";
-//         if (candidates.size() > 10 ) {
-//             cout << "[" << *candidates[0] << "..." << *candidates[candidates.size()-1] << "]  (" << candidates.size() << ")" << endl;
-//         } else {
-
-//             cout << candidates << endl;
-//         }
 //         // Extract next node
+//         // new_member = extract_node(candidates, clique);
 //         new_member = extract_node(candidates, clique);
 
-//         if (new_member == nullptr) {
-//             cout << "\t b) Extracted node: nullptr" << endl;
-//         } else {    
-//             cout << "\t b) Extracted node: " << *new_member << endl;
-//         }
-        
-
 //     }
-    
 //     return clique;
 // }
-
-
-/**
- * @brief Creates a Clique object representing the clique with the edge
- * 
- * @param edge_uv 
- * @return vector<Edge*> 
- */
-Clique* Graph::find_clique_of(Edge* edge, size_t& edges_covered) {
-
-    //R ← {u, v}  create the new clique with the edge
-    Clique* clique = new Clique(edge, *this, edges_covered);
-    Node* u = edge->_node1;
-    Node* v = edge->_node2;
-
-    //save the clique (for deconstruction)
-    _cliques.push_back(clique); 
-
-    //P ← N(u)∩ N(v)
-    unordered_set<Node*> candidates = node_set_intersect(u->neighbor_set, v->neighbor_set);
-
-    // vector<Node*> candidates = node_set_intersect(u->neighbors, v->neighbors);
-
-    // vector<Node*> candidates_vector = node_vector_intersect(u->neighbors, v->neighbors);
-    // unordered_set<Node*> candidates(candidates_vector.begin(), candidates_vector.end());
-
-    // z ← EXTRACT NODE(P)
-    // Node* new_member = extract_node(candidates, clique);
-    Node* new_member = extract_node(candidates, clique);
-
-    // while there are more potential additions:
-    while (new_member != nullptr) {
-        //add new_node to clique (COVERS EDGES)
-        clique->add_node(new_member, *this, edges_covered);
-
-        // Trim candidates: P ← P ∩ N(z)
-        // candidates = node_set_intersect(candidates, new_member->neighbors);
-        // candidates = trim_set(candidates, new_member->neighbors);
-        // trim_candidates(candidates, new_member->neighbor_set);
-        candidates = node_set_intersect(candidates, new_member->neighbor_set);
-
-        // Extract next node
-        // new_member = extract_node(candidates, clique);
-        new_member = extract_node(candidates, clique);
-
-    }
-    return clique;
-}
 
 // /**
 //  * @brief Return any vertex z (if any) yielding maximum size |N_u(z) ∩ R| > 0; otherwise, return z = null.
@@ -377,95 +287,95 @@ Clique* Graph::find_clique_of(Edge* edge, size_t& edges_covered) {
 //     return best;
 // }
 
-Node* Graph::extract_node(unordered_set<Node*>& potential_additions, Clique* clique) {
-    //If no potential_additions
-    if (potential_additions.empty()) {
-        return nullptr;
-    }
+// Node* Graph::extract_node(unordered_set<Node*>& potential_additions, Clique* clique) {
+//     //If no potential_additions
+//     if (potential_additions.empty()) {
+//         return nullptr;
+//     }
 
-    // Create a vector to track the number of uncovered connections between each potential node and the clique nodes
-    unordered_map<Node*, int> uncovered_counts;
+//     // Create a vector to track the number of uncovered connections between each potential node and the clique nodes
+//     unordered_map<Node*, int> uncovered_counts;
 
-    // Iterate over the clique's nodes and check for uncovered edges
-    for (Node* clique_node : clique->nodes) {
-        for (Node* potential : potential_additions) {
-            // Use are_connected() to check if the node is connected to the clique node and if the edge is uncovered
-            Edge* connection = this->are_connected(potential, clique_node);
-            if (connection != nullptr && !connection->is_covered()) {
-                uncovered_counts[potential] += 1;
-            }
-        }
-    }
+//     // Iterate over the clique's nodes and check for uncovered edges
+//     for (Node* clique_node : clique->nodes) {
+//         for (Node* potential : potential_additions) {
+//             // Use are_connected() to check if the node is connected to the clique node and if the edge is uncovered
+//             Edge* connection = this->are_connected(potential, clique_node);
+//             if (connection != nullptr && !connection->is_covered()) {
+//                 uncovered_counts[potential] += 1;
+//             }
+//         }
+//     }
 
-    // Find the node with the maximum uncovered connections
-    Node* best_node = nullptr;
-    int best_score = 0;
+//     // Find the node with the maximum uncovered connections
+//     Node* best_node = nullptr;
+//     int best_score = 0;
     
-    for (const auto& [node, score] : uncovered_counts) {
-        if (score > best_score) {
-            best_node = node;
-            best_score = score;
-        }
-    }
+//     for (const auto& [node, score] : uncovered_counts) {
+//         if (score > best_score) {
+//             best_node = node;
+//             best_score = score;
+//         }
+//     }
 
-    return best_node;
-}
+//     return best_node;
+// }
 
 
 
-/**
- * @brief  Even Faster! Given an unordered_set and vector, returns the elements in both
- * @param set_1
- * @param vec_2
- * @return unordered_set<Node *> new set
- */
-unordered_set<Node *> Graph::trim_set(unordered_set<Node *> set_1, vector<Node*>& vec_2) {
-    unordered_set<Node*> result;
-    for (Node* node : vec_2) {
-        if (set_1.count(node) > 0) {
-            result.insert(node);
-        }
-    }
-    return result;
-}
+// /**
+//  * @brief  Even Faster! Given an unordered_set and vector, returns the elements in both
+//  * @param set_1
+//  * @param vec_2
+//  * @return unordered_set<Node *> new set
+//  */
+// unordered_set<Node *> Graph::trim_set(unordered_set<Node *> set_1, vector<Node*>& vec_2) {
+//     unordered_set<Node*> result;
+//     for (Node* node : vec_2) {
+//         if (set_1.count(node) > 0) {
+//             result.insert(node);
+//         }
+//     }
+//     return result;
+// }
 
-void Graph::trim_candidates(unordered_set<Node *>& candidates, unordered_set<Node *>& constraints){
-    if (candidates.size() >= constraints.size()) {
-        candidates = node_set_intersect(constraints, candidates);
-        return;
-    }
+// void Graph::trim_candidates(unordered_set<Node *>& candidates, unordered_set<Node *>& constraints){
+//     if (candidates.size() >= constraints.size()) {
+//         candidates = node_set_intersect(constraints, candidates);
+//         return;
+//     }
 
-    // Iterate over the candidates and remove any that are not in the constraints
-    for (unordered_set<Node*>::const_iterator it = candidates.begin(); it != candidates.end(); ) {
-        // If the candidate is not in constraints, erase it from candidates
-        if (constraints.find(*it) == constraints.end()) {
-            it = candidates.erase(it);  // Erase returns the next iterator
-        } else {
-            ++it;  // Move to the next element if not erased
-        }
-    }
-}
+//     // Iterate over the candidates and remove any that are not in the constraints
+//     for (unordered_set<Node*>::const_iterator it = candidates.begin(); it != candidates.end(); ) {
+//         // If the candidate is not in constraints, erase it from candidates
+//         if (constraints.find(*it) == constraints.end()) {
+//             it = candidates.erase(it);  // Erase returns the next iterator
+//         } else {
+//             ++it;  // Move to the next element if not erased
+//         }
+//     }
+// }
 
  
-/**
- * @brief  Faster! Given two sets of nodes, returns the elements in both
- * @param vec_1
- * @param vec_2
- * @return vector<Node*> 
- */
-vector<Node*> Graph::node_vector_intersect(vector<Node*>& vec_1, vector<Node*>& vec_2) {
+// /**
+//  * @brief  Faster! Given two sets of nodes, returns the elements in both
+//  * @param vec_1
+//  * @param vec_2
+//  * @return vector<Node*> 
+//  */
+// vector<Node*> Graph::node_vector_intersect(vector<Node*>& vec_1, vector<Node*>& vec_2) {
 
-    unordered_set<Node *> set_1(vec_1.begin(), vec_1.end()); //O(n)
-    vector<Node*> intersection;
+//     unordered_set<Node *> set_1(vec_1.begin(), vec_1.end()); //O(n)
+//     vector<Node*> intersection;
 
-    for (Node* node : vec_2) {
-        if (set_1.count(node) > 0) {
-            intersection.push_back(node);
-        }
-    }
+//     for (Node* node : vec_2) {
+//         if (set_1.count(node) > 0) {
+//             intersection.push_back(node);
+//         }
+//     }
 
-    return intersection;
-}
+//     return intersection;
+// }
 
 // unordered_set<Node *> Graph::node_set_intersect(unordered_set<Node *>& set_1, unordered_set<Node *>& set_2) {
 //     // for (Node* node : set_2) {
@@ -496,74 +406,22 @@ vector<Node*> Graph::node_vector_intersect(vector<Node*>& vec_1, vector<Node*>& 
 //     return result;
 // }
 
-unordered_set<Node *> Graph::node_set_intersect(unordered_set<Node *>& set_1, unordered_set<Node *>& set_2) {
+// unordered_set<Node *> Graph::node_set_intersect(unordered_set<Node *>& set_1, unordered_set<Node *>& set_2) {
 
-    //Recursively run with smaller first
-    if (set_1.size() > set_2.size()) {
-        return node_set_intersect(set_2, set_1);
-    }
+//     //Recursively run with smaller first
+//     if (set_1.size() > set_2.size()) {
+//         return node_set_intersect(set_2, set_1);
+//     }
 
-    unordered_set<Node*> result;
+//     unordered_set<Node*> result;
     
-    // Iterate over the smaller set and check for each node in larger
-    for (Node* node : set_1) {
-        if (set_2.count(node) > 0) {
-            result.insert(node);
-        }
-    }
-    return result;
-}
-
-// /**
-//  * @brief Given two sets of nodes, returns the elements in both
-//  * Relies on nodes starting at 0 and ending at num_nodes
-//  * @param set_1
-//  * @param set_2
-//  * @return vector<Node*> 
-//  */
-// vector<Node*> Graph::node_set_intersect(vector<Node*> set_1, vector<Node*> set_2) {
-//     vector<bool> has_been_added(_nodes.size(), false);
-//     vector<Node*> intersection;
-
-//     for (Node* node_1 : set_1) {
-
-//         for (Node* node_2 : set_2) {
-
-//             if (node_1->id() == node_2->id()) {
-//                 if (!has_been_added[node_1->id()]) {
-//                     intersection.push_back(node_1);
-//                     has_been_added[node_1->id()] = 1;
-//                     continue;
-//                 }
-                
-
-//             }
-
+//     // Iterate over the smaller set and check for each node in larger
+//     for (Node* node : set_1) {
+//         if (set_2.count(node) > 0) {
+//             result.insert(node);
 //         }
 //     }
-//     return intersection;
-// }
-
-// /**
-//  * @brief Checks if two nodes are connected and returns the connecting edge if they are
-//  * 
-//  * @param node1 
-//  * @param node2 
-//  * @return Edge* 
-//  */
-// Edge* Graph::are_connected(Node* node1, Node* node2) {
-//     if (node1 == nullptr | node2 == nullptr) {
-//         cerr << "PASSED NULLPTR TO are_connected" << endl;
-//         return nullptr;
-//     }
-//     vector<Connection*> n1_connects = node1->connections;
-//     for (int i = 0; i < n1_connects.size(); i++) {
-//         Connection* connection = n1_connects[i];
-//         if (*connection->neighbor == *node2) {
-//             return connection->edge;
-//         }
-//     }
-//     return nullptr;
+//     return result;
 // }
 
 /**
@@ -599,47 +457,47 @@ Edge* Graph::get_edge(Node* node1, Node* node2) {
     return are_connected(node1, node2);
 }
 
-/**
- * @brief NOT IMPLEMENTED- Given a vector of edges get the nodes in the list
- * Used for the confusion between functions that need nodes and functions that need edges
- * 
- * @param edges 
- * @return vector<Node*> 
- */
-vector<Node*> Graph::edges_to_nodes(vector<Edge*> edges) {
-    vector<Node*> result;
-    for (int i = 0; i < edges.size(); i++) {
-        Edge* edge = edges[i];
+// /**
+//  * @brief NOT IMPLEMENTED- Given a vector of edges get the nodes in the list
+//  * Used for the confusion between functions that need nodes and functions that need edges
+//  * 
+//  * @param edges 
+//  * @return vector<Node*> 
+//  */
+// vector<Node*> Graph::edges_to_nodes(vector<Edge*> edges) {
+//     vector<Node*> result;
+//     for (int i = 0; i < edges.size(); i++) {
+//         Edge* edge = edges[i];
 
-        bool node1_already_added = false;
-        bool node2_already_added = false;
+//         bool node1_already_added = false;
+//         bool node2_already_added = false;
 
-        for (int j = 0; j < result.size(); j++) {
-            if (*result[j] == *edge->_node1) {
-                node1_already_added = true;
-            } else if (*result[j] == *edge->_node2) {
-                node2_already_added = true;
-            }
-            if (!node1_already_added) {
-                result.push_back(edge->_node1);
-            }
-            if (!node2_already_added) {
-                result.push_back(edge->_node2);
-            }
+//         for (int j = 0; j < result.size(); j++) {
+//             if (*result[j] == *edge->_node1) {
+//                 node1_already_added = true;
+//             } else if (*result[j] == *edge->_node2) {
+//                 node2_already_added = true;
+//             }
+//             if (!node1_already_added) {
+//                 result.push_back(edge->_node1);
+//             }
+//             if (!node2_already_added) {
+//                 result.push_back(edge->_node2);
+//             }
 
-        }
+//         }
 
-    }
-    return {nullptr};
-}
+//     }
+//     return {nullptr};
+// }
 
-/**
- * @brief NOT IMPLEMENTED- Given a vector of nodes get the all edges in the list
- * Used for the confusion between functions that need nodes and functions that need edges
- * 
- * @param nodes 
- * @return vector<Edge*> 
- */
-vector<Edge*> Graph::nodes_to_edges(vector<Node*> nodes) {
-    return {nullptr};
-}
+// /**
+//  * @brief NOT IMPLEMENTED- Given a vector of nodes get the all edges in the list
+//  * Used for the confusion between functions that need nodes and functions that need edges
+//  * 
+//  * @param nodes 
+//  * @return vector<Edge*> 
+//  */
+// vector<Edge*> Graph::nodes_to_edges(vector<Node*> nodes) {
+//     return {nullptr};
+// }
