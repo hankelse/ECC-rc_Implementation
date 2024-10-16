@@ -14,10 +14,7 @@
  *
  * @return 
  */
-vector<Clique*>* ECC::run(string prof_out_filepath) {
-    if (prof_out_filepath != "None") {
-        ProfilerStart("profile_output.prof");
-    }
+vector<Clique*>* ECC::run() {
 
 
     num_edges_covered = 0;
@@ -38,7 +35,6 @@ vector<Clique*>* ECC::run(string prof_out_filepath) {
         clique_cover.push_back(found_clique);
 
     }
-    ProfilerStop();
     return &clique_cover;
 }
 
@@ -59,17 +55,28 @@ bool ECC::check_solution () {
 }
 
 /**
- * @brief Constructor of ECC Object: Builds graph from file
+ * @brief Constructor of ECC Object: Builds graph from filepath
  * 
  *
  * @param dataset_filepath filepath of dataset
  */
 ECC::ECC(string dataset_filepath) {
-    _dataset_filepath = dataset_filepath;
+    dataset_filepath = dataset_filepath;
     G = new Graph(dataset_filepath);
 
 
 }
+
+/**
+ * @brief Constructor of ECC Object: Given G
+ * 
+ *
+ * @param G 
+ */
+ECC::ECC(Graph& Graph) {
+    G = &Graph;
+}
+
 
 /**
  * @brief Returns a pointer to the graph used

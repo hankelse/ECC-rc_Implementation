@@ -15,7 +15,6 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
-#include <gperftools/profiler.h>
 
 
 class Graph;
@@ -32,19 +31,20 @@ using namespace std;
 class ECC {
 public:
     ECC();                 //No default constructor
-    ECC(string dataset_filepath);   //Builds ECC object for dataset, and fast_set for lookups
+    ECC(string dataset_filepath);   //Builds ECC object for dataset, and G from dataset
+    ECC(Graph& G);            //Builds ECC object for dataset, given G
 
-    vector<Clique*>* run(string prof_out_filepath = "None");         //Runs the algorithm Returns a pointer to the clique_cover
+    vector<Clique*>* run();         //Runs the algorithm Returns a pointer to the clique_cover
 
     bool check_solution();
 
     const Graph* graph(); // Returns a pointer to the graph
 
+    string dataset_filepath;
 private:
     
 
 protected:
-    string _dataset_filepath;
     //Member Variables:
     Graph* G = nullptr; //Constructed with Object
     vector<Clique*> clique_cover;

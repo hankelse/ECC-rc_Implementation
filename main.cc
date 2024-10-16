@@ -15,6 +15,11 @@ using namespace std;
 #include "connection.h"
 #include "clique.h"
 #include <gperftools/profiler.h>
+#include <chrono>
+#include <thread>
+
+
+
 
 
 // /**
@@ -259,7 +264,25 @@ void data_on_all(vector<string> datasets) {
 
 }
 
+template<typename ECC_CLASS>
+void profile_on_all(vector<string> datasets, const char* profile_output_path) {
+    //Make all objects before starting profile
+    cout << "Building solver objects" << endl;
+    vector<ECC_CLASS> solvers;
+    for (string dataset : datasets) {
+        cout << "\t " << dataset << endl;
+        solvers.push_back(ECC_CLASS(dataset));
+    }
 
+    ProfilerStart(profile_output_path);
+    // this_thread::sleep_for(chrono::seconds(1));
+    for (ECC_CLASS solver : solvers) {
+        cout << "Running on " << solver.dataset_filepath << endl;
+        cout << "\t->" << solver.run()->size() << " cliques" << endl;;
+    }
+    ProfilerStop();
+
+}
 
 
 vector<string> datasets = {
@@ -304,9 +327,12 @@ int main() {
         datasets.insert(datasets.end(), big_datasets.begin(), big_datasets.end());
     }
     
-    ProfilerStart("profile_output.prof");
-    data_on_all<ECC_FS>(datasets);
-    ProfilerStop();
+    /*Profiling all the datasets */
+    // profile_on_all<ECC_FS>(datasets, PROFILER_OUT_PATH);
+
+    // /* Getting data on all the datasets*/
+    data_on_all<ECC_FS> (datasets);
+    // data_on_all<ECC> (datasets);
 
     // /* Looking at one in particular */
     // profile_on<ECC_FS>(datasets[8], PROFILER_OUT_PATH);

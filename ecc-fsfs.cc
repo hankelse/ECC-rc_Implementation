@@ -1,4 +1,4 @@
-#include "ecc-fs.h"
+#include "ecc-fsfs.h"
 
 #include "graph.h"
 #include "node.h"
@@ -8,16 +8,16 @@
 #include <gperftools/profiler.h>
 
 
-ECC_FS::ECC_FS(string ds_filepath) : ECC(ds_filepath) {
-    dataset_filepath = ds_filepath;
-    G = new Graph(ds_filepath);
+ECC_FSFS::ECC_FSFS(string dataset_filepath) : ECC_FS(dataset_filepath) {
+    dataset_filepath = dataset_filepath;
+    G = new Graph(dataset_filepath);
 
     // add lookup fastsets
-    lookup_set = new Fast_set(G->_nodes.size());
+    candidates_fs = new Fast_set(G->_nodes.size());
     // lookup_set2 = new Fast_set(G->_nodes.size());
 }
 
-vector<Node *> ECC_FS::node_set_intersect(const vector<Node *>& vec_1, const vector<Node*>& vec_2) {
+vector<Node *> ECC_FSFS::node_set_intersect(const vector<Node *>& vec_1, const vector<Node*>& vec_2) {
     if (vec_1.size() < vec_2.size()) {
         return node_set_intersect(vec_2, vec_1);
     }
@@ -39,7 +39,7 @@ vector<Node *> ECC_FS::node_set_intersect(const vector<Node *>& vec_1, const vec
     return intersection;
 }
 
-void ECC_FS::trim_candidates(std::vector<Node*>& candidates, const std::vector<Node*>& trimming_vec) {
+void ECC_FSFS::trim_candidates(std::vector<Node*>& candidates, const std::vector<Node*>& trimming_vec) {
     // Clear the lookup set
     lookup_set->clear();
 
@@ -57,7 +57,7 @@ void ECC_FS::trim_candidates(std::vector<Node*>& candidates, const std::vector<N
 }
 
 
-Clique* ECC_FS::find_clique_of(Edge* edge) {
+Clique* ECC_FSFS::find_clique_of(Edge* edge) {
 
     //R ← {u, v}  create the new clique with the edge
     Clique* clique = new Clique(edge, *G, num_edges_covered);
@@ -101,7 +101,7 @@ Clique* ECC_FS::find_clique_of(Edge* edge) {
  * @param clique 
  * @return 
  */
-Node* ECC_FS::extract_node(vector<Node*>& potential_additions, Clique* clique) {
+Node* ECC_FSFS::extract_node(vector<Node*>& potential_additions, Clique* clique) {
 
     //If no potential_additions
     if (potential_additions.empty()) {

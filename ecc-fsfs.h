@@ -16,7 +16,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "ecc.h"
+#include "ecc-fs.h"
 
 
 class Graph;
@@ -27,15 +27,15 @@ class Fast_set;
 
 using namespace std;
 
-#ifndef ECC_FS_H
-#define ECC_FS_H
+#ifndef ECC_FSFS_H
+#define ECC_FSFS_H
 
-class ECC_FS : public ECC{
+class ECC_FSFS : public ECC_FS{
 public:
-    ECC_FS() = delete;                 //No default constructor
-    ECC_FS(string dataset_filepath); // calls parent constructor 
+    ECC_FSFS() = delete;                 //No default constructor
+    ECC_FSFS(string dataset_filepath); // calls parent constructor 
 
-    Fast_set* lookup_set;
+    Fast_set* candidates_fs;
 protected:
     //new method
     virtual void trim_candidates(vector<Node *>& candidates, const vector<Node*>& trimming_vec);
