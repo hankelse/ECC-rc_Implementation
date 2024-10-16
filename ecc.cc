@@ -4,8 +4,6 @@
 #include "node.h"
 #include "edge.h"
 #include "clique.h"
-#include "fast_set.h"
-
 
 
 // ==== PUBLIC METHODS ==== //
@@ -71,8 +69,6 @@ ECC::ECC(string dataset_filepath) {
     G = new Graph(dataset_filepath);
 
 
-    lookup_set1 = new Fast_set(G->_nodes.size());
-    lookup_set2 = new Fast_set(G->_nodes.size());
 }
 
 /**
@@ -80,7 +76,7 @@ ECC::ECC(string dataset_filepath) {
  * 
  * @return 
  */
-Graph* ECC::graph() {
+const Graph* ECC::graph() {
     return G;
 }
 

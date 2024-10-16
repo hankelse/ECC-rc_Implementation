@@ -39,6 +39,6 @@ class Node {
     
 ostream& operator<<(ostream& os, Node& node);
 
-bool operator==(Node& n1, Node& n2);
+// bool operator==(Node& n1, Node& n2);
 
 #endif

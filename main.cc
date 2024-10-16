@@ -6,6 +6,7 @@
 using namespace std;
 
 #include "ecc.h"
+#include "ecc-fs.h"
 #include "io.h"
 #include "node.h"
 #include "edge.h"
@@ -153,122 +154,50 @@ bool run_checks(Graph& G) {
 
 // }
 
-// /**
-//  * @brief Runs full algorithm on a dataset. Measures running time and checks correctness.
-//  * @param filename the filename of the dataset to run on.
-//  */
-// void run_on_profile(string filename) {
+/**
+ * @brief Runs full algorithm on a dataset. Measures running time and checks correctness.
+ * @param filename the filename of the dataset to run on.
+ */
+template<typename ECC_CLASS>
+void profile_on(string filename, const char* profile_output_path) {
 
-//     cout << "\nRunning ECC on " << filename << "." << endl;
-    
-
-
-//     Graph G(filename);
-    
-//     //Save the starting time of the algorithm
-//     chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
-
-//     cout << "\tNodes: " << G._num_nodes << endl;
-//     cout << "\tEdges: " << G._num_edges << endl;
-
-//     ProfilerStart("profile_output.prof");
-
-//     vector<Clique*> clique_cover;
-//     size_t k = ecc_rc(G, clique_cover);
-
-//     ProfilerStop();
-
-//     //Get the time passed in miliseconds
-//     chrono::steady_clock::time_point end_time = chrono::steady_clock::now();
-//     size_t runtime = chrono::duration_cast<chrono::milliseconds>(end_time - start_time).count();
-    
+    ECC_CLASS solver(filename);
+    const Graph* G = solver.graph();
 
 
-//     if (check_ECC(G, clique_cover)) {
-//         cout << "Algorithm found cover of G with \n\t" << k << " cliques \n\tin " << runtime << " miliseconds.\n" << endl;
-//     } else {
-//         cout << "Algorithm did not cover all edges." << endl;
-//     }
-    
+
+    //start timer
+    chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
+    ProfilerStart(profile_output_path);
+
+    //run algorithm
+    vector<Clique*>* clique_cover = solver.run();
+
+    ProfilerStop();
+    size_t k = clique_cover->size();
+
+    //Get the time passed in miliseconds
+    chrono::steady_clock::time_point end_time = chrono::steady_clock::now();
+    size_t runtime = chrono::duration_cast<chrono::milliseconds>(end_time - start_time).count();
 
 
-// }
+    if (solver.check_solution()) {
+        cout << "Algorithm found cover of G from: "<< filename <<" with \n\t" << k << " cliques \n\tin " << runtime << " miliseconds.\n" << endl;
+    } else {
+        cout << "Algorithm did not cover all edges." << endl;
+    }
 
 
-// // void run_on_demo(string filename) {
 
-// //     cout << "\nRunning ECC demo on " << filename << "." << endl;
-// //     time_t ecc_start = time(NULL);
-// //     Graph G(filename);
+}
 
-// //     cout << "\tNodes: " << G._num_nodes << endl;
-// //     cout << "\tEdges: " << G._num_edges << endl;
-
-// //     vector<Clique*> clique_cover;
-// //     size_t k = demo_ecc_rc(G, clique_cover);
-
-// //     time_t ecc_end = time(NULL);
-
-// //     double runtime = difftime(ecc_end, ecc_start);
-// //     cout << "Algorithm found cover of G with \n\t" << k << " cliques \n\tin " << runtime << " seconds.\n" << endl;
-// // }
-
-// /**
-//  * @brief Runs run_on on a list of filenames
-//  * If do_checks, first checks if all the data is imported correctly, 
-//  * then runs on correctly imported data.
-//  * 
-//  * @param datasets list of datasets to run on
-//  * @param do_checks bool for if graphs should be checked
-//  */
-// void run_on_all(vector<string> datasets, bool do_checks) {
-//     //Run checks on each dataset and then report and exclude ones that don't pass
-//     if (do_checks) {
-//         vector<string> properly_imported;
-//         vector<string> improperly_imported;
-
-//         //Check whether or not dataset was properly imported and put in corresponding list
-//         for (string filepath : datasets) {
-//             Graph G(filepath);
-//             if(run_checks(G)) {
-//                 cout << filepath << " is being imported correctly!" << endl;
-//                 properly_imported.push_back(filepath);
-//                 continue;
-//             }
-//             cout << filepath << " is NOT being imported correctly." << endl;
-//             improperly_imported.push_back(filepath);
-//         }
-
-//         //Report the results
-//         cout << "Properly Imported: "  << endl;
-//         for (string filename : properly_imported) {
-//             cout << "\t - " << filename << endl;
-//         }
-
-//         cout << "NOT Properly Imported: "  << endl;
-//         for (string filename : improperly_imported) {
-//             cout << "\t - " << filename << endl;
-//         }
-//         if (improperly_imported.size() == 0) {
-//             cout << "\t None!" << endl;
-//         }
-//         datasets = properly_imported;
-
-//         cout << "\nPress ENTER to continue: Will run algorithm on " << properly_imported.size() << " properly imported graphs." << endl;
-//         cin.get();
-//      }
-
-
-//     for (string filepath : datasets) {
-//         run_on(filepath);
-//     } 
-// }
 
 /**
  * @brief Runs algo on all datasets, then prints copyable data sequences for copy and paste to table
  * 
  * @param datasets 
  */
+template<typename ECC_CLASS>
 void data_on_all(vector<string> datasets) {
     vector<size_t> clique_stats;
     vector<size_t> time_stats;
@@ -277,8 +206,8 @@ void data_on_all(vector<string> datasets) {
 
     for (string filename : datasets) {
         //make graph
-        ECC solver(filename);
-        Graph* G = solver.graph();
+        ECC_CLASS solver(filename);
+        const Graph* G = solver.graph();
 
         edge_stats.push_back(G->_edges.size());
         node_stats.push_back(G->_nodes.size());
@@ -330,12 +259,7 @@ void data_on_all(vector<string> datasets) {
 
 }
 
-/* SETTINGS */
 
-string const DATASET_PATH = "datasets/";
-bool const DO_CHECKS = false;
-bool const INCLUDE_BIG_DATA = true;
-string const PROFILER_OUT_PATH = "profile_output.prof";
 
 
 vector<string> datasets = {
@@ -347,7 +271,7 @@ vector<string> datasets = {
 "snap_datasets/cit-HepPh.txt", //[5]
 "snap_datasets/cit-HepTh.txt",
 "snap_datasets/email-Enron.txt",
-"snap_datasets/email-EuAll.txt",
+"snap_datasets/email-EuAll.txt", //[8]
 "snap_datasets/p2p-Gnutella31.txt",
 "snap_datasets/soc-Slashdot0811.txt", //[10]
 "snap_datasets/soc-Slashdot0902.txt",
@@ -364,7 +288,15 @@ vector<string> big_datasets = {
     "new_snap_datasets/web-Google.txt"
 };
 
-string dataset = "snap_datasets/test1.txt";
+/* SETTINGS */
+
+string const DATASET_PATH = "datasets/";
+const char* PROFILER_OUT_PATH = "profile_output.prof";
+
+bool const DO_CHECKS = false;
+bool const INCLUDE_BIG_DATA = true;
+// class ECC_class = ECC;
+
 
 int main() {
     
@@ -373,11 +305,12 @@ int main() {
     }
     
     ProfilerStart("profile_output.prof");
-
-
-    data_on_all(datasets);
-
+    data_on_all<ECC_FS>(datasets);
     ProfilerStop();
+
+    // /* Looking at one in particular */
+    // profile_on<ECC_FS>(datasets[8], PROFILER_OUT_PATH);
+
 
     return 0;
 }
@@ -395,5 +328,11 @@ pprof ecc ./profile_output.prof
 pprof analysis
 top100 --cum
 
+Get call graph:
+pprof --dot ./ecc profile_output.prof > output.dot
+dot -Tpng output.dot -o output.png
 
+
+all combined
+g++ -I/opt/homebrew/include -L/opt/homebrew/lib -lprofiler -std=c++17 *.cc -o ecc; ./ecc; pprof --dot ./ecc profile_output.prof > output.dot; dot -Tpng output.dot -o output.png
 */

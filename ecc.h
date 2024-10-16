@@ -31,22 +31,20 @@ using namespace std;
 
 class ECC {
 public:
-    ECC() = delete;                 //No default constructor
+    ECC();                 //No default constructor
     ECC(string dataset_filepath);   //Builds ECC object for dataset, and fast_set for lookups
 
     vector<Clique*>* run(string prof_out_filepath = "None");         //Runs the algorithm Returns a pointer to the clique_cover
 
     bool check_solution();
 
-    Fast_set* lookup_set1;
-    Fast_set* lookup_set2;
-
-    Graph* graph(); // Returns a pointer to the graph
+    const Graph* graph(); // Returns a pointer to the graph
 
 private:
-    string _dataset_filepath;
+    
 
 protected:
+    string _dataset_filepath;
     //Member Variables:
     Graph* G = nullptr; //Constructed with Object
     vector<Clique*> clique_cover;
@@ -55,12 +53,12 @@ protected:
 
 
     // Framework Methods
-    Edge* select_uncovered_edge(int& previous_index);
-    Clique* find_clique_of(Edge* edge);
-    Node* extract_node(unordered_set<Node*>& candidate_set, Clique* clique);
+    virtual Edge* select_uncovered_edge(int& previous_index);
+    virtual Clique* find_clique_of(Edge* edge);
+    virtual Node* extract_node(unordered_set<Node*>& candidate_set, Clique* clique);
 
     //Helper methods
-    unordered_set<Node *> node_set_intersect(unordered_set<Node *>&, unordered_set<Node *>&);
+    virtual unordered_set<Node *> node_set_intersect(unordered_set<Node *>&, unordered_set<Node *>&);
 
 
 
