@@ -54,6 +54,21 @@ bool ECC::check_solution () {
     return true;
 }
 
+void ECC::check_solution_debug () {
+    vector<Edge*> uncovered_edges;
+    for (Edge* edge : G->_edges) {
+        if (!edge->is_covered()) {
+            uncovered_edges.push_back(edge);
+        }
+    }
+    cout << "DEBUGGING INCORRECT SOLUTION" << endl;
+    cout << "\t" << uncovered_edges.size() << " edges left uncovered." << endl;
+    for (Edge* edge : uncovered_edges) {
+        cout << "\t\t Graph._edges[" << edge->index << "] = " << *edge << endl;
+    }
+    cout << "\t" << uncovered_edges.size() << " out of " << G->_edges.size() << " left uncovered." << endl;
+}
+
 /**
  * @brief Constructor of ECC Object: Builds graph from filepath
  * 

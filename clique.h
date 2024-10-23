@@ -12,11 +12,12 @@ class Graph;
 class Clique {
 public:
 
-    Clique() = delete;
+    Clique();
     Clique(vector<Node*> &nodes_to_add, Graph& G, size_t& edges_covered);
     Clique(Edge* edge, Graph& G, size_t& edges_covered);
 
     void add_node(Node* n, Graph& G, size_t& edges_covered);                    // add a node to the clique (adds all edges)
+    void add_node_cf(Node* n, Graph& G, vector<size_t>& clique_counts);         //variation for ecc-cf
 
     bool is_complete(); // is the clique complete
     int size();

@@ -168,7 +168,9 @@ void Graph::fill_graph(ifstream& file) {
         }
         if (new_edge) {
             edge = new Edge(node1, node2);
+            edge->index = _edges.size(); // save index for Clique::add_node_cf for ECC-CF
             _edges.push_back(edge);
+            
         } else {
             _num_edges -= 1; //decrease num reported edges by 1
         }

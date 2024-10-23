@@ -17,20 +17,31 @@ ECC_FS::ECC_FS(string ds_filepath) : ECC(ds_filepath) {
     // lookup_set2 = new Fast_set(G->_nodes.size());
 }
 
+/**
+ * @brief Finds the intersection of two vectors of node*s. Uses the fast_set class
+ * 
+ *
+ * @param vec_1 the first vec of nodes
+ * @param vec_2 the second vec of nodes
+ * @return 
+ */
 vector<Node *> ECC_FS::node_set_intersect(const vector<Node *>& vec_1, const vector<Node*>& vec_2) {
+    //Iterate through the smaller vector
     if (vec_1.size() < vec_2.size()) {
         return node_set_intersect(vec_2, vec_1);
     }
 
+    //Initialize the intersection to the size of the smaller vector
     vector<Node*> intersection;
-    intersection.reserve(vec_1.size());
+    intersection.reserve(vec_2.size());
 
-    //Build lookup_sets
+    //Update lookup set with vec_1's nodes
     lookup_set->clear();
     for (Node* node : vec_1) {
         lookup_set->add(node->index);
     }
 
+    //Iterate through vec_2 checking in the lookup set for mutual neighbors
     for (Node* node : vec_2) {
         if (lookup_set->get(node->index)) {
             intersection.push_back(node);

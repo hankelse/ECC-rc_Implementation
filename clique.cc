@@ -7,8 +7,8 @@
 
 
 
-// Clique::Clique() {
-// }
+Clique::Clique() {
+}
 
 // /**
 //  * @brief Construct a new Clique with nodes in it
@@ -38,6 +38,7 @@ Clique::Clique(Edge* edge, Graph& G, size_t &edges_covered) {
 void Clique::add_node(Node* n, Graph& G, size_t& edges_covered) {
     //reserve space
     edges.reserve(edges.size() + nodes.size()); // Reserve space if needed
+    
     //Add edges
     for (int i = 0; i < nodes.size(); i++) {
         Edge* edge = G.get_edge(n, nodes[i]);
@@ -51,7 +52,6 @@ void Clique::add_node(Node* n, Graph& G, size_t& edges_covered) {
             edges_covered += 1;
             
         }
-        // edge->cover();
         edges.push_back(edge);
     }
 
@@ -59,6 +59,28 @@ void Clique::add_node(Node* n, Graph& G, size_t& edges_covered) {
     nodes.push_back(n);
 }
 
+
+
+void Clique::add_node_cf(Node* n, Graph& G, vector<size_t>& clique_counts) {
+    //reserve space
+    edges.reserve(edges.size() + nodes.size()); // Reserve space if needed
+    //Add edges
+    for (int i = 0; i < nodes.size(); i++) {
+        Edge* edge = G.get_edge(n, nodes[i]);
+        
+        if (edge == nullptr) {
+            cerr << "ERROR: Can't include " << *n << " in clique: Node " << *n << " is not connected to Node " << *nodes[i] << endl;
+        }
+
+        clique_counts[edge->index] += 1;
+
+        // edge->cover();
+        edges.push_back(edge);
+    }
+
+    //Add node
+    nodes.push_back(n);
+}
 /**
  * @brief Is the clique complete; Is every node connected to every other?
  * 

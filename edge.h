@@ -19,6 +19,8 @@ class Edge {
         Node* _node2; 
 
         Connection* to_connection_of(Node& node);  //given a node, returns the connection of that node with the edge called on
+
+        size_t index;
     
     private:
         bool _covered;

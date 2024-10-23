@@ -30,27 +30,25 @@ using namespace std;
 
 class ECC {
 public:
-    ECC();                 //No default constructor
-    ECC(string dataset_filepath);   //Builds ECC object for dataset, and G from dataset
-    ECC(Graph& G);            //Builds ECC object for dataset, given G
+    ECC();                 
+    ECC(string dataset_filepath);           //Builds ECC object for dataset, and G from dataset
+    ECC(Graph& G);                          //Builds ECC object for dataset, given G
 
-    vector<Clique*>* run();         //Runs the algorithm Returns a pointer to the clique_cover
+    virtual vector<Clique*>* run();         //Runs the algorithm Returns a pointer to the clique_cover
 
-    bool check_solution();
 
-    const Graph* graph(); // Returns a pointer to the graph
+    virtual bool check_solution();
+    virtual void check_solution_debug();
+
+    const Graph* graph();                   // Returns a pointer to the graph
 
     string dataset_filepath;
-private:
-    
 
 protected:
     //Member Variables:
     Graph* G = nullptr; //Constructed with Object
     vector<Clique*> clique_cover;
     size_t num_edges_covered;
-
-
 
     // Framework Methods
     virtual Edge* select_uncovered_edge(int& previous_index);
@@ -59,12 +57,6 @@ protected:
 
     //Helper methods
     virtual unordered_set<Node *> node_set_intersect(unordered_set<Node *>&, unordered_set<Node *>&);
-
-
-
-
-
-
 };
 
 

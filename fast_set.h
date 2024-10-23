@@ -1,6 +1,7 @@
 /******************************************************************************
  * fast_set.h
- *
+ * From KAMIS
+ * https://github.com/KarlsruheMIS/KaMIS/blob/master/lib/mis/kernel/fast_set.h
  *****************************************************************************/
 
 #ifndef FAST_SET_H

@@ -7,6 +7,7 @@ using namespace std;
 
 #include "ecc.h"
 #include "ecc-fs.h"
+#include "ecc-cf.h"
 #include "io.h"
 #include "node.h"
 #include "edge.h"
@@ -238,6 +239,8 @@ void data_on_all(vector<string> datasets) {
             cout << "Algorithm did not cover all edges." << endl;
             clique_stats.push_back(-1);
             time_stats.push_back(-1);
+            solver.check_solution_debug();
+            cin.get();
         }
     }
     cout << "\nDATA for copy/paste!\n" << endl;
@@ -274,13 +277,14 @@ void profile_on_all(vector<string> datasets, const char* profile_output_path) {
         solvers.push_back(ECC_CLASS(dataset));
     }
 
+    cout << "Starting profile..." << endl;
     ProfilerStart(profile_output_path);
-    // this_thread::sleep_for(chrono::seconds(1));
     for (ECC_CLASS solver : solvers) {
         cout << "Running on " << solver.dataset_filepath << endl;
         cout << "\t->" << solver.run()->size() << " cliques" << endl;;
     }
     ProfilerStop();
+    cout << "Profile finished." << endl;
 
 }
 
@@ -317,7 +321,7 @@ string const DATASET_PATH = "datasets/";
 const char* PROFILER_OUT_PATH = "profile_output.prof";
 
 bool const DO_CHECKS = false;
-bool const INCLUDE_BIG_DATA = true;
+bool const INCLUDE_BIG_DATA = false;
 // class ECC_class = ECC;
 
 
@@ -328,10 +332,14 @@ int main() {
     }
     
     /*Profiling all the datasets */
-    // profile_on_all<ECC_FS>(datasets, PROFILER_OUT_PATH);
+    // profile_on_all<ECC_CF>(datasets, PROFILER_OUT_PATH);
+    profile_on_all<ECC>(datasets, PROFILER_OUT_PATH);
 
     // /* Getting data on all the datasets*/
-    data_on_all<ECC_FS> (datasets);
+    // data_on_all<ECC_FS> (datasets);
+    // cin.get();
+    // data_on_all<ECC_CF> (datasets);
+    // data_on_all<ECC_FS> (datasets);
     // data_on_all<ECC> (datasets);
 
     // /* Looking at one in particular */
