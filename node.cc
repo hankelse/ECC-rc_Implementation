@@ -8,8 +8,9 @@ Node::Node() {
     _id = 0; // default value
 }
 
-Node::Node(int id) {
+Node::Node(int id, int index_in_graph) {
     _id = id;
+    index = index_in_graph;
 }
 
 
@@ -72,6 +73,6 @@ ostream& operator<<(ostream& os, Node& node) {
     return os;
 }
 
-bool operator==(Node& n1, Node& n2) {
-    return n1.id() == n2.id();
-}
+// bool operator==(Node& n1, Node& n2) {
+//     return n1.id() == n2.id();
+// }

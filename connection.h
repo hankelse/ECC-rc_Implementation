@@ -19,7 +19,6 @@ public:
     Node* neighbor;
 
     Connection();
-
     Connection(Edge* connecting_edge, Node* neighboring_node);
 
     bool is_covered();

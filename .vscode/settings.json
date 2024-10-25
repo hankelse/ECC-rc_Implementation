@@ -54,6 +54,7 @@
         "iomanip": "cpp",
         "optional": "cpp",
         "queue": "cpp",
-        "chrono": "cpp"
+        "chrono": "cpp",
+        "unordered_set": "cpp"
     }
 }
