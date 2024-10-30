@@ -14,6 +14,7 @@ Graph::Graph() {
 }
 
 Graph::Graph(string filename) {
+    this->filename = filename;
     this->construct(filename); //populate the graph from the file.
 }
 
@@ -439,7 +440,7 @@ void Graph::fill_graph(ifstream& file) {
  * @param node2 
  * @return Edge* 
  */
-Edge* Graph::are_connected(Node* node1, Node* node2) {
+Edge* Graph::are_connected(Node* node1, Node* node2) const {
     if (node1 == nullptr | node2 == nullptr) {
         cerr << "PASSED NULLPTR TO are_connected" << endl;
         return nullptr;
@@ -461,7 +462,7 @@ Edge* Graph::are_connected(Node* node1, Node* node2) {
  * @param node2 
  * @return Edge* 
  */
-Edge* Graph::get_edge(Node* node1, Node* node2) {
+Edge* Graph::get_edge(Node* node1, Node* node2) const  {
     return are_connected(node1, node2);
 }
 

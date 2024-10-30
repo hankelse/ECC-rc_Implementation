@@ -47,16 +47,18 @@ vector<Clique*>* ECC_CF::run() {
 
 
 ECC_CF::ECC_CF(string dataset_filepath) : ECC_FS(dataset_filepath) {
-    dataset_filepath = dataset_filepath;
-    G = new Graph(dataset_filepath);
-
-    // lookup fastset from ECC-FS
-    candidates_fs = new Fast_set(G->_nodes.size());
 
     // NEW: Frequency vector for number of cliques each edge is in
     clique_counts = vector<size_t>(G->_edges.size()+1, 0);
+    name = "ECC_CF";
 
 }
+
+ECC_CF::ECC_CF (Graph& Graph) : ECC_FS(Graph) {
+    clique_counts = vector<size_t>(G->_edges.size()+1, 0);
+    name = "ECC_CF";
+}
+
 /**
  * @brief Selects an uncovered edge
  * NOW: Uses the clique_counts vector to check if an edge has been covered

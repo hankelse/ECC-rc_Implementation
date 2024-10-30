@@ -8,11 +8,13 @@ using namespace std;
 #include "ecc.h"
 #include "ecc-fs.h"
 #include "ecc-cf.h"
+#include "ecc-qec.h"
+
 #include "io.h"
 #include "node.h"
 #include "edge.h"
 #include "graph.h"
-#include "checks.h"
+// #include "checks.h"
 #include "connection.h"
 #include "clique.h"
 #include <gperftools/profiler.h>
@@ -21,144 +23,58 @@ using namespace std;
 
 
 
+// /* 
 
+// // /**
+// //  * @brief Runs checks from checks.h on G
+// //  * 
+// //  * @param G graph to run checks on
+// //  */
+// bool run_checks(Graph& G) {
+//     ostringstream warnings;
+//     int num_tests_failed = 0;
 
-// /**
-//  * @brief An Implementation of the framework from Conte et al.
-//  * 
-//  * @param graph_filepath, the filepath of the graph to preform the algorithm on
-//  * @param cliques, a vector of cliques to be filled
-//  * 
-//  * 
-//  * 
-//  * @return int the size of the ECC
-//  */
-// size_t ecc_rc(Graph& G, vector<Clique*> &cliques) {
- 
-//     //while there are uncovered edges do
-//     size_t num_edges_covered = 0;
-//     int last_uncovered_edge_index = 0;
+//     cout << "\tRUNNING ALL CHECKS" << endl;
 
-//     while (num_edges_covered < G._num_edges) {
-
-//         // u, v ← SELECT UNCOVERED EDGE()
-//         Edge* uncovered_edge = G.select_uncovered_edge(last_uncovered_edge_index);
-
-//         //R ← FIND CLIQUE OF(u, v)
-//         Clique* found_clique = G.find_clique_of(uncovered_edge, num_edges_covered);
-
-//         // C ← C∪R
-//         cliques.push_back(found_clique);
-
-
-//     }
-//     return cliques.size();
-// }
-
-// vector<Edge>* find_clique_of (Graph G) {
-
-//     return nullptr;
-// } 
-
-/**
- * @brief Runs checks from checks.h on G
- * 
- * @param G graph to run checks on
- */
-bool run_checks(Graph& G) {
-    ostringstream warnings;
-    int num_tests_failed = 0;
-
-    cout << "\tRUNNING ALL CHECKS" << endl;
-
-    // If not all nodes are imported, print the warnings
-    if (!all_nodes_imported(G, warnings)) { 
-        cout << warnings.str() << endl;
-        num_tests_failed += 1;
-    } else {
-        cout << "\t\tPASSED all_nodes_imported" << endl;
-    }
-    warnings.str(""); // empty
-
-
-    // If not all edges are imported, print the warnings
-    if (!all_edges_imported(G, warnings)) {
-        cout << warnings.str() << endl;
-        num_tests_failed += 1;
-    } else {
-        cout << "\t\tPASSED all_edges_imported" << endl;
-    }
-    warnings.str(""); // empty
-
-
-    // If adjacency lists don't match manual lists, print the warnigns
-    if (!adj_lists_correct(G, warnings)) {
-        cout << warnings.str() << endl;
-        num_tests_failed += 1;
-    } else {
-        cout << "\t\tPASSED adj_lists_correct" << endl;
-    }
-    warnings.str(""); // empty
-
-
-    if (!num_tests_failed) {
-        cout << "\tPASSED ALL CHECKS\n" << endl;
-        return true;
-    }
-    cout << "\tFAILED " << num_tests_failed << " TESTS.\n" << endl;
-    return false;
-}
-
-// /**
-//  * @brief Is the Clique Cover legitimate?
-//  * Checks to make sure all edges have been covered.
-//  *
-//  * @param G 
-//  * @param clique_cover 
-//  * @return 
-//  */
-// bool check_ECC (Graph& G, vector<Clique*>& clique_cover) {
-//     for (Edge* edge : G._edges) {
-//         if (!edge->is_covered()) {
-//             return false;
-//         }
-//     }
-//     return true;
-// }
-
-// /**
-//  * @brief Runs full algorithm on a dataset. Measures running time and checks correctness.
-//  * @param filename the filename of the dataset to run on.
-//  */
-// void run_on(string filename) {
-
-//     cout << "\nRunning ECC on " << filename << "." << endl;
-    
-//     //Save the starting time of the algorithm
-//     chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
-
-//     Graph G(filename);
-
-//     cout << "\tNodes: " << G._num_nodes << endl;
-//     cout << "\tEdges: " << G._num_edges << endl;
-
-//     vector<Clique*> clique_cover;
-//     size_t k = ecc_rc(G, clique_cover);
-
-//     //Get the time passed in miliseconds
-//     chrono::steady_clock::time_point end_time = chrono::steady_clock::now();
-//     size_t runtime = chrono::duration_cast<chrono::milliseconds>(end_time - start_time).count();
-
-
-//     if (check_ECC(G, clique_cover)) {
-//         cout << "Algorithm found cover of G with \n\t" << k << " cliques \n\tin " << runtime << " miliseconds.\n" << endl;
+//     // If not all nodes are imported, print the warnings
+//     if (!all_nodes_imported(G, warnings)) { 
+//         cout << warnings.str() << endl;
+//         num_tests_failed += 1;
 //     } else {
-//         cout << "Algorithm did not cover all edges." << endl;
+//         cout << "\t\tPASSED all_nodes_imported" << endl;
 //     }
-    
+//     warnings.str(""); // empty
 
 
+//     // If not all edges are imported, print the warnings
+//     if (!all_edges_imported(G, warnings)) {
+//         cout << warnings.str() << endl;
+//         num_tests_failed += 1;
+//     } else {
+//         cout << "\t\tPASSED all_edges_imported" << endl;
+//     }
+//     warnings.str(""); // empty
+
+
+//     // If adjacency lists don't match manual lists, print the warnigns
+//     if (!adj_lists_correct(G, warnings)) {
+//         cout << warnings.str() << endl;
+//         num_tests_failed += 1;
+//     } else {
+//         cout << "\t\tPASSED adj_lists_correct" << endl;
+//     }
+//     warnings.str(""); // empty
+
+
+//     if (!num_tests_failed) {
+//         cout << "\tPASSED ALL CHECKS\n" << endl;
+//         return true;
+//     }
+//     cout << "\tFAILED " << num_tests_failed << " TESTS.\n" << endl;
+//     return false;
 // }
+
+//  */
 
 /**
  * @brief Runs full algorithm on a dataset. Measures running time and checks correctness.
@@ -181,6 +97,7 @@ void profile_on(string filename, const char* profile_output_path) {
 
     ProfilerStop();
     size_t k = clique_cover->size();
+    cout << "found " << k << " cliques" << endl;
 
     //Get the time passed in miliseconds
     chrono::steady_clock::time_point end_time = chrono::steady_clock::now();
@@ -267,6 +184,80 @@ void data_on_all(vector<string> datasets) {
 
 }
 
+
+template<typename ECC_CLASS>
+void get_csv_data(const vector<string>& datasets, vector<vector<size_t>>& all_algo_runtimes, vector<vector<size_t>>& all_algo_num_cliques, vector<string>& algo_names) {
+
+    string class_name = typeid(ECC_CLASS).name();
+    algo_names.push_back(class_name);
+    cout << "COLLECTING DATA FOR: " << class_name << endl;
+
+    vector<size_t> algo_runtimes;
+    vector<size_t> algo_num_cliques;
+    for (string filename : datasets) {
+        // Make ECC_CLASS object
+        cout << "\tRunning on " << filename << endl;
+        ECC_CLASS solver(filename);
+
+        chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
+
+        size_t cliques_found = (*solver.run()).size();
+
+        chrono::steady_clock::time_point end_time = chrono::steady_clock::now();
+
+        size_t runtime = chrono::duration_cast<chrono::milliseconds>(end_time - start_time).count();
+        cout << "\t\t Found " << cliques_found << " cliques." << endl;
+        cout << "\t\t In    " << runtime << " miliseconds." <<endl;
+
+        algo_runtimes.push_back(runtime);
+        algo_num_cliques.push_back(cliques_found);
+    }
+    cout << "COLLECTED ALL DATA FOR: " << class_name << endl;
+    all_algo_runtimes.push_back(algo_runtimes);
+    all_algo_num_cliques.push_back(algo_num_cliques);
+    return;
+}
+
+//https://en.cppreference.com/w/cpp/language/parameter_pack
+template<typename... ECC_CLASSES>
+void csv_on_all(const vector<string> datasets, const string csv_output_filepath) {
+    cout << "Running csv on all" << endl;
+
+    vector<Graph*> graphs;
+
+    vector<size_t> graph_edges;
+    vector<size_t> graph_nodes;
+
+
+    //Make datasets and save data
+    cout << "Making Graphs" << endl;
+    for (string filename : datasets) {
+        Graph* graph = new Graph(filename);
+        graphs.push_back(graph);
+        graph_edges.push_back(graphs[graphs.size()-1]->_edges.size());
+        graph_nodes.push_back(graphs[graphs.size()-1]->_nodes.size());
+    }
+    cout << "Finished Making Graphs" << endl;
+
+    // Run algorithms and get result data
+    vector<string> algo_names;
+    vector<vector<size_t>> algo_runtimes;
+    vector<vector<size_t>> algo_num_cliques;
+
+    // For each class, gets runs on all the graphs and appends data to lists
+    (..., (get_csv_data<ECC_CLASSES>(datasets, algo_runtimes, algo_num_cliques, algo_names)));
+
+
+    // Call the CSV writing function
+    data_to_csv(csv_output_filepath, datasets, graph_nodes, graph_edges, algo_names, algo_runtimes, algo_num_cliques);
+
+    for (Graph* graph : graphs) {
+        delete graph;
+    }
+
+}
+
+
 template<typename ECC_CLASS>
 void profile_on_all(vector<string> datasets, const char* profile_output_path) {
     //Make all objects before starting profile
@@ -319,6 +310,7 @@ vector<string> big_datasets = {
 
 string const DATASET_PATH = "datasets/";
 const char* PROFILER_OUT_PATH = "profile_output.prof";
+string const CSV_OUT_PATH = "output.csv";
 
 bool const DO_CHECKS = false;
 bool const INCLUDE_BIG_DATA = false;
@@ -330,10 +322,29 @@ int main() {
     if (INCLUDE_BIG_DATA) {
         datasets.insert(datasets.end(), big_datasets.begin(), big_datasets.end());
     }
+
+    // ECC_QEC solver(datasets[0]);
+    // cout << "Initialize object" << endl;
+    // const Graph* G = solver.graph();
+    // cout << "Got Graph" << endl;
+    // cout << "Pre-Run" << endl;
+    // cout << (*solver.run()).size() << endl;
+    // cout << G -> _edges << endl;
+
+    // datasets = {datasets[0], datasets[1]};
+
+    csv_on_all<ECC, ECC_FS, ECC_CF, ECC_QEC>(datasets, CSV_OUT_PATH);
+
+    // profile_on<ECC_FS>(datasets[0], PROFILER_OUT_PATH);
+
+
+    // profile_on_all<ECC_CF>(datasets, PROFILER_OUT_PATH);
+    // solver.run();
+    // solver.check_solution_debug();
     
     /*Profiling all the datasets */
     // profile_on_all<ECC_CF>(datasets, PROFILER_OUT_PATH);
-    profile_on_all<ECC>(datasets, PROFILER_OUT_PATH);
+    // profile_on_all<ECC>(datasets, PROFILER_OUT_PATH);
 
     // /* Getting data on all the datasets*/
     // data_on_all<ECC_FS> (datasets);

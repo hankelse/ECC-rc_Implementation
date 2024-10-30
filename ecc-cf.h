@@ -34,6 +34,7 @@ class ECC_CF : public ECC_FS {
 public:
     ECC_CF() = delete;                 //No default constructor
     ECC_CF(string dataset_filepath); // calls parent constructor 
+    ECC_CF (Graph& Graph);
 
     Fast_set* candidates_fs;
 

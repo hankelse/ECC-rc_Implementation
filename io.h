@@ -1,6 +1,10 @@
 #include <iostream>
+#include <fstream>
+
 using namespace std;
 #include <type_traits>
+#include <vector>
+#include <string>
 
 #ifndef IO_H
 #define IO_H
@@ -15,7 +19,7 @@ using namespace std;
  * @return ostream& 
  */
 template <typename T>
-ostream& operator<<(ostream &os, vector<T> &v) {
+ostream& operator<<(ostream &os, const vector<T> &v) {
     // Check if vector is empty
     if (v.size() < 1) {
         os << "[vector is empty]";
@@ -44,5 +48,14 @@ ostream& operator<<(ostream &os, vector<T> &v) {
     }
     return os;
 }
+
+
+void data_to_csv(const string output_filepath,
+                 const vector<string>& datasets, 
+                 const vector<size_t>& dataset_node_nums, 
+                 const vector<size_t>& dataset_edges_nums,
+                 const vector<string>& algo_names,
+                 const vector<vector<size_t>>& algo_runtimes, 
+                 const vector<vector<size_t>>& algo_num_cliques);
 
 #endif

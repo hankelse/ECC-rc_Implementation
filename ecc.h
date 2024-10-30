@@ -32,7 +32,9 @@ class ECC {
 public:
     ECC();                 
     ECC(string dataset_filepath);           //Builds ECC object for dataset, and G from dataset
-    ECC(Graph& G);                          //Builds ECC object for dataset, given G
+    ECC(const Graph& G);                          //Builds ECC object for dataset, given G
+    
+    string name;
 
     virtual vector<Clique*>* run();         //Runs the algorithm Returns a pointer to the clique_cover
 
@@ -43,12 +45,13 @@ public:
     const Graph* graph();                   // Returns a pointer to the graph
 
     string dataset_filepath;
+    size_t num_edges_covered;
 
 protected:
     //Member Variables:
-    Graph* G = nullptr; //Constructed with Object
+    const Graph* G; //Constructed with Object
     vector<Clique*> clique_cover;
-    size_t num_edges_covered;
+    
 
     // Framework Methods
     virtual Edge* select_uncovered_edge(int& previous_index);

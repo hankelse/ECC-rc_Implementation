@@ -16,11 +16,10 @@
  */
 vector<Clique*>* ECC::run() {
 
-
-    num_edges_covered = 0;
     int last_uncovered_edge_index = 0;
 
     size_t round = 0;
+
     while (num_edges_covered < G->_edges.size()) {
         round ++;
 
@@ -33,7 +32,6 @@ vector<Clique*>* ECC::run() {
         Clique* found_clique = find_clique_of(uncovered_edge);
         // C ← C∪R
         clique_cover.push_back(found_clique);
-
     }
     return &clique_cover;
 }
@@ -75,9 +73,17 @@ void ECC::check_solution_debug () {
  *
  * @param dataset_filepath filepath of dataset
  */
-ECC::ECC(string dataset_filepath) {
-    dataset_filepath = dataset_filepath;
-    G = new Graph(dataset_filepath);
+ECC::ECC(string ds_filepath) {
+    name = "ECC";
+
+    dataset_filepath = ds_filepath;
+
+    Graph* mutable_graph = new Graph(dataset_filepath);
+    const Graph& const_graph = *mutable_graph;
+    G = &const_graph;
+
+    num_edges_covered = 0;
+    
 
 
 }
@@ -88,8 +94,9 @@ ECC::ECC(string dataset_filepath) {
  *
  * @param G 
  */
-ECC::ECC(Graph& Graph) {
+ECC::ECC(const Graph& Graph) {
     G = &Graph;
+    num_edges_covered = 0;
 }
 
 
@@ -128,7 +135,6 @@ Edge* ECC::select_uncovered_edge(int& previous_index) {
  * @return vector<Edge*> 
  */
 Clique* ECC::find_clique_of(Edge* edge) {
-
     //R ← {u, v}  create the new clique with the edge
     Clique* clique = new Clique(edge, *G, num_edges_covered);
     Node* u = edge->_node1;

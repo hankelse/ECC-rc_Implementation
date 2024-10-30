@@ -30,10 +30,11 @@ using namespace std;
 #ifndef ECC_FS_H
 #define ECC_FS_H
 
-class ECC_FS : public ECC{
+class ECC_FS : public ECC {
 public:
     ECC_FS() = delete;                 
     ECC_FS(string dataset_filepath);   // Calls parent constructor + builds lookup set
+    ECC_FS (Graph& Graph);
 
     // New Datastructure
     Fast_set* lookup_set;

@@ -26,6 +26,7 @@ class Graph {
         int _num_nodes;
         int _num_edges;
 
+        string filename;
 
         //ECC-rc methods
         // Edge* select_uncovered_edge(int& previous_index);
@@ -34,8 +35,8 @@ class Graph {
         // Node* extract_node(vector<Node*>& candidate_set, Clique* clique);
         // Node* extract_node(unordered_set<Node*>& candidate_set, Clique* clique);
 
-        Edge* are_connected(Node* node1, Node* node2);
-        Edge* get_edge(Node* node1, Node* node2);  // synonymous to are_connected
+        Edge* are_connected (Node* node1, Node* node2) const;
+        Edge* get_edge(Node* node1, Node* node2) const;  // synonymous to are_connected
 
 
         //helper methods that probably shouldn't be used

@@ -23,7 +23,7 @@ Clique::Clique() {
 // }
 
 
-Clique::Clique(Edge* edge, Graph& G, size_t &edges_covered) {
+Clique::Clique(Edge* edge, const Graph& G, size_t &edges_covered) {
     nodes = {};
     add_node(edge->_node1, G, edges_covered);
     add_node(edge->_node2, G, edges_covered);
@@ -35,7 +35,7 @@ Clique::Clique(Edge* edge, Graph& G, size_t &edges_covered) {
  * @param n Node being added
  * @param G Graph
  */
-void Clique::add_node(Node* n, Graph& G, size_t& edges_covered) {
+void Clique::add_node(Node* n, const Graph& G, size_t& edges_covered) {
     //reserve space
     edges.reserve(edges.size() + nodes.size()); // Reserve space if needed
     
@@ -61,7 +61,7 @@ void Clique::add_node(Node* n, Graph& G, size_t& edges_covered) {
 
 
 
-void Clique::add_node_cf(Node* n, Graph& G, vector<size_t>& clique_counts) {
+void Clique::add_node_cf(Node* n, const Graph& G, vector<size_t>& clique_counts) {
     //reserve space
     edges.reserve(edges.size() + nodes.size()); // Reserve space if needed
     //Add edges

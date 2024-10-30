@@ -8,13 +8,16 @@
 #include <gperftools/profiler.h>
 
 
-ECC_FS::ECC_FS(string ds_filepath) : ECC(ds_filepath) {
-    dataset_filepath = ds_filepath;
-    G = new Graph(ds_filepath);
-
-    // add lookup fastsets
+ECC_FS::ECC_FS(string ds_filepath) : ECC (ds_filepath) {
+    // add lookup fastset
     lookup_set = new Fast_set(G->_nodes.size());
-    // lookup_set2 = new Fast_set(G->_nodes.size());
+    name = "ECC_FS";
+
+}
+
+ECC_FS::ECC_FS(Graph& graph) : ECC (graph) {
+    lookup_set = new Fast_set(G->_nodes.size());
+    name = "ECC_FS";
 }
 
 /**
@@ -69,7 +72,6 @@ void ECC_FS::trim_candidates(std::vector<Node*>& candidates, const std::vector<N
 
 
 Clique* ECC_FS::find_clique_of(Edge* edge) {
-
     //R ← {u, v}  create the new clique with the edge
     Clique* clique = new Clique(edge, *G, num_edges_covered);
     Node* u = edge->_node1;
