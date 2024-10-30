@@ -187,8 +187,8 @@ void data_on_all(vector<string> datasets) {
 
 template<typename ECC_CLASS>
 void get_csv_data(const vector<string>& datasets, vector<vector<size_t>>& all_algo_runtimes, vector<vector<size_t>>& all_algo_num_cliques, vector<string>& algo_names) {
-
     string class_name = typeid(ECC_CLASS).name();
+    class_name.erase(0, 1); // typeid.name() starts with length of string
     algo_names.push_back(class_name);
     cout << "COLLECTING DATA FOR: " << class_name << endl;
 
@@ -206,8 +206,7 @@ void get_csv_data(const vector<string>& datasets, vector<vector<size_t>>& all_al
         chrono::steady_clock::time_point end_time = chrono::steady_clock::now();
 
         size_t runtime = chrono::duration_cast<chrono::milliseconds>(end_time - start_time).count();
-        cout << "\t\t Found " << cliques_found << " cliques." << endl;
-        cout << "\t\t In    " << runtime << " miliseconds." <<endl;
+        cout << "\t\t " << cliques_found << " cliques  :  " << runtime << " milliseconds" << endl;
 
         algo_runtimes.push_back(runtime);
         algo_num_cliques.push_back(cliques_found);
@@ -221,6 +220,7 @@ void get_csv_data(const vector<string>& datasets, vector<vector<size_t>>& all_al
 //https://en.cppreference.com/w/cpp/language/parameter_pack
 template<typename... ECC_CLASSES>
 void csv_on_all(const vector<string> datasets, const string csv_output_filepath) {
+    chrono::steady_clock::time_point start_full_program = std::chrono::steady_clock::now();
     cout << "Running csv on all" << endl;
 
     vector<Graph*> graphs;
@@ -254,6 +254,9 @@ void csv_on_all(const vector<string> datasets, const string csv_output_filepath)
     for (Graph* graph : graphs) {
         delete graph;
     }
+    chrono::steady_clock::time_point end_full_program = chrono::steady_clock::now();
+    size_t total_runtime = chrono::duration_cast<chrono::seconds>(end_full_program - start_full_program).count();
+    cout << "Ran CSV_ON_ ALL in " << total_runtime << " seconds." << endl;
 
 }
 
@@ -331,9 +334,10 @@ int main() {
     // cout << (*solver.run()).size() << endl;
     // cout << G -> _edges << endl;
 
-    // datasets = {datasets[0], datasets[1]};
+    // datasets = {datasets[1]};
 
-    csv_on_all<ECC, ECC_FS, ECC_CF, ECC_QEC>(datasets, CSV_OUT_PATH);
+    // csv_on_all<ECC, ECC_FS, ECC_CF, ECC_QEC>(datasets, CSV_OUT_PATH);
+    csv_on_all<ECC, ECC_FS, ECC_FS, ECC_FS, ECC_FS, ECC_FS, ECC>(datasets, CSV_OUT_PATH);
 
     // profile_on<ECC_FS>(datasets[0], PROFILER_OUT_PATH);
 
