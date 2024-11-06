@@ -163,7 +163,6 @@ void Graph::fill_graph(ifstream& file) {
         for (Node* neighbor : node2->neighbors) {
             if (neighbor->id() == node1_id) {
                 new_edge = false;
-
                 continue;
             }
         }

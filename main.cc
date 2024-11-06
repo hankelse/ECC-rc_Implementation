@@ -9,6 +9,7 @@ using namespace std;
 #include "ecc-fs.h"
 #include "ecc-cf.h"
 #include "ecc-qec.h"
+#include "ecc-qec1.h"
 
 #include "io.h"
 #include "node.h"
@@ -316,7 +317,7 @@ const char* PROFILER_OUT_PATH = "profile_output.prof";
 string const CSV_OUT_PATH = "output.csv";
 
 bool const DO_CHECKS = false;
-bool const INCLUDE_BIG_DATA = false;
+bool const INCLUDE_BIG_DATA = true;
 // class ECC_class = ECC;
 
 
@@ -336,13 +337,13 @@ int main() {
 
     // datasets = {datasets[1]};
 
-    // csv_on_all<ECC, ECC_FS, ECC_CF, ECC_QEC>(datasets, CSV_OUT_PATH);
-    csv_on_all<ECC, ECC_FS, ECC_FS, ECC_FS, ECC_FS, ECC_FS, ECC>(datasets, CSV_OUT_PATH);
+    // csv_on_all<ECC_FS, ECC_QEC, ECC_QEC1>(datasets, CSV_OUT_PATH);
+    // csv_on_all<ECC_FS, ECC_QEC>(datasets, CSV_OUT_PATH);
 
-    // profile_on<ECC_FS>(datasets[0], PROFILER_OUT_PATH);
+    // profile_on_all<ECC_QEC1>(datasets, PROFILER_OUT_PATH);
 
 
-    // profile_on_all<ECC_CF>(datasets, PROFILER_OUT_PATH);
+    // profile_on_all<ECC_QEC>(datasets, PROFILER_OUT_PATH);
     // solver.run();
     // solver.check_solution_debug();
     
@@ -351,7 +352,7 @@ int main() {
     // profile_on_all<ECC>(datasets, PROFILER_OUT_PATH);
 
     // /* Getting data on all the datasets*/
-    // data_on_all<ECC_FS> (datasets);
+    data_on_all<ECC_QEC1> (datasets);
     // cin.get();
     // data_on_all<ECC_CF> (datasets);
     // data_on_all<ECC_FS> (datasets);
@@ -380,6 +381,7 @@ top100 --cum
 Get call graph:
 pprof --dot ./ecc profile_output.prof > output.dot
 dot -Tpng output.dot -o output.png
+
 
 
 all combined

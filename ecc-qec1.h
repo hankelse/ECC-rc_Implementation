@@ -1,7 +1,7 @@
 /**
- * @file ecc-qec.h
+ * @file ecc-qec1.h
  * @author Hank Elsesser
- * @brief A variation of the algorithm using Professor Strash's idea of storing the most recent clique a node was in, to speed up edge covering
+ * @brief A variation of the algorithm using inline edge covering, and not saving clique edges
  * @version 0.1
  * @date 2024-10-09
  * 
@@ -27,14 +27,14 @@ class Fast_set;
 
 using namespace std;
 
-#ifndef ECC_QEC_H
-#define ECC_QEC_H
+#ifndef ECC_QEC1_H
+#define ECC_QEC1_H
 
-class ECC_QEC: public ECC_FS {
+class ECC_QEC1: public ECC_FS {
 public:
-    ECC_QEC() = delete;                 
-    ECC_QEC(string dataset_filepath);   // Calls parent constructor + builds lookup set
-    ECC_QEC(Graph& G);
+    ECC_QEC1() = delete;                 
+    ECC_QEC1(string dataset_filepath);   // Calls parent constructor + builds lookup set
+    ECC_QEC1(Graph& G);
 
     // New data structure for checking covered edges quickly, initialized in constructor
     vector<int> node_clique_assignments;
@@ -49,7 +49,7 @@ protected:
     // // Methods that are being overridden
     // virtual vector<Node *> node_set_intersect(const vector<Node*>&, const vector<Node *>&);
     virtual Clique* find_clique_of(Edge* edge);
-    virtual Node* extract_node(vector<Node*>& candidate_set, Clique* clique);
+    // virtual Node* extract_node(vector<Node*>& candidate_set, Clique* clique);
 
 };
 
