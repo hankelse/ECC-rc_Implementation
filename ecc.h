@@ -33,6 +33,8 @@ public:
     ECC();                 
     ECC(string dataset_filepath);           //Builds ECC object for dataset, and G from dataset
     ECC(const Graph& G);                          //Builds ECC object for dataset, given G
+
+    ~ECC();
     
     string name;
 
@@ -46,6 +48,8 @@ public:
 
     string dataset_filepath;
     size_t num_edges_covered;
+
+  
 
 protected:
     //Member Variables:

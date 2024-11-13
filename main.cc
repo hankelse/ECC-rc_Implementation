@@ -10,6 +10,7 @@ using namespace std;
 #include "ecc-cf.h"
 #include "ecc-qec.h"
 #include "ecc-qec1.h"
+#include "ecc-red.h"
 
 #include "io.h"
 #include "node.h"
@@ -19,6 +20,7 @@ using namespace std;
 #include "connection.h"
 #include "clique.h"
 #include <gperftools/profiler.h>
+// #include <gperftools/heap-checker.h>
 #include <chrono>
 #include <thread>
 
@@ -233,6 +235,7 @@ void csv_on_all(const vector<string> datasets, const string csv_output_filepath)
     //Make datasets and save data
     cout << "Making Graphs" << endl;
     for (string filename : datasets) {
+        cout << "\t making " << filename << endl;
         Graph* graph = new Graph(filename);
         graphs.push_back(graph);
         graph_edges.push_back(graphs[graphs.size()-1]->_edges.size());
@@ -255,6 +258,123 @@ void csv_on_all(const vector<string> datasets, const string csv_output_filepath)
     for (Graph* graph : graphs) {
         delete graph;
     }
+    chrono::steady_clock::time_point end_full_program = chrono::steady_clock::now();
+    size_t total_runtime = chrono::duration_cast<chrono::seconds>(end_full_program - start_full_program).count();
+    cout << "Ran CSV_ON_ ALL in " << total_runtime << " seconds." << endl;
+
+}
+
+
+template<typename ECC_CLASS>
+void get_csv_data_repeated (const vector<string>& datasets, vector<vector<double>>& all_algo_runtimes, vector<vector<double>>& all_algo_avg_num_cliques, vector<vector<double>>& all_algo_min_num_cliques, vector<vector<double>>& all_algo_max_num_cliques, vector<string>& algo_names, size_t repetitions) {
+    string class_name = typeid(ECC_CLASS).name();
+    class_name.erase(0, 1); // typeid.name() starts with length of string
+    algo_names.push_back(class_name);
+    cout << "COLLECTING DATA FOR: " << class_name << endl;
+
+    vector<double> algo_runtimes;
+    vector<double> algo_avg_num_cliques;
+    vector<double> algo_min_num_cliques;
+    vector<double> algo_max_num_cliques;
+    for (string filename : datasets) {
+        cout << "\tRunning on " << filename << " " << repetitions << " times."<< endl;
+
+        size_t current_min_cliques = -1;
+        size_t current_max_cliques = 0;
+        size_t cliques_sum = 0;
+        size_t runtime_sum = 0;
+        for (int i = 0; i < repetitions; i++) {
+            // Make ECC_CLASS object
+        
+            ECC_CLASS solver(filename);
+
+            chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
+
+            size_t cliques_found = (*solver.run()).size();
+
+            chrono::steady_clock::time_point end_time = chrono::steady_clock::now();
+
+            size_t runtime = chrono::duration_cast<chrono::milliseconds>(end_time - start_time).count();
+            cout << "\t\t " << cliques_found << " cliques  :  " << runtime << " milliseconds" << endl;
+
+            if (cliques_found < current_min_cliques || current_min_cliques == -1) {
+                current_min_cliques = cliques_found;
+            }
+            if (cliques_found > current_max_cliques) {
+                current_max_cliques = cliques_found;
+            }
+
+            cliques_sum += cliques_found;
+            runtime_sum += runtime;
+
+
+        }
+        double average_runtime = static_cast<double>(runtime_sum) /repetitions;
+        double average_cover_size = static_cast<double>(cliques_sum) / repetitions;
+        algo_runtimes.push_back(average_runtime);
+        algo_min_num_cliques.push_back(current_min_cliques);
+        algo_max_num_cliques.push_back(current_max_cliques);
+        algo_avg_num_cliques.push_back(average_cover_size);
+    }
+    cout << "COLLECTED ALL DATA FOR: " << class_name << endl;
+    all_algo_runtimes.push_back(algo_runtimes);
+
+    all_algo_avg_num_cliques.push_back(algo_avg_num_cliques);
+    all_algo_min_num_cliques.push_back(algo_min_num_cliques);
+    all_algo_max_num_cliques.push_back(algo_max_num_cliques);
+    return;
+}
+
+
+template<typename... ECC_CLASSES>
+void csv_on_all_repeated(const vector<string> datasets, const string csv_output_filepath, size_t repetitions) {
+    chrono::steady_clock::time_point start_full_program = std::chrono::steady_clock::now();
+    cout << "Running csv on all repeated" << endl;
+
+    vector<Graph*> graphs;
+
+    vector<size_t> graph_edges;
+    vector<size_t> graph_nodes;
+
+
+    //Make datasets and save data
+    cout << "Making Graphs" << endl;
+    for (string filename : datasets) {
+        cout << "\t making " << filename << endl;
+        Graph* graph = new Graph(filename);
+        graphs.push_back(graph);
+        graph_edges.push_back(graphs[graphs.size()-1]->_edges.size());
+        graph_nodes.push_back(graphs[graphs.size()-1]->_nodes.size());
+    }
+
+    for (Graph* graph : graphs) {
+        delete graph;
+    }
+    cout << "Finished Making Graphs" << endl;
+
+    // Run algorithms and get result data
+    vector<string> algo_names;
+    vector<vector<double>> algo_runtimes;
+    vector<vector<double>> algo_avg_num_cliques;
+    vector<vector<double>> algo_min_num_cliques;
+    vector<vector<double>> algo_max_num_cliques;
+
+    // For each class, gets runs on all the graphs and appends data to lists
+    (..., (get_csv_data_repeated<ECC_CLASSES>(datasets, algo_runtimes, algo_avg_num_cliques, algo_min_num_cliques, algo_max_num_cliques, algo_names, repetitions)));
+
+    // //calculate min, max, and average for each algo and each dataset
+
+    // for (int algo_index = 0; algo_index < algo_num_cliques.size() < algo_index++) {
+    //     vector<size_t> clique_data = algo_num_cliques[algo_index]
+    //     clique_min = 
+    //     clique_sum = 0;
+    // }
+
+
+    // Call the CSV writing function
+    data_to_csv_repeated(csv_output_filepath, datasets, graph_nodes, graph_edges, algo_names, algo_runtimes, algo_avg_num_cliques, algo_min_num_cliques, algo_max_num_cliques);
+
+    
     chrono::steady_clock::time_point end_full_program = chrono::steady_clock::now();
     size_t total_runtime = chrono::duration_cast<chrono::seconds>(end_full_program - start_full_program).count();
     cout << "Ran CSV_ON_ ALL in " << total_runtime << " seconds." << endl;
@@ -294,10 +414,20 @@ vector<string> datasets = {
 "snap_datasets/cit-HepTh.txt",
 "snap_datasets/email-Enron.txt",
 "snap_datasets/email-EuAll.txt", //[8]
+"snap_datasets/p2p-Gnutella04.txt",
+"snap_datasets/p2p-Gnutella05.txt", //[10]
+"snap_datasets/p2p-Gnutella06.txt",
+"snap_datasets/p2p-Gnutella08.txt",
+"snap_datasets/p2p-Gnutella09.txt",
+"snap_datasets/p2p-Gnutella24.txt", // [14]
+"snap_datasets/p2p-Gnutella25.txt",
+"snap_datasets/p2p-Gnutella30.txt",
 "snap_datasets/p2p-Gnutella31.txt",
-"snap_datasets/soc-Slashdot0811.txt", //[10]
+"snap_datasets/soc-Slashdot0811.txt", 
 "snap_datasets/soc-Slashdot0902.txt",
 "snap_datasets/wiki-Vote.txt",
+
+
 };
 
 vector<string> big_datasets = {
@@ -307,7 +437,10 @@ vector<string> big_datasets = {
     "new_snap_datasets/roadNet-PA.txt", 
     "new_snap_datasets/roadNet-TX.txt", 
     // "new_snap_datasets/web-BerkStan.txt", 
-    "new_snap_datasets/web-Google.txt"
+    "new_snap_datasets/web-Google.txt",
+    "new_snap_datasets/web-NotreDame.txt",
+    // "new_snap_datasets/web-Stanford.txt",
+    // "new_snap_datasets/zhishi-hudong-internallink.edges"  
 };
 
 /* SETTINGS */
@@ -321,42 +454,46 @@ bool const INCLUDE_BIG_DATA = true;
 // class ECC_class = ECC;
 
 
+
+
 int main() {
     
     if (INCLUDE_BIG_DATA) {
         datasets.insert(datasets.end(), big_datasets.begin(), big_datasets.end());
     }
 
-    // ECC_QEC solver(datasets[0]);
-    // cout << "Initialize object" << endl;
-    // const Graph* G = solver.graph();
-    // cout << "Got Graph" << endl;
-    // cout << "Pre-Run" << endl;
-    // cout << (*solver.run()).size() << endl;
-    // cout << G -> _edges << endl;
+    
 
-    // datasets = {datasets[1]};
+    // ProfilerStart(PROFILER_OUT_PATH);
+    // Graph G(big_datasets[6]);
 
-    // csv_on_all<ECC_FS, ECC_QEC, ECC_QEC1>(datasets, CSV_OUT_PATH);
-    // csv_on_all<ECC_FS, ECC_QEC>(datasets, CSV_OUT_PATH);
+    // data_on_all<ECC_RED>({datasets[0]});
+
+    // ProfilerStop();
+
+    // cout << removals << endl;
+    // HeapLeakChecker checker("my_heap_check");
+    // data_on_all<ECC_RED>({datasets[0]});
+
+    // Node* test = new Node(0, 9);
+    // test = nullptr;
+
+
+    // csv_on_all<ECC_RED>(datasets, CSV_OUT_PATH);
+    csv_on_all_repeated<ECC_QEC1, ECC_RED>(datasets, CSV_OUT_PATH, 7);
+    // data_on_all<ECC_RED>(datasets);
+    // csv_on_all_repeated<ECC_QEC1, ECC_RED>(datasets, CSV_OUT_PATH, 100);
+    // csv_on_all_repeated<ECC_RED, ECC_QEC1>(datasets, CSV_OUT_PATH, 10);
 
     // profile_on_all<ECC_QEC1>(datasets, PROFILER_OUT_PATH);
 
-
     // profile_on_all<ECC_QEC>(datasets, PROFILER_OUT_PATH);
-    // solver.run();
-    // solver.check_solution_debug();
     
     /*Profiling all the datasets */
-    // profile_on_all<ECC_CF>(datasets, PROFILER_OUT_PATH);
     // profile_on_all<ECC>(datasets, PROFILER_OUT_PATH);
 
     // /* Getting data on all the datasets*/
-    data_on_all<ECC_QEC1> (datasets);
-    // cin.get();
-    // data_on_all<ECC_CF> (datasets);
-    // data_on_all<ECC_FS> (datasets);
-    // data_on_all<ECC> (datasets);
+    // data_on_all<ECC_QEC1> (datasets);
 
     // /* Looking at one in particular */
     // profile_on<ECC_FS>(datasets[8], PROFILER_OUT_PATH);
@@ -365,12 +502,21 @@ int main() {
     return 0;
 }
 
+
+
 /*Running with gperf
 Include path:
 -I/opt/homebrew/include
 
 Linked:
-g++ -I/opt/homebrew/include -L/opt/homebrew/lib -lprofiler -std=c++17 *.cc -o ecc
+g++ -I/opt/homebrew/include -L/opt/homebrew/lib -lprofiler -std=c++17 -O3 *.cc -o ecc
+g++ -I/opt/homebrew/include -L/opt/homebrew/lib -ltcmalloc_and_profiler -std=c++17 *.cc -o ecc
+g++ -I/opt/homebrew/include -L/opt/homebrew/lib -std=c++17 -O3 -fsanitize=address *.cc -o ecc
+g++ -fsanitize=address -L/opt/homebrew/lib -g -O1 -std=c++17 *.cc -o ecc
+
+g++ -I/opt/homebrew/include -L/opt/homebrew/lib -lprofiler -std=c++17 -fsanitize=address -g *.cc -o ecc
+
+
 
 See pprof
 pprof ecc ./profile_output.prof  
@@ -385,5 +531,5 @@ dot -Tpng output.dot -o output.png
 
 
 all combined
-g++ -I/opt/homebrew/include -L/opt/homebrew/lib -lprofiler -std=c++17 *.cc -o ecc; ./ecc; pprof --dot ./ecc profile_output.prof > output.dot; dot -Tpng output.dot -o output.png
+g++ -I/opt/homebrew/include -L/opt/homebrew/lib -lprofiler -std=c++17 -O3 *.cc -o ecc; ./ecc; pprof --dot ./ecc profile_output.prof > output.dot; dot -Tpng output.dot -o output.png
 */

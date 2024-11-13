@@ -58,4 +58,14 @@ void data_to_csv(const string output_filepath,
                  const vector<vector<size_t>>& algo_runtimes, 
                  const vector<vector<size_t>>& algo_num_cliques);
 
+void data_to_csv_repeated (const string output_filepath,
+                 const vector<string>& datasets, 
+                 const vector<size_t>& dataset_node_nums, 
+                 const vector<size_t>& dataset_edges_nums,
+                 const vector<string>& algo_names,
+                 const vector<vector<double>>& algo_runtimes, 
+                 const vector<vector<double>>& algo_avg_num_cliques,
+                 const vector<vector<double>>& algo_min_num_cliques,
+                 const vector<vector<double>>& algo_max_num_cliques);
+
 #endif

@@ -205,6 +205,40 @@ void Graph::fill_graph(ifstream& file) {
 
 }
 
+/**
+ * @brief FASTER! Using connection_map (unordered_map): Checks if two nodes are connected and returns the connecting edge if they are
+ * 
+ * @param node1 
+ * @param node2 
+ * @return Edge* 
+ */
+Edge* Graph::are_connected(Node* node1, Node* node2) const {
+    if (node1 == nullptr | node2 == nullptr) {
+        cerr << "PASSED NULLPTR TO are_connected" << endl;
+        return nullptr;
+    }
+
+    unordered_map<Node*, Edge*>::const_iterator node2_searcher = node1->connection_map.find(node2);
+    if (node2_searcher != node1->connection_map.end()) {
+        return node2_searcher->second;
+    }
+
+    return nullptr;
+}
+
+
+/**
+ * @brief Synonym of are_connected
+ * 
+ * @param node1 
+ * @param node2 
+ * @return Edge* 
+ */
+Edge* Graph::get_edge(Node* node1, Node* node2) const  {
+    return are_connected(node1, node2);
+}
+
+
 
 
 // /**
@@ -432,38 +466,7 @@ void Graph::fill_graph(ifstream& file) {
 //     return result;
 // }
 
-/**
- * @brief FASTER! Using connection_map (unordered_map): Checks if two nodes are connected and returns the connecting edge if they are
- * 
- * @param node1 
- * @param node2 
- * @return Edge* 
- */
-Edge* Graph::are_connected(Node* node1, Node* node2) const {
-    if (node1 == nullptr | node2 == nullptr) {
-        cerr << "PASSED NULLPTR TO are_connected" << endl;
-        return nullptr;
-    }
 
-    unordered_map<Node*, Edge*>::const_iterator node2_searcher = node1->connection_map.find(node2);
-    if (node2_searcher != node1->connection_map.end()) {
-        return node2_searcher->second;
-    }
-
-    return nullptr;
-}
-
-
-/**
- * @brief Synonym of are_connected
- * 
- * @param node1 
- * @param node2 
- * @return Edge* 
- */
-Edge* Graph::get_edge(Node* node1, Node* node2) const  {
-    return are_connected(node1, node2);
-}
 
 // /**
 //  * @brief NOT IMPLEMENTED- Given a vector of edges get the nodes in the list

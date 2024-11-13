@@ -5,7 +5,8 @@
 #include "edge.h"
 #include "clique.h"
 #include "fast_set.h"
-#include <gperftools/profiler.h>
+// #include <gperftools/profiler.h>
+
 
 
 ECC_QEC1::ECC_QEC1(string dataset_filepath) : ECC_FS(dataset_filepath) {

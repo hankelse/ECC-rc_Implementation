@@ -6,6 +6,43 @@
 #include "clique.h"
 
 
+
+/**
+ * @brief Constructor of ECC Object: Builds graph from filepath
+ * 
+ *
+ * @param dataset_filepath filepath of dataset
+ */
+ECC::ECC(string ds_filepath) {
+    name = "ECC";
+
+    dataset_filepath = ds_filepath;
+
+    Graph* mutable_graph = new Graph(dataset_filepath);
+    const Graph& const_graph = *mutable_graph;
+    G = &const_graph;
+
+    num_edges_covered = 0;
+}
+
+/**
+ * @brief Constructor of ECC Object: Given G
+ * 
+ *
+ * @param G 
+ */
+ECC::ECC(const Graph& Graph) {
+    G = &Graph;
+    num_edges_covered = 0;
+}
+
+
+ECC::~ECC() {
+    for (Clique* clique : clique_cover) {
+        delete clique;
+    }
+}
+
 // ==== PUBLIC METHODS ==== //
 
 /**
@@ -67,37 +104,6 @@ void ECC::check_solution_debug () {
     cout << "\t" << uncovered_edges.size() << " out of " << G->_edges.size() << " left uncovered." << endl;
 }
 
-/**
- * @brief Constructor of ECC Object: Builds graph from filepath
- * 
- *
- * @param dataset_filepath filepath of dataset
- */
-ECC::ECC(string ds_filepath) {
-    name = "ECC";
-
-    dataset_filepath = ds_filepath;
-
-    Graph* mutable_graph = new Graph(dataset_filepath);
-    const Graph& const_graph = *mutable_graph;
-    G = &const_graph;
-
-    num_edges_covered = 0;
-    
-
-
-}
-
-/**
- * @brief Constructor of ECC Object: Given G
- * 
- *
- * @param G 
- */
-ECC::ECC(const Graph& Graph) {
-    G = &Graph;
-    num_edges_covered = 0;
-}
 
 
 /**
@@ -108,6 +114,9 @@ ECC::ECC(const Graph& Graph) {
 const Graph* ECC::graph() {
     return G;
 }
+
+
+
 
 // ==== FRAMEWORK METHODS ==== //
 

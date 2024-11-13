@@ -5,7 +5,7 @@
 #include "edge.h"
 #include "clique.h"
 #include "fast_set.h"
-#include <gperftools/profiler.h>
+// #include <gperftools/profiler.h>
 
 
 ECC_FS::ECC_FS(string ds_filepath) : ECC (ds_filepath) {
