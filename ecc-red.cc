@@ -32,12 +32,7 @@ vector<Clique*>* ECC_RED::run(){
     size_t og_num_edges = G->_edges.size();
 
     // apply reductions exhaustively
-    size_t change = 1;
-    while (change > 0) {
-        change = 0;
-        change += apply_rule_two();
-        change += apply_rule_one();
-    }
+    apply_rules_exhaustively();
 
 
     cout << "\t\tPreformed Data Reductions:" << endl;
@@ -58,11 +53,11 @@ size_t ECC_RED::apply_rule_two() {
     Clique* found_clique;
     for (Node* node : G->_nodes) {
         if (node_removals[node->index]) continue; // skip node if already removed
-        // cout << "RULE 2: looking at " << *node << endl;
+
         for (const auto & [neighbor, connecting_edge] : node->connection_map) {
             if (node_removals[neighbor->index]) continue; // skip neighbor if already removed
             if (connecting_edge->is_covered()) continue; //skip neighbor if connecting edge already covered.
-            // cout << "\t\t with neighbor " << *neighbor << " by " << *connecting_edge << endl;
+
             //compute common neighbors
             vector<Node*> commmon_neighbors = node_set_intersect(node->neighbors, neighbor->neighbors);
             // cout << "\t\t common neighbors: " << commmon_neighbors << endl;
@@ -72,7 +67,7 @@ size_t ECC_RED::apply_rule_two() {
 
             //check if commmon_neighbors is a clique
             if (is_clique (commmon_neighbors)) {
-                // cout << "\tCLIQUE FOUND " << commmon_neighbors << endl;
+
                 found_clique = new Clique();
                 for (Node* node : commmon_neighbors) {
                     add_to_clique(found_clique, node);
@@ -235,43 +230,13 @@ bool ECC_RED::is_removed(Node* node) {
 }
 
 
-
-// size_t apply_rule_one(Graph const& graph, Cover& cover, size_t const component = 0) {
-//     size_t ret = 0;
-
-//     for (auto const& [v1, v1_neighbors] : graph.get_adj_list()) {
-//         if (cover.is_removed(v1) or (component != 0 and cover.components[v1] != component)) continue;
-
-//         bool all_edges_covered = true;
-//         for (node_t v2 : v1_neighbors) {
-//             if (cover.is_removed(v2)) continue;
-
-//             if (not cover.is_covered(v1, v2)) {
-//                 all_edges_covered = false;
-//                 break;
-//             }
-//         }
-
-//         if (all_edges_covered) {
-//             cover.remove_node(v1);
-//             // std::cout << "Rule 1 is removing " << v1 << "\n";
-//             for (node_t neighbor : graph.neighbors(v1)) {
-//                 cover.cover_edge(neighbor, v1);
-//             }
-//             ret++;
-//         }
-//     }
-
-//     return ret;
-// }
-
 size_t ECC_RED::apply_rule_one() {
-
     size_t starting_num_removed = nodes_removed;
     
     for (Node* node : G->_nodes) {
         if (is_removed(node)) continue; // Skip node if removed
 
+        //check if all incident edges have been covered
         vector<Edge*> incident_edges = node->edges;
         bool all_covered = true;
         for (Edge* edge : incident_edges) {
@@ -281,18 +246,26 @@ size_t ECC_RED::apply_rule_one() {
             }
         }
 
+        //if all incident edges covered, remove node from G
         if (all_covered) {
             size_t index = node->index;
             node_removals[index] = true;
             nodes_removed ++;
-            // delete G->_nodes[index];
-            // G->_nodes[index] = nullptr;
         }
     }
 
     return nodes_removed - starting_num_removed;
 }
 
+
+void ECC_RED::apply_rules_exhaustively() {
+    size_t change = 1;
+    while (change > 0) {
+        change = 0;
+        change += apply_rule_two();
+        change += apply_rule_one();
+    }
+}
 
 
 

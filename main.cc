@@ -11,6 +11,7 @@ using namespace std;
 #include "ecc-qec.h"
 #include "ecc-qec1.h"
 #include "ecc-red.h"
+#include "ecc-nec.h"
 
 #include "io.h"
 #include "node.h"
@@ -450,7 +451,7 @@ const char* PROFILER_OUT_PATH = "profile_output.prof";
 string const CSV_OUT_PATH = "output.csv";
 
 bool const DO_CHECKS = false;
-bool const INCLUDE_BIG_DATA = true;
+bool const INCLUDE_BIG_DATA = false;
 // class ECC_class = ECC;
 
 
@@ -467,7 +468,8 @@ int main() {
     // ProfilerStart(PROFILER_OUT_PATH);
     // Graph G(big_datasets[6]);
 
-    // data_on_all<ECC_RED>({datasets[0]});
+    // data_on_all<ECC_NEC>({datasets[0]});
+    // data_on_all<ECC_NEC>({"snap_datasets/red_test.txt"});
 
     // ProfilerStop();
 
@@ -479,8 +481,10 @@ int main() {
     // test = nullptr;
 
 
-    // csv_on_all<ECC_RED>(datasets, CSV_OUT_PATH);
-    csv_on_all_repeated<ECC_QEC1, ECC_RED>(datasets, CSV_OUT_PATH, 7);
+    csv_on_all_repeated<ECC_RED, ECC_NEC>(datasets, CSV_OUT_PATH, 10);
+
+    // csv_on_all<ECC_RED, ECC_NEC>(datasets, CSV_OUT_PATH);
+    // csv_on_all_repeated<ECC_RED, ECC_NEC>(datasets, CSV_OUT_PATH, 5);
     // data_on_all<ECC_RED>(datasets);
     // csv_on_all_repeated<ECC_QEC1, ECC_RED>(datasets, CSV_OUT_PATH, 100);
     // csv_on_all_repeated<ECC_RED, ECC_QEC1>(datasets, CSV_OUT_PATH, 10);

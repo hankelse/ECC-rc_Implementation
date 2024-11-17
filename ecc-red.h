@@ -58,6 +58,7 @@ protected:
 
 
     // New Methods
+    void apply_rules_exhaustively();
     size_t apply_rule_two();
     size_t apply_rule_one();
 
