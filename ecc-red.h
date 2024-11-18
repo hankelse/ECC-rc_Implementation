@@ -51,20 +51,20 @@ protected:
 
 
     //Overrides
-    vector<Node *> node_set_intersect(const vector<Node *>& vec_1, const vector<Node*>& vec_2);
-    void trim_candidates(std::vector<Node*>& candidates, const std::vector<Node*>& trimming_vec);
-    Node* extract_node(vector<Node*>& potential_additions, Clique* clique);
-    Clique* find_clique_of(Edge* edge);
+    virtual vector<Node *> node_set_intersect(const vector<Node *>& vec_1, const vector<Node*>& vec_2);
+    virtual void trim_candidates(std::vector<Node*>& candidates, const std::vector<Node*>& trimming_vec);
+    virtual Node* extract_node(vector<Node*>& potential_additions, Clique* clique);
+    virtual Clique* find_clique_of(Edge* edge);
 
 
     // New Methods
-    void apply_rules_exhaustively();
-    size_t apply_rule_two();
-    size_t apply_rule_one();
+    virtual void apply_rules_exhaustively();
+    virtual size_t apply_rule_two();
+    virtual size_t apply_rule_one();
 
-    bool is_clique(vector<Node*>&);
+    virtual bool is_clique(vector<Node*>&);
 
-    bool is_removed(Node* node);
+    virtual bool is_removed(Node* node);
     
 
 };

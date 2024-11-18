@@ -49,17 +49,12 @@ protected:
 
 
     //Overrides
-    // vector<Node *> node_set_intersect(const vector<Node *>& vec_1, const vector<Node*>& vec_2);
-    // void trim_candidates(std::vector<Node*>& candidates, const std::vector<Node*>& trimming_vec);
-    // Node* extract_node(vector<Node*>& potential_additions, Clique* clique);
-    // Clique* find_clique_of(Edge* edge);
-
     virtual Edge* select_uncovered_edge(int& previous_index);
 
 
     // New Methods
-    void init_edge_intersection_counts();
-    void get_edge_ordering();
+    virtual void init_edge_intersection_counts();
+    virtual void get_edge_ordering();
 
 
     // size_t apply_rule_two();

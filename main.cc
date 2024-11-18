@@ -12,6 +12,7 @@ using namespace std;
 #include "ecc-qec1.h"
 #include "ecc-red.h"
 #include "ecc-nec.h"
+#include "ecc-fr.h"
 
 #include "io.h"
 #include "node.h"
@@ -452,7 +453,6 @@ string const CSV_OUT_PATH = "output.csv";
 
 bool const DO_CHECKS = false;
 bool const INCLUDE_BIG_DATA = false;
-// class ECC_class = ECC;
 
 
 
@@ -479,9 +479,10 @@ int main() {
 
     // Node* test = new Node(0, 9);
     // test = nullptr;
+    // datasets = {datasets[6]};
 
 
-    csv_on_all_repeated<ECC_RED, ECC_NEC>(datasets, CSV_OUT_PATH, 10);
+    // csv_on_all_repeated<ECC_NEC, ECC_FR>(datasets, CSV_OUT_PATH, 1);
 
     // csv_on_all<ECC_RED, ECC_NEC>(datasets, CSV_OUT_PATH);
     // csv_on_all_repeated<ECC_RED, ECC_NEC>(datasets, CSV_OUT_PATH, 5);
@@ -489,7 +490,7 @@ int main() {
     // csv_on_all_repeated<ECC_QEC1, ECC_RED>(datasets, CSV_OUT_PATH, 100);
     // csv_on_all_repeated<ECC_RED, ECC_QEC1>(datasets, CSV_OUT_PATH, 10);
 
-    // profile_on_all<ECC_QEC1>(datasets, PROFILER_OUT_PATH);
+    profile_on_all<ECC_FR>(datasets, PROFILER_OUT_PATH);
 
     // profile_on_all<ECC_QEC>(datasets, PROFILER_OUT_PATH);
     

@@ -33,7 +33,7 @@ ECC_NEC::ECC_NEC(Graph& G) : ECC_RED (G) {
 vector<Clique*>* ECC_NEC::run() {
 
     //applies reductions
-    // apply_rules_exhaustively();
+    apply_rules_exhaustively();
 
     //sort edges
     init_edge_intersection_counts();

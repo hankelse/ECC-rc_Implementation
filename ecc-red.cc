@@ -59,17 +59,16 @@ size_t ECC_RED::apply_rule_two() {
             if (connecting_edge->is_covered()) continue; //skip neighbor if connecting edge already covered.
 
             //compute common neighbors
-            vector<Node*> commmon_neighbors = node_set_intersect(node->neighbors, neighbor->neighbors);
-            // cout << "\t\t common neighbors: " << commmon_neighbors << endl;
-            // cout << "\t\t\t\t common neighbors: " << commmon_neighbors.size() << endl;
-            commmon_neighbors.push_back(node);
-            commmon_neighbors.push_back(neighbor);
+            vector<Node*> common_neighbors = node_set_intersect(node->neighbors, neighbor->neighbors);
 
-            //check if commmon_neighbors is a clique
-            if (is_clique (commmon_neighbors)) {
+            common_neighbors.push_back(node);
+            common_neighbors.push_back(neighbor);
+
+            //check if common_neighbors is a clique
+            if (is_clique (common_neighbors)) {
 
                 found_clique = new Clique();
-                for (Node* node : commmon_neighbors) {
+                for (Node* node : common_neighbors) {
                     add_to_clique(found_clique, node);
                 }
                 fill_clique(found_clique);
@@ -265,6 +264,8 @@ void ECC_RED::apply_rules_exhaustively() {
         change += apply_rule_two();
         change += apply_rule_one();
     }
+    cout << num_edges_covered << endl;
+    cout << nodes_removed << endl;
 }
 
 
