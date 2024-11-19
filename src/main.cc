@@ -21,10 +21,16 @@ using namespace std;
 // #include "checks.h"
 #include "connection.h"
 #include "clique.h"
-#include <gperftools/profiler.h>
+
+
 // #include <gperftools/heap-checker.h>
 #include <chrono>
 #include <thread>
+
+// only try to get gperftools if progiling
+#ifdef PROFILING
+    #include <gperftools/profiler.h>   
+#endif 
 
 
 
@@ -87,7 +93,7 @@ using namespace std;
  */
 template<typename ECC_CLASS>
 void profile_on(string filename, const char* profile_output_path) {
-
+#ifdef PROFILING
     ECC_CLASS solver(filename);
     const Graph* G = solver.graph();
 
@@ -116,7 +122,7 @@ void profile_on(string filename, const char* profile_output_path) {
     }
 
 
-
+#endif 
 }
 
 
@@ -386,6 +392,7 @@ void csv_on_all_repeated(const vector<string> datasets, const string csv_output_
 
 template<typename ECC_CLASS>
 void profile_on_all(vector<string> datasets, const char* profile_output_path) {
+#ifdef PROFILING
     //Make all objects before starting profile
     cout << "Building solver objects" << endl;
     vector<ECC_CLASS> solvers;
@@ -402,106 +409,149 @@ void profile_on_all(vector<string> datasets, const char* profile_output_path) {
     }
     ProfilerStop();
     cout << "Profile finished." << endl;
-
+#endif 
 }
 
 
+// vector<string> datasets = {
+// "snap_datasets/ca-AstroPh.txt", 
+// "snap_datasets/ca-CondMat.txt", 
+// "snap_datasets/ca-GrQc.txt", 
+// "snap_datasets/ca-HepPh.txt", 
+// "snap_datasets/ca-HepTh.txt", 
+// "snap_datasets/cit-HepPh.txt", //[5]
+// "snap_datasets/cit-HepTh.txt",
+// "snap_datasets/email-Enron.txt",
+// "snap_datasets/email-EuAll.txt", //[8]
+// "snap_datasets/p2p-Gnutella04.txt",
+// "snap_datasets/p2p-Gnutella05.txt", //[10]
+// "snap_datasets/p2p-Gnutella06.txt",
+// "snap_datasets/p2p-Gnutella08.txt",
+// "snap_datasets/p2p-Gnutella09.txt",
+// "snap_datasets/p2p-Gnutella24.txt", // [14]
+// "snap_datasets/p2p-Gnutella25.txt",
+// "snap_datasets/p2p-Gnutella30.txt",
+// "snap_datasets/p2p-Gnutella31.txt",
+// "snap_datasets/soc-Slashdot0811.txt", 
+// "snap_datasets/soc-Slashdot0902.txt",
+// "snap_datasets/wiki-Vote.txt",
+// };
+
 vector<string> datasets = {
-"snap_datasets/ca-AstroPh.txt", 
-"snap_datasets/ca-CondMat.txt", 
-"snap_datasets/ca-GrQc.txt", 
-"snap_datasets/ca-HepPh.txt", 
-"snap_datasets/ca-HepTh.txt", 
-"snap_datasets/cit-HepPh.txt", //[5]
-"snap_datasets/cit-HepTh.txt",
-"snap_datasets/email-Enron.txt",
-"snap_datasets/email-EuAll.txt", //[8]
-"snap_datasets/p2p-Gnutella04.txt",
-"snap_datasets/p2p-Gnutella05.txt", //[10]
-"snap_datasets/p2p-Gnutella06.txt",
-"snap_datasets/p2p-Gnutella08.txt",
-"snap_datasets/p2p-Gnutella09.txt",
-"snap_datasets/p2p-Gnutella24.txt", // [14]
-"snap_datasets/p2p-Gnutella25.txt",
-"snap_datasets/p2p-Gnutella30.txt",
-"snap_datasets/p2p-Gnutella31.txt",
-"snap_datasets/soc-Slashdot0811.txt", 
-"snap_datasets/soc-Slashdot0902.txt",
-"snap_datasets/wiki-Vote.txt",
-
-
+    "datasets/snap_datasets/ca-AstroPh.txt", 
+    "datasets/snap_datasets/ca-CondMat.txt", 
+    "datasets/snap_datasets/ca-GrQc.txt", 
+    "datasets/snap_datasets/ca-HepPh.txt", 
+    "datasets/snap_datasets/ca-HepTh.txt", 
+    "datasets/snap_datasets/cit-HepPh.txt", // [5]
+    "datasets/snap_datasets/cit-HepTh.txt",
+    "datasets/snap_datasets/email-Enron.txt",
+    "datasets/snap_datasets/email-EuAll.txt", // [8]
+    "datasets/snap_datasets/p2p-Gnutella04.txt",
+    "datasets/snap_datasets/p2p-Gnutella05.txt", // [10]
+    "datasets/snap_datasets/p2p-Gnutella06.txt",
+    "datasets/snap_datasets/p2p-Gnutella08.txt",
+    "datasets/snap_datasets/p2p-Gnutella09.txt",
+    "datasets/snap_datasets/p2p-Gnutella24.txt", // [14]
+    "datasets/snap_datasets/p2p-Gnutella25.txt",
+    "datasets/snap_datasets/p2p-Gnutella30.txt",
+    "datasets/snap_datasets/p2p-Gnutella31.txt",
+    "datasets/snap_datasets/soc-Slashdot0811.txt", 
+    "datasets/snap_datasets/soc-Slashdot0902.txt",
+    "datasets/snap_datasets/wiki-Vote.txt",
 };
 
 vector<string> big_datasets = {
-    "new_snap_datasets/amazon0302.txt", 
-    "new_snap_datasets/amazon0312.txt", 
-    "new_snap_datasets/roadNet-CA.txt", 
-    "new_snap_datasets/roadNet-PA.txt", 
-    "new_snap_datasets/roadNet-TX.txt", 
-    // "new_snap_datasets/web-BerkStan.txt", 
-    "new_snap_datasets/web-Google.txt",
-    "new_snap_datasets/web-NotreDame.txt",
-    // "new_snap_datasets/web-Stanford.txt",
-    // "new_snap_datasets/zhishi-hudong-internallink.edges"  
+    "datasets/new_snap_datasets/amazon0302.txt", 
+    "datasets/new_snap_datasets/amazon0312.txt", 
+    "datasets/new_snap_datasets/roadNet-CA.txt", 
+    "datasets/new_snap_datasets/roadNet-PA.txt", 
+    "datasets/new_snap_datasets/roadNet-TX.txt", 
+    // "datasets/new_snap_datasets/web-BerkStan.txt", 
+    "datasets/new_snap_datasets/web-Google.txt",
+    "datasets/new_snap_datasets/web-NotreDame.txt",
+    // "datasets/new_snap_datasets/web-Stanford.txt",
+    // "datasets/new_snap_datasets/zhishi-hudong-internallink.edges"  
 };
+
+
+// vector<string> big_datasets = {
+//     "new_snap_datasets/amazon0302.txt", 
+//     "new_snap_datasets/amazon0312.txt", 
+//     "new_snap_datasets/roadNet-CA.txt", 
+//     "new_snap_datasets/roadNet-PA.txt", 
+//     "new_snap_datasets/roadNet-TX.txt", 
+//     // "new_snap_datasets/web-BerkStan.txt", 
+//     "new_snap_datasets/web-Google.txt",
+//     "new_snap_datasets/web-NotreDame.txt",
+//     // "new_snap_datasets/web-Stanford.txt",
+//     // "new_snap_datasets/zhishi-hudong-internallink.edges"  
+// };
 
 /* SETTINGS */
 
 string const DATASET_PATH = "datasets/";
-const char* PROFILER_OUT_PATH = "profile_output.prof";
-string const CSV_OUT_PATH = "output.csv";
+const char* PROFILER_OUT_PATH = "build/profiler/profile_output.prof";
+string const CSV_OUT_PATH = "build/csv/output.csv";
 
-bool const DO_CHECKS = false;
-bool const INCLUDE_BIG_DATA = false;
-
-
+// bool const DO_CHECKS = false;
+// bool const INCLUDE_BIG_DATA = false;
 
 
-int main() {
-    
-    if (INCLUDE_BIG_DATA) {
-        datasets.insert(datasets.end(), big_datasets.begin(), big_datasets.end());
+
+
+int main(int argc, char* argv[]) {
+    if (argc < 2) {
+        // cerr << "Usage: " << argv[0] << " <flag> [filepath if -g]" << endl;
+        cerr << "Usage: " << "./run" << " <flag> [filepath if -g]" << endl;
+        cout << "\t flags:\n\t\t -a : all datasets \n\t\t -b : all with big datasets \n\t\t -g : specified graph\n" << endl;
+        return 1;
+    }
+
+    /* Parse the flags passed */
+    // -a : run on all datasets
+    // -b:  run on all datasets and big datasets
+    // -g:  run on dataset from path passed to commandline
+
+    string dataset_flag = argv[1];
+    bool include_big_data = false;
+    bool profiling = false;
+
+    if (dataset_flag == "-a") {
+        // datasets in dataset vector
+    } 
+    else if (dataset_flag == "-b") {
+        include_big_data = true;
+    } 
+    else if (dataset_flag == "-g") {
+        if (argc < 3) {
+            cout << "no filepath passed with -g!" << endl;
+            return 1;
+        }
+        string graph_filepath = argv[2];
+        datasets = {graph_filepath};
+
+    } else {
+        cerr << "flag: " << dataset_flag << " not recognized." << endl;
+        return 1;
     }
 
     
+    if (include_big_data) {
+        datasets.insert(datasets.end(), big_datasets.begin(), big_datasets.end());
+    }
 
-    // ProfilerStart(PROFILER_OUT_PATH);
-    // Graph G(big_datasets[6]);
+    /* Get average CSV data on ECC_CLASSES for multiple runs */
+    // csv_on_all_repeated<ECC_NEC, ECC_FR>(datasets, CSV_OUT_PATH, 2);
 
-    // data_on_all<ECC_NEC>({datasets[0]});
-    // data_on_all<ECC_NEC>({"snap_datasets/red_test.txt"});
-
-    // ProfilerStop();
-
-    // cout << removals << endl;
-    // HeapLeakChecker checker("my_heap_check");
-    // data_on_all<ECC_RED>({datasets[0]});
-
-    // Node* test = new Node(0, 9);
-    // test = nullptr;
-    // datasets = {datasets[6]};
-
-
-    csv_on_all_repeated<ECC_NEC, ECC_FR>(datasets, CSV_OUT_PATH, 2);
-
+    /* Get CSV data on ECC_CLASSES for one run */
     // csv_on_all<ECC_RED, ECC_NEC>(datasets, CSV_OUT_PATH);
-    // csv_on_all_repeated<ECC_RED, ECC_NEC>(datasets, CSV_OUT_PATH, 5);
-    // data_on_all<ECC_RED>(datasets);
-    // csv_on_all_repeated<ECC_QEC1, ECC_RED>(datasets, CSV_OUT_PATH, 100);
-    // csv_on_all_repeated<ECC_RED, ECC_QEC1>(datasets, CSV_OUT_PATH, 10);
 
-    // profile_on_all<ECC_FR>(datasets, PROFILER_OUT_PATH);
+    /* Profile on ECC class for one run */
+    profile_on_all<ECC_FR>(datasets, PROFILER_OUT_PATH);
 
-    // profile_on_all<ECC_QEC>(datasets, PROFILER_OUT_PATH);
-    
-    /*Profiling all the datasets */
-    // profile_on_all<ECC>(datasets, PROFILER_OUT_PATH);
 
-    // /* Getting data on all the datasets*/
-    // data_on_all<ECC_QEC1> (datasets);
 
-    // /* Looking at one in particular */
-    // profile_on<ECC_FS>(datasets[8], PROFILER_OUT_PATH);
 
 
     return 0;
@@ -520,6 +570,8 @@ g++ -I/opt/homebrew/include -L/opt/homebrew/lib -std=c++17 -O3 -fsanitize=addres
 g++ -fsanitize=address -L/opt/homebrew/lib -g -O1 -std=c++17 *.cc -o ecc
 
 g++ -I/opt/homebrew/include -L/opt/homebrew/lib -lprofiler -std=c++17 -fsanitize=address -g *.cc -o ecc
+
+
 
 
 
