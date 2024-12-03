@@ -6,6 +6,7 @@
 #include "clique.h"
 #include "fast_set.h"
 // #include <gperftools/profiler.h>
+#include <algorithm>
 
 
 ECC_FS::ECC_FS(string ds_filepath) : ECC (ds_filepath) {

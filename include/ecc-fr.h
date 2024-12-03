@@ -43,6 +43,7 @@ public:
 
     // New Datastructure: Index i corresponds to all of the common neighbors between edge i
     vector<vector<Node*>> common_neighbor_sets;
+    vector<bool> edge_removals;
 
     virtual vector<Clique*>* run(); 
  
@@ -64,9 +65,19 @@ protected:
 
 
     // New Methods
-    void find_all_common_neighbors(); // For each edge, finds and stores all neighbors of both of its nodes
+    void init_reduction_data(); // For each edge, finds and stores all neighbors of both of its nodes
+
+
+    size_t get_edge_intersection_count(Edge* edge, vector<Node*>& neighborhood);
+
+
     vector<Node*> get_common_neighbors(Edge*); // Returns the common neighbors of the nodes in an edge
 
+    void remove_node(Node* node);
+    void remove_edge(Edge* edge);
+
+
+    bool edge_removed(Edge* edge);
     
 
 };

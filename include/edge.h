@@ -22,6 +22,11 @@ class Edge {
 
         size_t index;
         bool _covered;
+
+        // For fast data reductions:
+        // All of the edges for whom this edge is between the common neighbors of its nodes
+        vector<Edge*> counted_by;
+
     private:
         
 };

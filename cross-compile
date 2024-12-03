@@ -9,7 +9,7 @@ compile_project() {
     # echo "Arguments passed: $@"
     
     # # Get the last argument (ignore extra spaces)
-    LAST_ARG="${!#}"
+    # LAST_ARG="${!#}"
     
     # # Debugging: Print the last argument
     # echo "Last argument: $LAST_ARG"
@@ -19,13 +19,13 @@ compile_project() {
         # Compile with gperftools flags
         echo "Compiling with gperftools flags..."
         mkdir -p build
-        g++ -I/opt/homebrew/include -L/opt/homebrew/lib -lprofiler -DPROFILING -Iinclude -std=c++17 -O3 src/*.cc -o build/ecc
+        x86_64-linux-musl-g++ -I/opt/homebrew/include -L/opt/homebrew/lib -lprofiler -DPROFILING -Iinclude -std=c++17 -O3 src/*.cc -o build/ecc
 
     else
         # Compile without gperftools flags
         echo "Compiling program..."
         mkdir -p build
-        g++ -Iinclude -std=c++17 -O3 src/*.cc -o build/ecc
+        x86_64-linux-musl-g++ -Iinclude -std=c++17 -O3 src/*.cc -o build/ecc
     fi
 }
 

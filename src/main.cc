@@ -27,7 +27,7 @@ using namespace std;
 #include <chrono>
 #include <thread>
 
-// only try to get gperftools if progiling
+// only try to get gperftools if profiling (might not be installed in location)
 #ifdef PROFILING
     #include <gperftools/profiler.h>   
 #endif 
@@ -120,7 +120,8 @@ void profile_on(string filename, const char* profile_output_path) {
     } else {
         cout << "Algorithm did not cover all edges." << endl;
     }
-
+#else
+    cerr << "ERROR: In order to profile, run the command followed by -P" << endl;
 
 #endif 
 }
@@ -409,6 +410,8 @@ void profile_on_all(vector<string> datasets, const char* profile_output_path) {
     }
     ProfilerStop();
     cout << "Profile finished." << endl;
+#else
+    cerr << "ERROR: In order to profile, run the command followed by -P" << endl;
 #endif 
 }
 
@@ -502,9 +505,9 @@ string const CSV_OUT_PATH = "build/csv/output.csv";
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
-        // cerr << "Usage: " << argv[0] << " <flag> [filepath if -g]" << endl;
         cerr << "Usage: " << "./run" << " <flag> [filepath if -g]" << endl;
-        cout << "\t flags:\n\t\t -a : all datasets \n\t\t -b : all with big datasets \n\t\t -g : specified graph\n" << endl;
+        cout << "\t flags:\n\t\t -a : default datasets \n\t\t -b : including big datasets \n\t\t -g : specified graph" << endl;
+        cout << "\t\t -P : if profiling (with gperftools) (last arg)\n" << endl;
         return 1;
     }
 
@@ -541,14 +544,18 @@ int main(int argc, char* argv[]) {
         datasets.insert(datasets.end(), big_datasets.begin(), big_datasets.end());
     }
 
-    /* Get average CSV data on ECC_CLASSES for multiple runs */
-    // csv_on_all_repeated<ECC_NEC, ECC_FR>(datasets, CSV_OUT_PATH, 2);
+// -------------------- OPTIONS FOR RUNNING PROGRAM ------------------- //
+/* 1)  Get average CSV data on ECC_CLASSES for multiple runs  */
 
-    /* Get CSV data on ECC_CLASSES for one run */
+    csv_on_all_repeated<ECC_NEC, ECC_FR>(datasets, CSV_OUT_PATH, 5);
+
+/* 2)  Get CSV data on ECC_CLASSES for one run */
+
     // csv_on_all<ECC_RED, ECC_NEC>(datasets, CSV_OUT_PATH);
 
-    /* Profile on ECC class for one run */
-    profile_on_all<ECC_FR>(datasets, PROFILER_OUT_PATH);
+/* 3)  Profile on ECC class for one run */
+
+    // profile_on_all<ECC_NEC>(datasets, PROFILER_OUT_PATH);
 
 
 
@@ -559,34 +566,24 @@ int main(int argc, char* argv[]) {
 
 
 
-/*Running with gperf
-Include path:
--I/opt/homebrew/include
+/*Running the program manually
 
-Linked:
-g++ -I/opt/homebrew/include -L/opt/homebrew/lib -lprofiler -std=c++17 -O3 *.cc -o ecc
-g++ -I/opt/homebrew/include -L/opt/homebrew/lib -ltcmalloc_and_profiler -std=c++17 *.cc -o ecc
-g++ -I/opt/homebrew/include -L/opt/homebrew/lib -std=c++17 -O3 -fsanitize=address *.cc -o ecc
-g++ -fsanitize=address -L/opt/homebrew/lib -g -O1 -std=c++17 *.cc -o ecc
+Compiling:
+  -  With profiling:
+        g++ -I/opt/homebrew/include -L/opt/homebrew/lib -lprofiler -DPROFILING -Iinclude -std=c++17 -O3 src/[delete_this]*.cc -o build/ecc
 
-g++ -I/opt/homebrew/include -L/opt/homebrew/lib -lprofiler -std=c++17 -fsanitize=address -g *.cc -o ecc
+  - Without profiling:
+        g++ -Iinclude -std=c++17 -O3 src/[delete_this]*.cc -o build/ecc
 
+Running:
+  - With profiling:
+        ./build/ecc <flags> -P
+    
+  - Without profiling: 
+        ./build/ecc <flags>
 
+Getting profiling data:
+    1)  pprof --dot ./build/ecc build/profiler/profile_output.prof > build/profiler/output.dot
+    2)  dot -Tpng build/profiler/output.dot -o build/profiler/output.png
 
-
-
-See pprof
-pprof ecc ./profile_output.prof  
-
-pprof analysis
-top100 --cum
-
-Get call graph:
-pprof --dot ./ecc profile_output.prof > output.dot
-dot -Tpng output.dot -o output.png
-
-
-
-all combined
-g++ -I/opt/homebrew/include -L/opt/homebrew/lib -lprofiler -std=c++17 -O3 *.cc -o ecc; ./ecc; pprof --dot ./ecc profile_output.prof > output.dot; dot -Tpng output.dot -o output.png
 */

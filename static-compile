@@ -1,3 +1,7 @@
+
+
+
+
 #!/bin/bash
 
 # Function to compile the project with or without gperftools
@@ -19,13 +23,13 @@ compile_project() {
         # Compile with gperftools flags
         echo "Compiling with gperftools flags..."
         mkdir -p build
-        g++ -I/opt/homebrew/include -L/opt/homebrew/lib -lprofiler -DPROFILING -Iinclude -std=c++17 -O3 src/*.cc -o build/ecc
+        g++ -I/opt/homebrew/include -L/opt/homebrew/lib -static-libstdc++ -static-libgcc -lprofiler -DPROFILING -Iinclude -std=c++17 -O3 src/*.cc -o build/ecc
 
     else
         # Compile without gperftools flags
         echo "Compiling program..."
         mkdir -p build
-        g++ -Iinclude -std=c++17 -O3 src/*.cc -o build/ecc
+        g++ -Iinclude -std=c++17 -static-libstdc++ -static-libgcc -O3 src/*.cc -o build/ecc
     fi
 }
 
@@ -44,7 +48,7 @@ run_binary_with_args() {
 # Main logic
 compile_project "$@"
 if [ $? -eq 0 ]; then
-    run_binary_with_args "$@"
+    echo "run as ./build/ecc $@"
 else
     echo "Compilation failed."
     exit 1

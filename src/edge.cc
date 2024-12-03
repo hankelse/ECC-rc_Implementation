@@ -5,6 +5,7 @@
 
 Edge::Edge() {
     _covered = false;
+    counted_by = {};
 }
 
 Edge::Edge(Node* node1, Node* node2) {
@@ -12,6 +13,7 @@ Edge::Edge(Node* node1, Node* node2) {
     _node2 = node2;
     
     _covered = false;
+    counted_by = {};
 }
 
 bool Edge::is_covered() {

@@ -44,7 +44,7 @@ run_binary_with_args() {
 # Main logic
 compile_project "$@"
 if [ $? -eq 0 ]; then
-    run_binary_with_args "$@"
+    echo "run as ./build/ecc $@"
 else
     echo "Compilation failed."
     exit 1

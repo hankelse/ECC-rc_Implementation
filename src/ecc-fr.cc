@@ -15,6 +15,7 @@ ECC_FR::ECC_FR(string ds_filepath) : ECC_NEC (ds_filepath) {
     // common_neighbor_sets = vector<vector<Node*>>(G->_edges.size(), vector<Node*>(0));
 
     common_neighbor_sets.reserve(G->_edges.size());
+    edge_removals = vector<bool>(G->_edges.size(), false);
 
 
 }
@@ -23,6 +24,7 @@ ECC_FR::ECC_FR(Graph& G) : ECC_NEC (G) {
     name = "ECC_FR";
     // common_neighbor_sets = vector<vector<Node*>>(G._edges.size(), vector<Node*>(0));
     common_neighbor_sets.reserve(G._edges.size());
+    edge_removals = vector<bool>(G._edges.size(), false);
 
 }
 
@@ -33,7 +35,10 @@ ECC_FR::ECC_FR(Graph& G) : ECC_NEC (G) {
  * @return a clique cover of G
  */
 vector<Clique*>* ECC_FR::run() {
-    find_all_common_neighbors();
+    ECC_NEC::apply_rule_two();
+    ECC_NEC::apply_rule_one();
+
+    init_reduction_data();
 
     //applies reductions
     apply_rules_exhaustively();
@@ -57,21 +62,15 @@ size_t ECC_FR::apply_rule_two() {
         for (const auto & [neighbor, connecting_edge] : node->connection_map) {
             if (node_removals[neighbor->index]) continue; // skip neighbor if already removed
             if (connecting_edge->is_covered()) continue; //skip neighbor if connecting edge already covered.
-
-            //compute common neighbors
-            // vector<Node*> common_neighbors = get_common_neighbors(connecting_edge);
-            // common_neighbors.push_back(node);
-            // common_neighbors.push_back(neighbor);
+            if (edge_removed(connecting_edge)) continue; //skip if edge removed (shouldn't trigger is prev passed)
 
 
             size_t num_common_neighbors = get_common_neighbors(connecting_edge).size() + 2; // add the two nodes from connceting edge
 
             size_t expected_num_edges = (num_common_neighbors * (num_common_neighbors -1))/2;
-            // cout << "comparing" << endl;
-            // cout << "\t" << expected_num_edges << endl;
-            // cout << "\t" <<  edge_intersection_counts[connecting_edge->index] << endl;
+
             if (expected_num_edges == edge_intersection_counts[connecting_edge->index]) {
-                // cout << "found clique! " << endl;
+
                 vector<Node*> common_neighbors = get_common_neighbors(connecting_edge);
                 common_neighbors.push_back(node);
                 common_neighbors.push_back(neighbor);
@@ -90,18 +89,77 @@ size_t ECC_FR::apply_rule_two() {
 }
 
 
+void ECC_FR::remove_node(Node* node) {
+    node_removals[node->index] = true;
+    nodes_removed++;
+    
+    // remove node from each of the node's neighbor's neighbor's
+    for (Node* neighbor : node->neighbors) {
+        vector<Node*>& neighbors2  = neighbor->neighbors;
 
+        auto it = find(neighbors2.begin(), neighbors2.end(), node);
+        swap(*it, neighbors2.back());
+        neighbors2.pop_back();
+    }
+
+    //remove from all neighbors connection-maps
+    for (Node* neighbor : node->neighbors) {
+        neighbor->connection_map.erase(node);
+    }
+
+    // remove from all common neighbors??
+
+}
+
+void ECC_FR::remove_edge(Edge* edge) {
+    edge_removals[edge->index] = true;
+
+    //update edge_intersection_counts of effected edges
+    for (Edge* referencing_edge : edge->counted_by) {
+        edge_intersection_counts[referencing_edge->index] -= 1;
+    }
+
+    //remove edge from all of n1, n2 edges (one should already be removed by rule1)
+    Node* n1 = edge->_node1;
+    Node* n2 = edge->_node2;
+
+    // remove using swap and pop method 
+    if (not is_removed(n1)) {
+        vector<Edge*>& n1_edges = n1->edges;
+        auto it = find(n1_edges.begin(), n1_edges.end(), edge);
+        swap(*it, n1_edges.back());
+        n1_edges.pop_back();
+    }
+
+    if (not is_removed(n2)) {
+        vector<Edge*>& n2_edges = n2->edges;
+        auto it = find(n2_edges.begin(), n2_edges.end(), edge);
+        swap(*it, n2_edges.back());
+        n2_edges.pop_back();
+    }
+
+
+
+
+}
+
+
+bool ECC_FR::edge_removed(Edge* edge) {
+    return edge_removals[edge->index];
+}
 
 size_t ECC_FR::apply_rule_one() {
     size_t starting_num_removed = nodes_removed;
     
     for (Node* node : G->_nodes) {
+        
         if (is_removed(node)) continue; // Skip node if removed
 
         //check if all incident edges have been covered
         vector<Edge*> incident_edges = node->edges;
         bool all_covered = true;
         for (Edge* edge : incident_edges) {
+            if (edge_removed(edge)) continue;
             if (!edge->_covered) {
                 all_covered = false;
                 break;
@@ -110,9 +168,15 @@ size_t ECC_FR::apply_rule_one() {
 
         //if all incident edges covered, remove node from G
         if (all_covered) {
-            size_t index = node->index;
-            node_removals[index] = true;
-            nodes_removed ++;
+            //remove connecting node
+            remove_node(node);
+
+            //remove incident edges, and update the corresponding counts in edge_intersection_counts
+            for (Edge* incident_edge : incident_edges) {
+                if (edge_removed(incident_edge)) continue;
+                remove_edge(incident_edge);
+            }
+
 
             // Adjust edge_intersection_counts
                 // for each edge covered, "we remove them" -> must adjust edge counts wherever edge is included
@@ -146,7 +210,7 @@ Clique* ECC_FR::find_clique_of(Edge* edge) {
     Node* v = edge->_node2;
 
     if (is_removed(u) || is_removed(v)) {
-        throw invalid_argument("Passed edge with removed nodes");
+        throw invalid_argument("Passed edge with removed node(s)");
     }
 
     add_to_clique(clique, u);
@@ -166,7 +230,6 @@ Clique* ECC_FR::find_clique_of(Edge* edge) {
 
         // Trim candidates: P ← P ∩ N(z), sped up using the common_neighbors
         Edge* new_edge_with_u = G->get_edge(u, new_member);
-        // candidates = node_set_intersect(candidates, get_common_neighbors(new_edge_with_u));
         // trim_candidates(candidates, new_member->neighbors);
         trim_candidates(candidates, get_common_neighbors(new_edge_with_u));
 
@@ -184,8 +247,9 @@ Clique* ECC_FR::find_clique_of(Edge* edge) {
  * and the number of edges between common neighbors in edge_intersection_counts
  * 
  */
-void ECC_FR::find_all_common_neighbors() {
+void ECC_FR::init_reduction_data() {
     for (Edge* edge : G->_edges) {
+        if (edge_removed(edge)) continue;
 
         // Get each node in the edge
         Node* n1 = edge->_node1;
@@ -205,22 +269,33 @@ void ECC_FR::find_all_common_neighbors() {
         neighborhood.emplace_back(n1);
         neighborhood.emplace_back(n2);
 
-        // calculate the number of edges between the common neighbors
-        size_t edge_count = 0;
-        for (int n1_index = 0; n1_index < neighborhood.size(); n1_index++) {
-            for (int n2_index = n1_index + 1; n2_index < neighborhood.size(); n2_index++ ) {
-
-                //is there an edge here?
-                Edge* connecting_edge = G->get_edge(neighborhood[n1_index], neighborhood[n2_index]);
-                if (connecting_edge != nullptr) {
-                    edge_count += 1;
-                }
-            }
-        }
+        size_t edge_count = get_edge_intersection_count(edge, neighborhood);
+        
         //Put the number of edges between the common neighbors into the list
         edge_intersection_counts[edge->index] = edge_count;
     }
 
+}
+
+
+
+size_t ECC_FR::get_edge_intersection_count(Edge* edge, vector<Node*>& neighborhood) {
+    // Calculate the edges between common neighbors
+    size_t edge_count = 0;
+    for (int n1_index = 0; n1_index < neighborhood.size(); n1_index++) {
+        for (int n2_index = n1_index + 1; n2_index < neighborhood.size(); n2_index++ ) {
+
+            //is there an edge here?
+            Edge* connecting_edge = G->get_edge(neighborhood[n1_index], neighborhood[n2_index]);
+            if (connecting_edge != nullptr) {
+                edge_count += 1;
+
+                //add reference to connecting_edge:
+                connecting_edge->counted_by.push_back(edge);
+            }
+        }
+    }
+    return edge_count;
 }
 
 /**
@@ -231,6 +306,24 @@ void ECC_FR::find_all_common_neighbors() {
  * @return vector of common neighbors
  */
 vector<Node*> ECC_FR::get_common_neighbors(Edge* edge) {
-    return common_neighbor_sets[edge->index];
+    vector<Node*>& candidates = common_neighbor_sets[edge->index];
+    vector<Node*> temp_candidates = candidates;
+
+    vector<Node*> result;
+    result.reserve(candidates.size());
+    for (Node* node : temp_candidates) {
+        if (is_removed(node)) {
+            // swap and pop to remove node
+            auto it = find(candidates.begin(), candidates.end(), node);
+            swap(*it, candidates.back());
+            candidates.pop_back();
+
+
+            continue;
+        }
+        result.emplace_back(node);
+    }
+
+    return result;
 }
 
