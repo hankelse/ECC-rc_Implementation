@@ -1,0 +1,24 @@
+#PBS -N run-ecc-with
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=50GB
+#PBS -q una-new
+#PBS -M helsesse@hamilton.edu
+#PBS -m bea
+#PBS -j oe
+#PBS -l walltime=01:00:00
+#PBS -r n
+
+
+echo ""
+echo "Running data on all (including big)"
+echo ""
+
+
+cd $PBS_O_WORKDIR
+
+
+./build/ecc -b >> log.txt
+
+
+echo -n "Finished at: "
+date

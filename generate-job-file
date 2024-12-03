@@ -1,0 +1,10 @@
+#!/bin/bash
+
+LAST_ARG="${!#}"
+touch jobfiles/$LAST_ARG.run
+
+python3 scripts/generate_job_file.py $LAST_ARG
+
+
+
+scp jobfiles/$LAST_ARG.run helsesse@grid.hpc.hamilton.edu:/usr/local/research/compsci/strash/helsesse/ecc-uploads/jobfiles

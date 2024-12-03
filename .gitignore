@@ -1,7 +1,6 @@
 
-new_snap_datasets/amazon0302.txt
-new_snap_datasets/amazon0312.txt
-new_snap_datasets/roadNet-CA.txt
-new_snap_datasets/web-BerkStan.txt
-/new_snap_datasets
-/new_nde_datasets
+
+/reference
+/datasets
+/old
+

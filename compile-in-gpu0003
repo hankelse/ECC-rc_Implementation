@@ -1,0 +1,58 @@
+#!/bin/bash
+
+ssh helsesse@grid.hpc.hamilton.edu
+cd /usr/local/research/compsci/strash/helsesse/ecc-uploads
+
+echo "sending source..."
+scp -r -B src helsesse@gpu0003:/home/helsesse/ecc-uploads
+echo "sending include..."
+scp -r -B include helsesse@gpu0003:/home/helsesse/ecc-uploads
+echo "sshing to gpu0003"
+ssh helsesse@gpu0003
+cd ecc-uploads
+compile_project()
+echo "sending ecc back to grid"
+scp -B /build/ecc helsesse@grid.hpc.hamilton.edu:/usr/local/research/compsci/strash/helsesse/ecc-uploads/build
+exit
+
+
+
+
+# Function to compile the project with or without gperftools
+compile_project() {
+    # Shift the arguments to skip the script name
+    shift  # This will remove './run' from $@
+    
+    # # Debugging: Print all arguments passed
+    # echo "Arguments passed: $@"
+    
+    # # Get the last argument (ignore extra spaces)
+    LAST_ARG="${!#}"
+    
+    # # Debugging: Print the last argument
+    # echo "Last argument: $LAST_ARG"
+    
+    # Check if the last flag is -P
+    if [[ "$LAST_ARG" == "-P" ]]; then
+        # Compile with gperftools flags
+        echo "Compiling with gperftools flags..."
+        mkdir -p build
+        g++ -I/opt/homebrew/include -L/opt/homebrew/lib -lprofiler -DPROFILING -Iinclude -std=c++17 -O3 src/*.cc -o build/ecc
+
+    else
+        # Compile without gperftools flags
+        echo "Compiling program..."
+        mkdir -p build
+        g++ -Iinclude -std=c++17 -O3 src/*.cc -o build/ecc
+    fi
+}
+
+
+# Main logic
+compile_project "$@"
+if [ $? -eq 0 ]; then
+    echo "run as ./build/ecc $@"
+else
+    echo "Compilation failed."
+    exit 1
+fi
