@@ -16,9 +16,11 @@ Graph::Graph() {
 Graph::Graph(string filename) {
     this->filename = filename;
     this->construct(filename); //populate the graph from the file.
+    // cout << "\t graph constructed: " << filename << endl;
 }
 
 Graph::~Graph() {
+    // cout << "\t deconstructing G : " << filename << endl;
     for (int n = 0; n < _edges.size(); n++) {
         // if (_edges[n] != nullptr) {
         delete _edges[n];

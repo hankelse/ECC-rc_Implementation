@@ -31,6 +31,9 @@ class Node {
         unordered_map<Node*, Edge*> connection_map;
         unordered_set<Node*> neighbor_set;
 
+        //for reductions
+        vector<Node*> later_neighbors;
+
 
     private:
         int _id;

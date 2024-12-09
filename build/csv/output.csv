@@ -1,23 +1,23 @@
-Dataset	Nodes in G	Edges in G		ECC_NEC				ECC_FR				
+Dataset	Nodes in G	Edges in G		ECC_NEC				ECC_FR1				
 				Average Cliques Found	Min Cliques Found	Max Cliques Found	Runtime	Average Cliques Found	Min Cliques Found	Max Cliques Found	Runtime	
-=REGEXEXTRACT("datasets/snap_datasets/ca-AstroPh.txt", "[^/]+$")	18772	198050		15180	15177	15182	206.333	15177.3	15177	15178	825.333	
-=REGEXEXTRACT("datasets/snap_datasets/ca-CondMat.txt", "[^/]+$")	23133	93439		16286	16286	16286	36	16285	16285	16285	68.3333	
-=REGEXEXTRACT("datasets/snap_datasets/ca-GrQc.txt", "[^/]+$")	5242	14484		3738	3738	3738	3.33333	3738	3738	3738	6	
-=REGEXEXTRACT("datasets/snap_datasets/ca-HepPh.txt", "[^/]+$")	12008	118489		10044.3	10044	10045	52	10042.7	10042	10044	2212.67	
-=REGEXEXTRACT("datasets/snap_datasets/ca-HepTh.txt", "[^/]+$")	9877	25973		9198	9198	9198	9	9198	9198	9198	13.6667	
-=REGEXEXTRACT("datasets/snap_datasets/cit-HepPh.txt", "[^/]+$")	34546	420877		131487	131456	131514	2760	131522	131503	131535	3401.67	
-=REGEXEXTRACT("datasets/snap_datasets/cit-HepTh.txt", "[^/]+$")	27770	352285		93483.7	93442	93534	3667	93469.3	93446	93502	4129.67	
-=REGEXEXTRACT("datasets/snap_datasets/email-Enron.txt", "[^/]+$")	36692	183831		43486.7	43467	43505	1134.33	43494.3	43481	43515	1856.33	
-=REGEXEXTRACT("datasets/snap_datasets/email-EuAll.txt", "[^/]+$")	265214	364481		297734	297730	297740	1730.33	297733	297722	297744	2769.33	
-=REGEXEXTRACT("datasets/snap_datasets/p2p-Gnutella04.txt", "[^/]+$")	10876	39994		38491	38491	38491	13.6667	38491	38491	38491	23	
-=REGEXEXTRACT("datasets/snap_datasets/p2p-Gnutella05.txt", "[^/]+$")	8846	31839		30523	30523	30523	10.6667	30523	30523	30523	15.6667	
-=REGEXEXTRACT("datasets/snap_datasets/p2p-Gnutella06.txt", "[^/]+$")	8717	31525		30322	30322	30322	10.6667	30322	30322	30322	15	
-=REGEXEXTRACT("datasets/snap_datasets/p2p-Gnutella08.txt", "[^/]+$")	6301	20777		19001	19001	19001	9	19002	19002	19002	11.3333	
-=REGEXEXTRACT("datasets/snap_datasets/p2p-Gnutella09.txt", "[^/]+$")	8114	26013		24118	24118	24118	12	24120	24120	24120	15.3333	
-=REGEXEXTRACT("datasets/snap_datasets/p2p-Gnutella24.txt", "[^/]+$")	26518	65369		63725	63725	63725	25	63725	63725	63725	35.3333	
-=REGEXEXTRACT("datasets/snap_datasets/p2p-Gnutella25.txt", "[^/]+$")	22687	54705		53367	53367	53367	32	53367	53367	53367	28.6667	
-=REGEXEXTRACT("datasets/snap_datasets/p2p-Gnutella30.txt", "[^/]+$")	36682	88328		85821	85821	85821	37	85821	85821	85821	51.6667	
-=REGEXEXTRACT("datasets/snap_datasets/p2p-Gnutella31.txt", "[^/]+$")	62586	147892		144478	144478	144478	65.3333	144478	144478	144478	95	
-=REGEXEXTRACT("datasets/snap_datasets/soc-Slashdot0811.txt", "[^/]+$")	77360	469180		329873	329854	329885	2018.33	329899	329892	329909	2593.67	
-=REGEXEXTRACT("datasets/snap_datasets/soc-Slashdot0902.txt", "[^/]+$")	82168	504230		352942	352934	352948	2095.67	352971	352961	352983	3210.33	
-=REGEXEXTRACT("datasets/snap_datasets/wiki-Vote.txt", "[^/]+$")	7115	100762		37408.3	37403	37412	1006.33	37402.7	37394	37417	1853	
+=REGEXEXTRACT("datasets/snap_datasets/ca-AstroPh.txt", "[^/]+$")	18772	198050		15182	15179	15187	210	15198.3	15198	15199	734	
+=REGEXEXTRACT("datasets/snap_datasets/ca-CondMat.txt", "[^/]+$")	23133	93439		16286	16286	16286	35.6667	16290	16290	16290	147.333	
+=REGEXEXTRACT("datasets/snap_datasets/ca-GrQc.txt", "[^/]+$")	5242	14484		3738	3738	3738	3	3739	3739	3739	27	
+=REGEXEXTRACT("datasets/snap_datasets/ca-HepPh.txt", "[^/]+$")	12008	118489		10045	10045	10045	53	10050.3	10050	10051	5450	
+=REGEXEXTRACT("datasets/snap_datasets/ca-HepTh.txt", "[^/]+$")	9877	25973		9197.67	9197	9198	8.33333	9197	9196	9198	33	
+=REGEXEXTRACT("datasets/snap_datasets/cit-HepPh.txt", "[^/]+$")	34546	420877		131465	131434	131483	3237.33	131662	131632	131686	1171	
+=REGEXEXTRACT("datasets/snap_datasets/cit-HepTh.txt", "[^/]+$")	27770	352285		93478.3	93442	93511	4010.67	93579	93566	93589	1181	
+=REGEXEXTRACT("datasets/snap_datasets/email-Enron.txt", "[^/]+$")	36692	183831		43485.7	43482	43490	1187.67	43503.3	43495	43520	551.667	
+=REGEXEXTRACT("datasets/snap_datasets/email-EuAll.txt", "[^/]+$")	265214	364481		297737	297731	297746	1732.33	297744	297731	297757	2164	
+=REGEXEXTRACT("datasets/snap_datasets/p2p-Gnutella04.txt", "[^/]+$")	10876	39994		38491	38491	38491	10.3333	38491	38491	38491	50	
+=REGEXEXTRACT("datasets/snap_datasets/p2p-Gnutella05.txt", "[^/]+$")	8846	31839		30523	30523	30523	8	30523	30523	30523	37.3333	
+=REGEXEXTRACT("datasets/snap_datasets/p2p-Gnutella06.txt", "[^/]+$")	8717	31525		30322	30322	30322	8.33333	30322	30322	30322	36.6667	
+=REGEXEXTRACT("datasets/snap_datasets/p2p-Gnutella08.txt", "[^/]+$")	6301	20777		19001	19001	19001	8	19001.7	19001	19002	25	
+=REGEXEXTRACT("datasets/snap_datasets/p2p-Gnutella09.txt", "[^/]+$")	8114	26013		24118	24118	24118	10.3333	24119	24119	24119	29.6667	
+=REGEXEXTRACT("datasets/snap_datasets/p2p-Gnutella24.txt", "[^/]+$")	26518	65369		63725	63725	63725	20.6667	63725	63725	63725	92.3333	
+=REGEXEXTRACT("datasets/snap_datasets/p2p-Gnutella25.txt", "[^/]+$")	22687	54705		53367	53367	53367	15.6667	53367	53367	53367	80	
+=REGEXEXTRACT("datasets/snap_datasets/p2p-Gnutella30.txt", "[^/]+$")	36682	88328		85821	85821	85821	28.3333	85821	85821	85821	134.333	
+=REGEXEXTRACT("datasets/snap_datasets/p2p-Gnutella31.txt", "[^/]+$")	62586	147892		144478	144478	144478	54	144478	144478	144478	256.667	
+=REGEXEXTRACT("datasets/snap_datasets/soc-Slashdot0811.txt", "[^/]+$")	77360	469180		329876	329867	329882	2041	330203	330196	330209	1372.33	
+=REGEXEXTRACT("datasets/snap_datasets/soc-Slashdot0902.txt", "[^/]+$")	82168	504230		352944	352929	352968	2143	353254	353248	353262	1331.67	
+=REGEXEXTRACT("datasets/snap_datasets/wiki-Vote.txt", "[^/]+$")	7115	100762		37406.7	37401	37415	1087.67	37453	37446	37460	399.333	

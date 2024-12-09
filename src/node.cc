@@ -11,6 +11,7 @@ Node::Node() {
 Node::Node(int id, int index_in_graph) {
     _id = id;
     index = index_in_graph;
+    vector<Node*> later_neighbors = {};
 }
 
 

@@ -13,6 +13,7 @@ using namespace std;
 #include "ecc-red.h"
 #include "ecc-nec.h"
 #include "ecc-fr.h"
+#include "ecc-fr1.h"
 
 #include "io.h"
 #include "node.h"
@@ -32,60 +33,6 @@ using namespace std;
     #include <gperftools/profiler.h>   
 #endif 
 
-
-
-// /* 
-
-// // /**
-// //  * @brief Runs checks from checks.h on G
-// //  * 
-// //  * @param G graph to run checks on
-// //  */
-// bool run_checks(Graph& G) {
-//     ostringstream warnings;
-//     int num_tests_failed = 0;
-
-//     cout << "\tRUNNING ALL CHECKS" << endl;
-
-//     // If not all nodes are imported, print the warnings
-//     if (!all_nodes_imported(G, warnings)) { 
-//         cout << warnings.str() << endl;
-//         num_tests_failed += 1;
-//     } else {
-//         cout << "\t\tPASSED all_nodes_imported" << endl;
-//     }
-//     warnings.str(""); // empty
-
-
-//     // If not all edges are imported, print the warnings
-//     if (!all_edges_imported(G, warnings)) {
-//         cout << warnings.str() << endl;
-//         num_tests_failed += 1;
-//     } else {
-//         cout << "\t\tPASSED all_edges_imported" << endl;
-//     }
-//     warnings.str(""); // empty
-
-
-//     // If adjacency lists don't match manual lists, print the warnigns
-//     if (!adj_lists_correct(G, warnings)) {
-//         cout << warnings.str() << endl;
-//         num_tests_failed += 1;
-//     } else {
-//         cout << "\t\tPASSED adj_lists_correct" << endl;
-//     }
-//     warnings.str(""); // empty
-
-
-//     if (!num_tests_failed) {
-//         cout << "\tPASSED ALL CHECKS\n" << endl;
-//         return true;
-//     }
-//     cout << "\tFAILED " << num_tests_failed << " TESTS.\n" << endl;
-//     return false;
-// }
-
-//  */
 
 /**
  * @brief Runs full algorithm on a dataset. Measures running time and checks correctness.
@@ -347,19 +294,16 @@ void csv_on_all_repeated(const vector<string> datasets, const string csv_output_
 
 
     //Make datasets and save data
-    cout << "Making Graphs" << endl;
+    cout << "Getting Graph Data" << endl;
     for (string filename : datasets) {
         cout << "\t making " << filename << endl;
         Graph* graph = new Graph(filename);
-        graphs.push_back(graph);
-        graph_edges.push_back(graphs[graphs.size()-1]->_edges.size());
-        graph_nodes.push_back(graphs[graphs.size()-1]->_nodes.size());
-    }
-
-    for (Graph* graph : graphs) {
+        graph_edges.push_back(graph->_edges.size());
+        graph_nodes.push_back(graph->_nodes.size());
         delete graph;
     }
-    cout << "Finished Making Graphs" << endl;
+
+    cout << "Stored Graph Data" << endl;
 
     // Run algorithms and get result data
     vector<string> algo_names;
@@ -396,49 +340,29 @@ void profile_on_all(vector<string> datasets, const char* profile_output_path) {
 #ifdef PROFILING
     //Make all objects before starting profile
     cout << "Building solver objects" << endl;
-    vector<ECC_CLASS> solvers;
+    vector<ECC_CLASS*> solvers;
     for (string dataset : datasets) {
         cout << "\t " << dataset << endl;
-        solvers.push_back(ECC_CLASS(dataset));
+        solvers.push_back(new ECC_CLASS(dataset));
     }
 
     cout << "Starting profile..." << endl;
     ProfilerStart(profile_output_path);
-    for (ECC_CLASS solver : solvers) {
-        cout << "Running on " << solver.dataset_filepath << endl;
-        cout << "\t->" << solver.run()->size() << " cliques" << endl;;
+    for (ECC_CLASS* solver : solvers) {
+        cout << "Running on " << solver->dataset_filepath << endl;
+        cout << "\t->" << solver->run()->size() << " cliques" << endl;;
     }
     ProfilerStop();
+
+    for (ECC_CLASS* solver : solvers) {
+        delete solver;
+    }
     cout << "Profile finished." << endl;
 #else
     cerr << "ERROR: In order to profile, run the command followed by -P" << endl;
 #endif 
 }
 
-
-// vector<string> datasets = {
-// "snap_datasets/ca-AstroPh.txt", 
-// "snap_datasets/ca-CondMat.txt", 
-// "snap_datasets/ca-GrQc.txt", 
-// "snap_datasets/ca-HepPh.txt", 
-// "snap_datasets/ca-HepTh.txt", 
-// "snap_datasets/cit-HepPh.txt", //[5]
-// "snap_datasets/cit-HepTh.txt",
-// "snap_datasets/email-Enron.txt",
-// "snap_datasets/email-EuAll.txt", //[8]
-// "snap_datasets/p2p-Gnutella04.txt",
-// "snap_datasets/p2p-Gnutella05.txt", //[10]
-// "snap_datasets/p2p-Gnutella06.txt",
-// "snap_datasets/p2p-Gnutella08.txt",
-// "snap_datasets/p2p-Gnutella09.txt",
-// "snap_datasets/p2p-Gnutella24.txt", // [14]
-// "snap_datasets/p2p-Gnutella25.txt",
-// "snap_datasets/p2p-Gnutella30.txt",
-// "snap_datasets/p2p-Gnutella31.txt",
-// "snap_datasets/soc-Slashdot0811.txt", 
-// "snap_datasets/soc-Slashdot0902.txt",
-// "snap_datasets/wiki-Vote.txt",
-// };
 
 vector<string> datasets = {
     "datasets/snap_datasets/ca-AstroPh.txt", 
@@ -478,18 +402,6 @@ vector<string> big_datasets = {
 };
 
 
-// vector<string> big_datasets = {
-//     "new_snap_datasets/amazon0302.txt", 
-//     "new_snap_datasets/amazon0312.txt", 
-//     "new_snap_datasets/roadNet-CA.txt", 
-//     "new_snap_datasets/roadNet-PA.txt", 
-//     "new_snap_datasets/roadNet-TX.txt", 
-//     // "new_snap_datasets/web-BerkStan.txt", 
-//     "new_snap_datasets/web-Google.txt",
-//     "new_snap_datasets/web-NotreDame.txt",
-//     // "new_snap_datasets/web-Stanford.txt",
-//     // "new_snap_datasets/zhishi-hudong-internallink.edges"  
-// };
 
 /* SETTINGS */
 
@@ -544,10 +456,25 @@ int main(int argc, char* argv[]) {
         datasets.insert(datasets.end(), big_datasets.begin(), big_datasets.end());
     }
 
+    // datasets = {datasets[0], datasets[1], datasets[2], datasets[3], datasets[4], datasets[5], datasets[6], datasets[7]};
+    // datasets = {datasets};
+
+    // string test_set = "datasets/snap_datasets/degen-test.txt";
+    // string test_set = "datasets/snap_datasets/5-clique.txt";
+    string test_set = "datasets/snap_datasets/456-clique.txt";
+    // string test_set = "datasets/snap_datasets/ca-AstroPh.txt";
+
+    // ECC_FS fs_solver(datasets[0]);
+    // cout << "FINISHED: \n\t" << (*fs_solver.run()).size() << endl;
+
+    // ECC_FR1 fr1_solver(test_set);
+    // cout << "FINISHED: \n\t" << (*fr1_solver.run()).size() << endl;
+    // // cout << "FINISHED: \n\t" << *fr1_solver.run() << endl;
+
 // -------------------- OPTIONS FOR RUNNING PROGRAM ------------------- //
 /* 1)  Get average CSV data on ECC_CLASSES for multiple runs  */
 
-    csv_on_all_repeated<ECC_NEC, ECC_FR>(datasets, CSV_OUT_PATH, 5);
+    // csv_on_all_repeated<ECC_NEC, ECC_FR1>(datasets, CSV_OUT_PATH, 3);
 
 /* 2)  Get CSV data on ECC_CLASSES for one run */
 
@@ -555,7 +482,7 @@ int main(int argc, char* argv[]) {
 
 /* 3)  Profile on ECC class for one run */
 
-    // profile_on_all<ECC_NEC>(datasets, PROFILER_OUT_PATH);
+    profile_on_all<ECC_FR1>(datasets, PROFILER_OUT_PATH);
 
 
 
@@ -574,6 +501,7 @@ Compiling:
 
   - Without profiling:
         g++ -Iinclude -std=c++17 -O3 src/[delete_this]*.cc -o build/ecc
+
 
 Running:
   - With profiling:

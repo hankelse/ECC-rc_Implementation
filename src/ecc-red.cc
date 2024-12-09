@@ -36,6 +36,7 @@ vector<Clique*>* ECC_RED::run(){
     apply_rules_exhaustively();
 
 
+
     cout << "\t\tPreformed Data Reductions:" << endl;
     cout << "\t\t\t Reduced nodes: " << og_num_nodes << " -> " << G->_nodes.size() - nodes_removed << " (by " << nodes_removed << ")." << endl;
     cout << "\t\t\t Covered: " << num_edges_covered << " edges." << endl;
@@ -98,7 +99,7 @@ vector<Node *> ECC_RED::node_set_intersect(const vector<Node *>& vec_1, const ve
 
     //Initialize the intersection to the size of the smaller vector
     vector<Node*> intersection;
-    intersection.reserve(vec_2.size());
+    // intersection.reserve(vec_2.size());
 
     //Update lookup set with vec_1's nodes
     lookup_set->clear();
@@ -265,7 +266,7 @@ void ECC_RED::apply_rules_exhaustively() {
         change += apply_rule_two();
         change += apply_rule_one();
     }
-    // cout << "\t\t\t(reduced data: -" << num_edges_covered << " edges and -" << nodes_removed << " nodes.)" << endl;
+    cout << "\t\t\t(reduced data: -" << num_edges_covered << " edges and -" << nodes_removed << " nodes.)" << endl;
 }
 
 

@@ -1,0 +1,25 @@
+
+#PBS -N b-fr-fr1-CR-2
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=50GB
+#PBS -q una-new
+#PBS -M helsesse@hamilton.edu
+#PBS -m bea
+#PBS -j oe
+#PBS -l walltime=03:00:00
+#PBS -r n
+
+
+echo ""
+echo "Running data on all (including big)"
+echo ""
+
+module load gcc/14.2.0
+
+cd $PBS_O_WORKDIR
+
+./run -b >> log.txt
+
+echo -n "Finished at: "
+date
+

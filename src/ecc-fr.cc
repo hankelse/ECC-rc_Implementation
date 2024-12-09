@@ -11,6 +11,7 @@
 
 
 
+
 ECC_FR::ECC_FR(string ds_filepath) : ECC_NEC (ds_filepath) {
     // common_neighbor_sets = vector<vector<Node*>>(G->_edges.size(), vector<Node*>(0));
 
@@ -35,10 +36,12 @@ ECC_FR::ECC_FR(Graph& G) : ECC_NEC (G) {
  * @return a clique cover of G
  */
 vector<Clique*>* ECC_FR::run() {
-    ECC_NEC::apply_rule_two();
-    ECC_NEC::apply_rule_one();
+    // ECC_NEC::apply_rule_two();
+    // ECC_NEC::apply_rule_one();
 
     init_reduction_data();
+
+    // cout << edge_intersection_counts << endl;
 
     //applies reductions
     apply_rules_exhaustively();
@@ -51,6 +54,51 @@ vector<Clique*>* ECC_FR::run() {
     return ECC::run();
 }
 
+
+
+size_t ECC_FR::apply_rule_one() {
+    size_t starting_num_removed = nodes_removed;
+    
+    for (Node* node : G->_nodes) {
+        
+        if (is_removed(node)) continue; // Skip node if removed
+
+        //check if all incident edges have been covered
+        vector<Edge*> incident_edges = node->edges;
+        bool all_covered = true;
+        for (Edge* edge : incident_edges) {
+            if (edge_removed(edge)) continue;
+            if (!edge->_covered) {
+                all_covered = false;
+                break;
+            }
+        }
+
+        //if all incident edges covered, remove node from G
+        if (all_covered) {
+            //remove connecting node
+            remove_node(node);
+
+            //remove incident edges, and update the corresponding counts in edge_intersection_counts
+            for (Edge* incident_edge : incident_edges) {
+                if (edge_removed(incident_edge)) continue;
+                remove_edge(incident_edge);
+            }
+
+
+            // Adjust edge_intersection_counts
+                // for each edge covered, "we remove them" -> must adjust edge counts wherever edge is included
+
+
+            //Adjust common neighbor lists
+                // for each edge the node is in, if the node is in its common neighbor list, remove it
+
+
+        }
+    }
+
+    return nodes_removed - starting_num_removed;
+}
 
 size_t ECC_FR::apply_rule_two() {
     size_t cliques_found = 0;
@@ -87,6 +135,8 @@ size_t ECC_FR::apply_rule_two() {
     }
     return cliques_found;
 }
+
+
 
 
 void ECC_FR::remove_node(Node* node) {
@@ -146,50 +196,6 @@ void ECC_FR::remove_edge(Edge* edge) {
 
 bool ECC_FR::edge_removed(Edge* edge) {
     return edge_removals[edge->index];
-}
-
-size_t ECC_FR::apply_rule_one() {
-    size_t starting_num_removed = nodes_removed;
-    
-    for (Node* node : G->_nodes) {
-        
-        if (is_removed(node)) continue; // Skip node if removed
-
-        //check if all incident edges have been covered
-        vector<Edge*> incident_edges = node->edges;
-        bool all_covered = true;
-        for (Edge* edge : incident_edges) {
-            if (edge_removed(edge)) continue;
-            if (!edge->_covered) {
-                all_covered = false;
-                break;
-            }
-        }
-
-        //if all incident edges covered, remove node from G
-        if (all_covered) {
-            //remove connecting node
-            remove_node(node);
-
-            //remove incident edges, and update the corresponding counts in edge_intersection_counts
-            for (Edge* incident_edge : incident_edges) {
-                if (edge_removed(incident_edge)) continue;
-                remove_edge(incident_edge);
-            }
-
-
-            // Adjust edge_intersection_counts
-                // for each edge covered, "we remove them" -> must adjust edge counts wherever edge is included
-
-
-            //Adjust common neighbor lists
-                // for each edge the node is in, if the node is in its common neighbor list, remove it
-
-
-        }
-    }
-
-    return nodes_removed - starting_num_removed;
 }
 
 

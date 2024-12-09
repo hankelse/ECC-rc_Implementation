@@ -41,6 +41,7 @@ ECC::~ECC() {
     for (Clique* clique : clique_cover) {
         delete clique;
     }
+    delete G;
 }
 
 // ==== PUBLIC METHODS ==== //
@@ -60,14 +61,16 @@ vector<Clique*>* ECC::run() {
     while (num_edges_covered < G->_edges.size()) {
         round ++;
 
+        // cout << "ECC::run() -> select uncovered_edge" << endl;
         // u, v ← SELECT UNCOVERED EDGE()
         Edge* uncovered_edge = select_uncovered_edge(last_uncovered_edge_index);
 
-
+        // cout << "ECC::run() -> find clique of" << endl;
         //R ← FIND CLIQUE OF(u, v)
         //Increases num_edges_covered as it runs
         Clique* found_clique = find_clique_of(uncovered_edge);
         // C ← C∪R
+        // cout << "ECC::run() -> adding clique to cover" << endl;
         clique_cover.push_back(found_clique);
     }
     return &clique_cover;

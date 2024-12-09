@@ -44,6 +44,7 @@ echo ""
 echo "Running data on all (including big)"
 echo ""
 
+module load gcc/14.2.0
 
 cd $PBS_O_WORKDIR
 
