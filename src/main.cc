@@ -294,6 +294,7 @@ void csv_on_all_repeated(const vector<string> datasets, const string csv_output_
 
 
     //Make datasets and save data
+
     cout << "Getting Graph Data" << endl;
     for (string filename : datasets) {
         cout << "\t making " << filename << endl;
@@ -304,6 +305,7 @@ void csv_on_all_repeated(const vector<string> datasets, const string csv_output_
     }
 
     cout << "Stored Graph Data" << endl;
+
 
     // Run algorithms and get result data
     vector<string> algo_names;
@@ -340,14 +342,17 @@ void profile_on_all(vector<string> datasets, const char* profile_output_path) {
 #ifdef PROFILING
     //Make all objects before starting profile
     cout << "Building solver objects" << endl;
+
     vector<ECC_CLASS*> solvers;
     for (string dataset : datasets) {
         cout << "\t " << dataset << endl;
         solvers.push_back(new ECC_CLASS(dataset));
+
     }
 
     cout << "Starting profile..." << endl;
     ProfilerStart(profile_output_path);
+
     for (ECC_CLASS* solver : solvers) {
         cout << "Running on " << solver->dataset_filepath << endl;
         cout << "\t->" << solver->run()->size() << " cliques" << endl;;
@@ -357,6 +362,7 @@ void profile_on_all(vector<string> datasets, const char* profile_output_path) {
     for (ECC_CLASS* solver : solvers) {
         delete solver;
     }
+
     cout << "Profile finished." << endl;
 #else
     cerr << "ERROR: In order to profile, run the command followed by -P" << endl;
@@ -456,6 +462,7 @@ int main(int argc, char* argv[]) {
         datasets.insert(datasets.end(), big_datasets.begin(), big_datasets.end());
     }
 
+
     // datasets = {datasets[0], datasets[1], datasets[2], datasets[3], datasets[4], datasets[5], datasets[6], datasets[7]};
     // datasets = {datasets};
 
@@ -474,7 +481,8 @@ int main(int argc, char* argv[]) {
 // -------------------- OPTIONS FOR RUNNING PROGRAM ------------------- //
 /* 1)  Get average CSV data on ECC_CLASSES for multiple runs  */
 
-    // csv_on_all_repeated<ECC_NEC, ECC_FR1>(datasets, CSV_OUT_PATH, 3);
+    csv_on_all_repeated<ECC_NEC, ECC_FR1>(datasets, CSV_OUT_PATH, 3);
+
 
 /* 2)  Get CSV data on ECC_CLASSES for one run */
 
@@ -482,7 +490,8 @@ int main(int argc, char* argv[]) {
 
 /* 3)  Profile on ECC class for one run */
 
-    profile_on_all<ECC_FR1>(datasets, PROFILER_OUT_PATH);
+
+    // profile_on_all<ECC_FR1>(datasets, PROFILER_OUT_PATH);
 
 
 
