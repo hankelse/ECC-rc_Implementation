@@ -1,0 +1,51 @@
+#!/bin/bash
+
+# Function to compile the project with or without gperftools
+compile_project() {
+    # Shift the arguments to skip the script name
+    shift  # This will remove './run' from $@
+    
+    # # Debugging: Print all arguments passed
+    # echo "Arguments passed: $@"
+    
+    # # Get the last argument (ignore extra spaces)
+    # LAST_ARG="${!#}"
+    
+    # # Debugging: Print the last argument
+    # echo "Last argument: $LAST_ARG"
+    
+    # Check if the last flag is -P
+    if [[ "$LAST_ARG" == "-P" ]]; then
+        # Compile with gperftools flags
+        echo "Compiling with gperftools flags..."
+        mkdir -p build
+        x86_64-linux-musl-g++ -I/opt/homebrew/include -L/opt/homebrew/lib -lprofiler -DPROFILING -Iinclude -std=c++17 -O3 src/*.cc -o build/ecc
+
+    else
+        # Compile without gperftools flags
+        echo "Compiling program..."
+        mkdir -p build
+        x86_64-linux-musl-g++ -Iinclude -std=c++17 -O3 src/*.cc -o build/ecc
+    fi
+}
+
+# Function to run the binary with passed arguments
+run_binary_with_args() {
+    echo -e "Running ECC with: $@ \n"
+    ./build/ecc "$@"
+
+    if [[ "$LAST_ARG" == "-P" ]]; then
+        echo "Making graph..."
+        pprof --dot ./build/ecc build/profiler/profile_output.prof > build/profiler/output.dot
+        dot -Tpng build/profiler/output.dot -o build/profiler/output.png
+    fi
+}
+
+# Main logic
+compile_project "$@"
+if [ $? -eq 0 ]; then
+    run_binary_with_args "$@"
+else
+    echo "Compilation failed."
+    exit 1
+fi

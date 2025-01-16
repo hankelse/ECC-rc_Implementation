@@ -1,0 +1,34 @@
+Compiling program...
+Running ECC with: -a 
+
+Running csv on all repeated
+Making Graphs
+	 making datasets/snap_datasets/ca-AstroPh.txt
+Finished Making Graphs
+COLLECTING DATA FOR: ECC_NEC
+	Running on datasets/snap_datasets/ca-AstroPh.txt 10 times.
+		 15182 cliques  :  177 milliseconds
+		 15184 cliques  :  179 milliseconds
+		 15183 cliques  :  183 milliseconds
+		 15181 cliques  :  178 milliseconds
+		 15185 cliques  :  178 milliseconds
+		 15184 cliques  :  178 milliseconds
+		 15183 cliques  :  179 milliseconds
+		 15180 cliques  :  177 milliseconds
+		 15182 cliques  :  181 milliseconds
+		 15187 cliques  :  194 milliseconds
+COLLECTED ALL DATA FOR: ECC_NEC
+COLLECTING DATA FOR: ECC_FR
+	Running on datasets/snap_datasets/ca-AstroPh.txt 10 times.
+		 15197 cliques  :  1236 milliseconds
+		 15192 cliques  :  1251 milliseconds
+		 15195 cliques  :  1239 milliseconds
+		 15197 cliques  :  1285 milliseconds
+		 15196 cliques  :  1227 milliseconds
+		 15193 cliques  :  1232 milliseconds
+		 15192 cliques  :  1234 milliseconds
+		 15197 cliques  :  1259 milliseconds
+		 15190 cliques  :  1247 milliseconds
+		 15195 cliques  :  1310 milliseconds
+COLLECTED ALL DATA FOR: ECC_FR
+Ran CSV_ON_ ALL in 18 seconds.

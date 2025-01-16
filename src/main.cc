@@ -13,6 +13,7 @@ using namespace std;
 #include "ecc-red.h"
 #include "ecc-nec.h"
 #include "ecc-fr.h"
+#include "ecc-fr1.h"
 
 #include "io.h"
 #include "node.h"
@@ -293,19 +294,18 @@ void csv_on_all_repeated(const vector<string> datasets, const string csv_output_
 
 
     //Make datasets and save data
-    cout << "Making Graphs" << endl;
+
+    cout << "Getting Graph Data" << endl;
     for (string filename : datasets) {
         cout << "\t making " << filename << endl;
         Graph* graph = new Graph(filename);
-        graphs.push_back(graph);
-        graph_edges.push_back(graphs[graphs.size()-1]->_edges.size());
-        graph_nodes.push_back(graphs[graphs.size()-1]->_nodes.size());
-    }
-
-    for (Graph* graph : graphs) {
+        graph_edges.push_back(graph->_edges.size());
+        graph_nodes.push_back(graph->_nodes.size());
         delete graph;
     }
-    cout << "Finished Making Graphs" << endl;
+
+    cout << "Stored Graph Data" << endl;
+
 
     // Run algorithms and get result data
     vector<string> algo_names;
@@ -342,19 +342,27 @@ void profile_on_all(vector<string> datasets, const char* profile_output_path) {
 #ifdef PROFILING
     //Make all objects before starting profile
     cout << "Building solver objects" << endl;
-    vector<ECC_CLASS> solvers;
+
+    vector<ECC_CLASS*> solvers;
     for (string dataset : datasets) {
         cout << "\t " << dataset << endl;
-        solvers.push_back(ECC_CLASS(dataset));
+        solvers.push_back(new ECC_CLASS(dataset));
+
     }
 
     cout << "Starting profile..." << endl;
     ProfilerStart(profile_output_path);
-    for (ECC_CLASS solver : solvers) {
-        cout << "Running on " << solver.dataset_filepath << endl;
-        cout << "\t->" << solver.run()->size() << " cliques" << endl;;
+
+    for (ECC_CLASS* solver : solvers) {
+        cout << "Running on " << solver->dataset_filepath << endl;
+        cout << "\t->" << solver->run()->size() << " cliques" << endl;;
     }
     ProfilerStop();
+
+    for (ECC_CLASS* solver : solvers) {
+        delete solver;
+    }
+
     cout << "Profile finished." << endl;
 #else
     cerr << "ERROR: In order to profile, run the command followed by -P" << endl;
@@ -454,10 +462,27 @@ int main(int argc, char* argv[]) {
         datasets.insert(datasets.end(), big_datasets.begin(), big_datasets.end());
     }
 
+
+    // datasets = {datasets[0], datasets[1], datasets[2], datasets[3], datasets[4], datasets[5], datasets[6], datasets[7]};
+    // datasets = {datasets};
+
+    // string test_set = "datasets/snap_datasets/degen-test.txt";
+    // string test_set = "datasets/snap_datasets/5-clique.txt";
+    string test_set = "datasets/snap_datasets/456-clique.txt";
+    // string test_set = "datasets/snap_datasets/ca-AstroPh.txt";
+
+    // ECC_FS fs_solver(datasets[0]);
+    // cout << "FINISHED: \n\t" << (*fs_solver.run()).size() << endl;
+
+    // ECC_FR1 fr1_solver(test_set);
+    // cout << "FINISHED: \n\t" << (*fr1_solver.run()).size() << endl;
+    // // cout << "FINISHED: \n\t" << *fr1_solver.run() << endl;
+
 // -------------------- OPTIONS FOR RUNNING PROGRAM ------------------- //
 /* 1)  Get average CSV data on ECC_CLASSES for multiple runs  */
 
-    csv_on_all_repeated<ECC_NEC, ECC_FR>(datasets, CSV_OUT_PATH, 5);
+    csv_on_all_repeated<ECC_NEC, ECC_FR1>(datasets, CSV_OUT_PATH, 3);
+
 
 /* 2)  Get CSV data on ECC_CLASSES for one run */
 
@@ -465,7 +490,8 @@ int main(int argc, char* argv[]) {
 
 /* 3)  Profile on ECC class for one run */
 
-    // profile_on_all<ECC_NEC>(datasets, PROFILER_OUT_PATH);
+
+    // profile_on_all<ECC_FR1>(datasets, PROFILER_OUT_PATH);
 
 
 
@@ -484,6 +510,7 @@ Compiling:
 
   - Without profiling:
         g++ -Iinclude -std=c++17 -O3 src/[delete_this]*.cc -o build/ecc
+
 
 Running:
   - With profiling:
